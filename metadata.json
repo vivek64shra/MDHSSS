@@ -1,0 +1,6 @@
+{
+  "name": "Maa Durga Higher Secondary School",
+  "description": "Official responsive glassmorphism portal for Maa Durga Higher Secondary School, Semariya, District Rewa (M.P.)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
