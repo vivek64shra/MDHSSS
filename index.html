@@ -208,68 +208,455 @@
     }
 
     /* ==========================================================================
-       4. TOP INFO BAR & RED ALERT MARQUEE
+       4. TOP PRIMARY NAVIGATION BAR & 3-DOT MENU DRAWER
        ========================================================================== */
-    .top-info-bar {
-      background: #0f172a;
-      color: #e2e8f0;
-      font-size: 0.88rem;
+    .top-primary-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: linear-gradient(135deg, #09152b 0%, #0f2744 50%, #0369a1 100%);
+      border-bottom: 2px solid #38bdf8;
+      box-shadow: 0 6px 25px rgba(2, 132, 199, 0.35);
       padding: 0.45rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      z-index: 50;
+      width: 100%;
     }
 
-    .top-info-inner {
+    .top-nav-inner {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 1rem;
+      justify-content: space-between;
+      gap: 0.75rem;
     }
 
-    .top-bar-btn {
-      display: inline-flex;
+    .nav-brand-logo {
+      display: flex;
       align-items: center;
-      gap: 0.45rem;
-      color: #f8fafc;
-      font-size: 0.88rem;
-      font-weight: 700;
-      padding: 0.35rem 0.95rem;
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      transition: all 0.2s ease;
+      gap: 0.65rem;
       text-decoration: none;
+      color: #ffffff;
+      flex-shrink: 0;
       cursor: pointer;
     }
 
-    .top-bar-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .nav-brand-logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+      background: #ffffff;
+      object-fit: cover;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .nav-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand-text .nav-title-hi {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.15;
+      font-family: var(--font-hindi);
+      letter-spacing: 0.2px;
+    }
+
+    .nav-brand-text .nav-sub-en {
+      font-size: 0.72rem;
+      color: #bae6fd;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-primary-list {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.42rem 0.75rem;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      border-radius: 8px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .nav-link-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
       color: #38bdf8;
-      border-color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.45);
       transform: translateY(-1px);
     }
 
-    .top-bar-login-pill {
+    .nav-link-btn.active-tab {
       background: linear-gradient(135deg, #0284c7, #0369a1);
-      border: 1px solid #38bdf8;
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+      color: #ffffff !important;
+      border-color: #7dd3fc;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
     }
 
-    .top-bar-login-pill:hover {
-      background: linear-gradient(135deg, #0369a1, #075985);
+    .nav-link-btn.nav-result-pill {
+      background: linear-gradient(135deg, #be123c, #9f1239);
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
+      border: 1px solid #fda4af;
+      box-shadow: 0 2px 10px rgba(190, 18, 60, 0.4);
+      animation: pulseResult 2.5s infinite;
+    }
+
+    .nav-link-btn.nav-result-pill:hover {
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      color: #ffffff;
+      border-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(225, 29, 72, 0.6);
+      transform: translateY(-1px) scale(1.03);
+    }
+
+    @keyframes pulseResult {
+      0%, 100% { transform: scale(1); box-shadow: 0 2px 10px rgba(190, 18, 60, 0.4); }
+      50% { transform: scale(1.04); box-shadow: 0 4px 16px rgba(225, 29, 72, 0.65); }
+    }
+
+    .nav-link-btn.nav-wa-pill {
+      background: rgba(34, 197, 94, 0.2);
+      color: #bbf7d0;
+      border: 1px solid rgba(134, 239, 172, 0.5);
+    }
+
+    .nav-link-btn.nav-wa-pill:hover {
+      background: #15803d;
+      color: #ffffff;
+      border-color: #86efac;
+    }
+
+    .nav-link-btn.nav-login-pill {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      border: 1px solid #7dd3fc;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+    }
+
+    .nav-link-btn.nav-login-pill:hover {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.55);
+    }
+
+    /* 3-Dot (Kebab) Menu Button in Navbar */
+    .nav-3dot-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.38rem 0.85rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+      border: 1.5px solid #38bdf8;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .nav-3dot-btn:hover {
+      background: #38bdf8;
+      color: #09152b;
+      border-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.6);
+      transform: translateY(-1px) scale(1.04);
+    }
+
+    .nav-3dot-btn .three-dots-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      font-weight: 900;
+      color: #38bdf8;
+      transition: color 0.2s ease;
+    }
+
+    .nav-3dot-btn:hover .three-dots-icon {
+      color: #09152b;
+    }
+
+    .nav-3dot-btn .three-dots-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* 3-DOT SLIDE-OUT MENU DRAWER & BACKDROP */
+    .threedot-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .threedot-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .threedot-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 400px;
+      max-width: 90vw;
+      background: #ffffff;
+      z-index: 9999;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.35);
+      transform: translateX(105%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .threedot-drawer.active {
+      transform: translateX(0);
+    }
+
+    .threedot-drawer-header {
+      background: linear-gradient(135deg, #09152b 0%, #0f2744 50%, #0369a1 100%);
+      color: #ffffff;
+      padding: 1.2rem 1.25rem;
+      border-bottom: 2px solid #38bdf8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .threedot-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .threedot-brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+      background: #fff;
+      object-fit: cover;
+    }
+
+    .threedot-brand-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      font-family: var(--font-hindi);
+      line-height: 1.2;
+    }
+
+    .threedot-brand-sub {
+      font-size: 0.72rem;
+      color: #bae6fd;
+      margin-top: 2px;
+    }
+
+    .threedot-close-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .threedot-close-btn:hover {
+      background: #ef4444;
+      border-color: #f87171;
+      transform: rotate(90deg);
+    }
+
+    .threedot-drawer-body {
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      flex: 1;
+    }
+
+    .threedot-quick-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .threedot-quick-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.84rem;
+      font-weight: 700;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .threedot-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .threedot-group-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #0369a1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding-bottom: 0.35rem;
+      border-bottom: 1.5px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .threedot-item-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0.65rem 0.85rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #1e293b;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .threedot-item-btn:hover {
+      background: #f0f9ff;
+      border-color: #7dd3fc;
+      color: #0284c7;
+      transform: translateX(4px);
+    }
+
+    .threedot-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .threedot-item-icon {
+      font-size: 1.25rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+
+    .threedot-item-tag {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .threedot-drawer-footer {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 1rem 1.1rem;
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+      .nav-primary-list .nav-link-btn:not(.nav-result-pill):not(#navHomeBtn) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-primary-navbar {
+        padding: 0.35rem 0;
+      }
+      .nav-brand-logo img {
+        width: 34px;
+        height: 34px;
+      }
+      .nav-brand-text .nav-title-hi {
+        font-size: 0.88rem;
+      }
+      .nav-brand-text .nav-sub-en {
+        display: none;
+      }
+      .nav-link-btn.nav-result-pill {
+        padding: 0.32rem 0.6rem;
+        font-size: 0.78rem;
+      }
+      #navHomeBtn {
+        display: none !important;
+      }
+      .nav-3dot-btn {
+        padding: 0.32rem 0.7rem;
+        font-size: 0.88rem;
+      }
+      .nav-3dot-btn .three-dots-icon {
+        font-size: 1.15rem;
+      }
     }
 
     /* Red Alert Marquee */
     .marquee-bar {
-      background: linear-gradient(90deg, #b91c1c, #dc2626, #b91c1c);
+      background: linear-gradient(90deg, #991b1b, #dc2626, #991b1b);
       color: #ffffff;
-      padding: 0.6rem 0;
-      font-size: 0.95rem;
+      padding: 0.55rem 0;
+      font-size: 0.92rem;
       font-weight: 700;
-      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.25);
+      box-shadow: 0 3px 12px rgba(220, 38, 38, 0.25);
       position: relative;
       overflow: hidden;
       display: flex;
@@ -280,17 +667,17 @@
     .marquee-tag {
       background: #7f1d1d;
       color: #fff;
-      padding: 0.25rem 1.2rem;
+      padding: 0.25rem 1.1rem;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
       flex-shrink: 0;
       z-index: 2;
-      box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
     }
 
     .marquee-track {
@@ -318,18 +705,19 @@
        5. MAIN HEADER (WHITE-BLUE BRANDING)
        ========================================================================== */
     .header-section {
-      padding: 1.25rem 0;
+      padding: 1rem 0 0.85rem;
     }
 
     .header-card {
-      padding: 1.35rem 1.75rem;
+      padding: 1.25rem 1.6rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1.5rem;
       flex-wrap: wrap;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 25px rgba(2, 132, 199, 0.1);
     }
 
     .header-brand {
@@ -342,8 +730,8 @@
 
     .school-logo-frame {
       position: relative;
-      width: 95px;
-      height: 95px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       padding: 4px;
       background: linear-gradient(135deg, #0284c7, #38bdf8, #2563eb);
@@ -364,7 +752,7 @@
     }
 
     .school-titles h1 {
-      font-size: 1.85rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: #0369a1;
       line-height: 1.2;
@@ -373,16 +761,16 @@
     }
 
     .school-titles .hindi-school-name {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: #1e3a8a;
       display: block;
-      margin: 0.15rem 0 0.35rem;
+      margin: 0.15rem 0 0.3rem;
       font-family: var(--font-hindi);
     }
 
     .school-location-badge {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
       color: #334155;
       display: flex;
@@ -394,16 +782,16 @@
     .header-code-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      gap: 0.45rem;
+      margin-top: 0.45rem;
     }
 
     .code-chip {
       background: #f0f9ff;
       border: 1px solid #bae6fd;
-      padding: 0.2rem 0.75rem;
+      padding: 0.18rem 0.7rem;
       border-radius: var(--radius-full);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: #0369a1;
       display: inline-flex;
@@ -422,14 +810,15 @@
       background: linear-gradient(135deg, #059669, #10b981);
       color: #ffffff;
       font-weight: 700;
-      font-size: 0.95rem;
-      padding: 0.65rem 1.35rem;
+      font-size: 0.92rem;
+      padding: 0.6rem 1.25rem;
       border-radius: var(--radius-full);
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
       box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
       transition: var(--transition);
+      text-decoration: none;
     }
 
     .btn-header-call:hover {
@@ -442,14 +831,15 @@
       background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #ffffff;
       font-weight: 700;
-      font-size: 0.95rem;
-      padding: 0.65rem 1.35rem;
+      font-size: 0.92rem;
+      padding: 0.6rem 1.25rem;
       border-radius: var(--radius-full);
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
       box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
       transition: var(--transition);
+      text-decoration: none;
     }
 
     .btn-header-gallery:hover {
@@ -1670,6 +2060,16 @@
     }
 
     /* Floating WhatsApp & Scroll Top Buttons */
+    .wa-svg-inline {
+      display: inline-block;
+      vertical-align: middle;
+      width: 1.15em;
+      height: 1.15em;
+      fill: currentColor;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
     .floating-wa-btn {
       position: fixed;
       bottom: 25px;
@@ -1682,10 +2082,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.85rem;
       box-shadow: 0 6px 22px rgba(37, 211, 102, 0.5);
       z-index: 999;
       transition: var(--transition);
+      text-decoration: none;
     }
 
     .floating-wa-btn:hover {
@@ -2162,85 +2562,6 @@
 </head>
 <body>
 
-  <!-- FLOATING SIDE CORNER MENU BAR BUTTON -->
-  <button id="floatingCornerMenuBtn" onclick="toggleCornerDrawer()" class="floating-corner-menu-btn" aria-label="मेनू खोलें" title="नेविगेशन मेनू">
-    <span class="menu-icon-bars">☰</span>
-    <span class="menu-label-text">मेनू (Menu)</span>
-  </button>
-
-  <!-- SLIDE-OUT CORNER NAVIGATION DRAWER -->
-  <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeCornerDrawer()"></div>
-  <div id="sideCornerDrawer" class="side-corner-drawer">
-    <div class="drawer-header">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" alt="Logo" style="width:42px; height:42px; border-radius:50%; border:2px solid #fff;">
-        <div>
-          <h3 style="font-size:0.95rem; color:#ffffff; font-weight:800; line-height:1.2;">माँ दुर्गा उ.मा. विद्यालय</h3>
-          <p style="font-size:0.75rem; color:#e0f2fe;">सेमरिया (रीवा) • 9:30 AM - 4:00 PM</p>
-        </div>
-      </div>
-      <button class="drawer-close-btn" onclick="closeCornerDrawer()" title="मेनू बंद करें">✕</button>
-    </div>
-    
-    <div class="drawer-body">
-      <div class="drawer-section-title">🌟 मुख्य नेविगेशन एवं पोर्टल्स</div>
-      <a class="drawer-item" onclick="navigateToPage('home'); closeCornerDrawer();">
-        <span class="drawer-item-icon">🏠</span>
-        <span>मुख्य पृष्ठ (Home)</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('student'); closeCornerDrawer();">
-        <span class="drawer-item-icon">🏆</span>
-        <span>परीक्षा परिणाम व अंकपत्र (Results)</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('teacher'); closeCornerDrawer();">
-        <span class="drawer-item-icon">👨‍🏫</span>
-        <span>शिक्षक पोर्टल (Teacher Module)</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('admission'); closeCornerDrawer();">
-        <span class="drawer-item-icon">📝</span>
-        <span>ऑनलाइन प्रवेश फॉर्म 2026-27</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('whatsapp'); closeCornerDrawer();">
-        <span class="drawer-item-icon">💬</span>
-        <span>कक्षावार व्हाट्सएप ग्रुप्स</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('books'); closeCornerDrawer();">
-        <span class="drawer-item-icon">📚</span>
-        <span>MP Board Books Portal</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('facilities'); closeCornerDrawer();">
-        <span class="drawer-item-icon">🏫</span>
-        <span>कैंपस व लैब सुविधाएं</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('staff'); closeCornerDrawer();">
-        <span class="drawer-item-icon">👥</span>
-        <span>स्टाफ संपर्क डायरेक्टरी</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('feedback'); closeCornerDrawer();">
-        <span class="drawer-item-icon">⭐</span>
-        <span>अभिभावक व छात्र फीडबैक</span>
-      </a>
-      <a class="drawer-item" onclick="navigateToPage('admin'); closeCornerDrawer();">
-        <span class="drawer-item-icon">🔐</span>
-        <span>प्रशासक नियंत्रण (Admin Panel)</span>
-      </a>
-
-      <div class="drawer-section-title" style="margin-top:1rem;">📢 त्वरित सेवाएं</div>
-      <button class="drawer-item" style="width:100%; border:none; text-align:left; background:#eff6ff; color:#0284c7;" onclick="openFirstTimeNoticeManually(); closeCornerDrawer();">
-        <span class="drawer-item-icon">🔔</span>
-        <span>सत्र 2026-27 मुख्य सूचना पॉपअप</span>
-      </button>
-      <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="drawer-item" style="background:#f5f3ff; color:#7c3aed;">
-        <span class="drawer-item-icon">📸</span>
-        <span>स्कूल फोटो गैलरी (Google Photos) ↗</span>
-      </a>
-      <a href="packets/index.html" class="drawer-item" style="background:#f0fdf4; color:#166534;">
-        <span class="drawer-item-icon">📦</span>
-        <span>10 अलग-अलग HTML पैकेट्स ↗</span>
-      </a>
-    </div>
-  </div>
-
   <!-- Ambient background spheres for White-Blue glassmorphism lighting -->
   <div class="ambient-sphere sphere-1"></div>
   <div class="ambient-sphere sphere-2"></div>
@@ -2253,70 +2574,247 @@
     <div class="loader-sub">Semariya, District Rewa (M.P.) • सत्र 2026-27</div>
   </div>
 
-  <!-- 2. TOP INFORMATION BAR (CLEAN: Home on Left, Feedback in Middle, Login Portal on Right) -->
-  <div class="top-info-bar">
-    <div class="container top-info-inner">
-      <div class="top-info-left" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-        <a href="#home" onclick="navigateToPage('home'); return false;" class="top-bar-btn" title="मुख्य पृष्ठ पर जाएं">
-          🏠 <span>मुख्य पृष्ठ (Home)</span>
-        </a>
-        <button type="button" onclick="openFirstTimeNoticeManually()" class="top-bar-btn" style="background: rgba(254, 240, 138, 0.2); color: #fef08a; border-color: rgba(254, 240, 138, 0.5); cursor:pointer;" title="विद्यालय मुख्य सूचना">
-          📢 <span>सूचना (Notice)</span>
-        </button>
-        <a href="#feedback" onclick="navigateToPage('feedback'); return false;" class="top-bar-btn" style="background: rgba(255, 255, 255, 0.12); color: #bae6fd; border-color: rgba(186, 230, 253, 0.4);" title="अभिभावक एवं छात्र फीडबैक फॉर्म">
-          💬 <span>फीडबैक (Feedback)</span>
-        </a>
-      </div>
-      <div class="top-info-right">
-        <a href="#login" onclick="navigateToPage('teacher'); return false;" class="top-bar-btn top-bar-login-pill" title="शिक्षक एवं एडमिन लॉगिन">
-          🔐 <span>लॉगिन पोर्टल (Teacher / Admin Login)</span>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. MAIN HEADER (WHITE-BLUE BRANDING) -->
-  <header class="header-section">
+  <!-- 2. UNIFIED PRIMARY NAVIGATION BAR (POSITIONED AT THE VERY TOP - PERSISTENT ACROSS ALL PAGES) -->
+  <nav class="top-primary-navbar" id="mainTopNavbar">
     <div class="container">
-      <div class="header-card glass-card">
-        <!-- Logo & Details -->
-        <div class="header-brand">
-          <div class="school-logo-frame">
-            <img 
-              src="https://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" 
-              alt="Maa Durga Higher Secondary School Logo" 
-              class="school-logo-img"
-              onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';"
-            />
+      <div class="top-nav-inner">
+        <!-- Brand Link on Left -->
+        <a href="#home" onclick="navigateToPage('home'); return false;" class="nav-brand-logo" title="मुख्य पृष्ठ पर जाएं">
+          <img 
+            src="https://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" 
+            alt="Maa Durga School Logo" 
+            onerror="this.onerror=null; this.src='https://placehold.co/80x80/0284c7/ffffff?text=MD';"
+          />
+          <div class="nav-brand-text">
+            <span class="nav-title-hi">माँ दुर्गा उ.मा.वि. सेमरिया</span>
+            <span class="nav-sub-en">Maa Durga H.S.S. Rewa (M.P.) • UDISE: 23140402055</span>
           </div>
-          <div class="school-titles">
-            <h1>Maa Durga Higher Secondary School</h1>
-            <span class="hindi-school-name">माँ दुर्गा उच्चतर माध्यमिक विद्यालय</span>
-            <div class="school-location-badge">
-              <span>📍 सेमरिया, जिला - रीवा (मध्य प्रदेश)</span>
-              <span>• पिन कोड: 486445</span>
-              <span>• 🕒 समय: 9:30 AM - 4:00 PM</span>
-            </div>
-            <div class="header-code-chips">
-              <span class="code-chip">UDISE: 23140402055</span>
-              <span class="code-chip">Sanstha Code: 322517</span>
-              <span class="code-chip">म.प्र. बोर्ड मान्यता प्राप्त</span>
-            </div>
-          </div>
-        </div>
+        </a>
 
-        <!-- Quick Call & Action Buttons -->
-        <div class="header-quick-actions">
-          <a href="tel:9200178385" class="btn-header-call">
-            📞 9200178385
-          </a>
-          <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-header-gallery">
-            📸 स्कूल गैलरी देखें
-          </a>
-        </div>
+        <!-- Navigation Links List with 3-Dot Menu -->
+        <ul class="nav-primary-list" id="navMenuList">
+          <!-- 1. Home -->
+          <li>
+            <button type="button" class="nav-link-btn active-tab" id="navHomeBtn" onclick="navigateToPage('home')">
+              🏠 मुख्य पृष्ठ
+            </button>
+          </li>
+
+          <!-- 2. Admission Form -->
+          <li>
+            <a href="#admission" class="nav-link-btn" onclick="navigateToPage('admission'); return false;">
+              📝 प्रवेश 2026-27
+            </a>
+          </li>
+
+          <!-- 3. Student Result (DIRECT ONE-CLICK JUMP TO RESULT LINK) -->
+          <li>
+            <a href="https://online.edumentsolution.com/" target="_blank" rel="noopener noreferrer" class="nav-link-btn nav-result-pill" id="navResultLinkDirect" onclick="openStudentResultDirect(event)" title="अधिकृत परीक्षा परिणाम वेबसाइट">
+              🏆 Student Result ↗
+            </a>
+          </li>
+
+          <!-- 4. Class WhatsApp Groups -->
+          <li>
+            <a href="#whatsapp" class="nav-link-btn nav-wa-pill" onclick="navigateToPage('whatsapp'); return false;">
+              <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor; vertical-align:middle;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg> WhatsApp
+            </a>
+          </li>
+
+          <!-- 5. Login Portal (Teacher & Admin) -->
+          <li>
+            <a href="#login" class="nav-link-btn nav-login-pill" onclick="navigateToPage('teacher'); return false;">
+              🔐 लॉगिन
+            </a>
+          </li>
+
+          <!-- 6. 3-DOT (KEBAB) MENU BUTTON TRIGGER -->
+          <li>
+            <button type="button" class="nav-3dot-btn" id="threeDotMenuBtn" onclick="openThreeDotMenu()" title="सभी मेन्यू, सेवाएं एवं सूचनाएं (All Pages & Services)">
+              <span class="three-dots-icon">⋮</span>
+              <span class="three-dots-label">मेन्यू</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
-  </header>
+  </nav>
+
+  <!-- 3. FULL 3-DOT SLIDE-OUT NAVIGATION DRAWER & BACKDROP -->
+  <div class="threedot-backdrop" id="threeDotBackdrop" onclick="closeThreeDotMenu()"></div>
+  <aside class="threedot-drawer" id="threeDotDrawer" aria-label="स्कूल नेविगेशन मेन्यू">
+    <div class="threedot-drawer-header">
+      <div class="threedot-brand">
+        <img 
+          src="https://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" 
+          alt="Maa Durga School Logo"
+          onerror="this.onerror=null; this.src='https://placehold.co/80x80/0284c7/ffffff?text=MD';"
+        />
+        <div>
+          <div class="threedot-brand-title">माँ दुर्गा उच्चतर माध्यमिक विद्यालय</div>
+          <div class="threedot-brand-sub">सेमरिया, रीवा (म.प्र.) • UDISE: 23140402055</div>
+        </div>
+      </div>
+      <button type="button" class="threedot-close-btn" onclick="closeThreeDotMenu()" title="मेन्यू बंद करें (Close)">
+        ✕
+      </button>
+    </div>
+
+    <div class="threedot-drawer-body">
+      <!-- Quick Action Buttons -->
+      <div class="threedot-quick-pills">
+        <a href="tel:9200178385" class="threedot-quick-btn" style="background:#f0fdf4; color:#15803d; border:1px solid #86efac;">
+          📞 हेल्पलाइन: 9200178385
+        </a>
+        <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="threedot-quick-btn" style="background:#eff6ff; color:#0369a1; border:1px solid #93c5fd;">
+          📸 फोटो गैलरी ↗
+        </a>
+      </div>
+
+      <!-- Group 1: मुख्य अनुभाग (Main Navigation) -->
+      <div class="threedot-group">
+        <div class="threedot-group-title">📌 मुख्य अनुभाग (Main Sections)</div>
+        
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('home')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">🏠</span>
+            <div>
+              <div>मुख्य पृष्ठ (Home)</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">विद्यालय का मुख्य होमपेज व सुविधाएं</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#e0f2fe; color:#0369a1;">Home →</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('about')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">ℹ️</span>
+            <div>
+              <div>विद्यालय परिचय (About Us)</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">उद्देश्य, इतिहास, संकाय एवं निदेशक संदेश</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">विवरण →</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('admission')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">📝</span>
+            <div>
+              <div>ऑनलाइन प्रवेश फॉर्म (Admission 2026-27)</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">Nursery से 12वीं तक नया प्रवेश आवेदन</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#fef3c7; color:#b45309; font-weight:800;">सत्र 2026-27</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openStudentResultDirect(event);" style="border-color:#fecdd3; background:#fff1f2;">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="background:#ffe4e6; color:#be123c;">🏆</span>
+            <div>
+              <div style="color:#9f1239; font-weight:800;">विद्यार्थी परीक्षा परिणाम पोर्टल ↗</div>
+              <div style="font-size:0.75rem; color:#be123c;">अधिकृत ऑनलाइन परीक्षा परिणाम एवं अंकपत्र</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#be123c; color:#ffffff;">New Tab ↗</span>
+        </button>
+      </div>
+
+      <!-- Group 2: विद्यार्थी व शैक्षणिक सेवाएं (Student Services) -->
+      <div class="threedot-group">
+        <div class="threedot-group-title">🎓 विद्यार्थी व शैक्षणिक मॉड्यूल (Student Services)</div>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('whatsapp')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="color:#16a34a;">💬</span>
+            <div>
+              <div>कक्षावार व्हाट्सएप ग्रुप्स</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">Class 4th, 5th, 8th-12th ऑफिशियल लिंक्स</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#dcfce7; color:#15803d;">Active 🟢</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('books')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">📚</span>
+            <div>
+              <div>म.प्र. बोर्ड ई-बुक्स एवं नोट्स</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">कक्षा 1 से 12वीं तक की सभी पाठ्यपुस्तकें</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#e0e7ff; color:#4338ca;">PDF E-Books</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('facilities')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">🏫</span>
+            <div>
+              <div>विद्यालय सुविधाएं (Facilities)</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">GPS स्कूल बस, स्मार्ट क्लास, कंप्यूटर एवं विज्ञान लैब</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">सुविधाएं →</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openFirstTimeNoticeManually();">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="color:#eab308;">📢</span>
+            <div>
+              <div>विद्यालय मुख्य सूचना (Notice)</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">नवीनतम घोषणाएं, अवकाश एवं परीक्षा सूचना</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#fef08a; color:#854d0e;">Notice 🔔</span>
+        </button>
+      </div>
+
+      <!-- Group 3: संपर्क, फीडबैक एवं लॉगिन पोर्टल (Portals & Contact) -->
+      <div class="threedot-group">
+        <div class="threedot-group-title">📞 संपर्क व प्रशासनिक पोर्टल (Portals & Directory)</div>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('staff')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">📞</span>
+            <div>
+              <div>स्टाफ एवं शिक्षक डायरेक्टरी</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">प्रिंसिपल, शिक्षक एवं शाखा प्रभारियों के नंबर</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">डायरेक्टरी →</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('feedback')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon">⭐</span>
+            <div>
+              <div>अभिभावक व छात्र फीडबैक</div>
+              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">सुझाव व शिकायत दर्ज करें (Google Sheets Sync)</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">फीडबैक →</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('teacher')" style="background:#f0fdfa; border-color:#99f6e4;">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="color:#0d9488;">🔐</span>
+            <div>
+              <div style="color:#0f766e; font-weight:800;">शिक्षक एवं एडमिन लॉगिन पोर्टल</div>
+              <div style="font-size:0.75rem; color:#115e59;">उपस्थिति, परीक्षा अंक, रिजल्ट लिंक व डेटा कंट्रोल</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#0d9488; color:#ffffff;">Login 🔑</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="threedot-drawer-footer">
+      <div style="font-weight:700; color:#1e293b; margin-bottom:3px;">📍 माँ दुर्गा उच्चतर माध्यमिक विद्यालय</div>
+      <div>सेमरिया, जिला - रीवा (मध्य प्रदेश) - 486445</div>
+      <div>🕒 स्कूल समय: प्रातः 09:30 AM से सायं 04:00 PM</div>
+      <div style="margin-top:4px; font-weight:700; color:#0284c7;">Sanstha Code: 322517 • UDISE: 23140402055</div>
+    </div>
+  </aside>
 
   <!-- 4. RED ALERT BAR MARQUEE -->
   <div class="marquee-bar">
@@ -2329,115 +2827,6 @@
       </div>
     </div>
   </div>
-
-  <!-- 5. STICKY NAVIGATION (SIMPLIFIED & STRUCTURED) -->
-  <nav class="sticky-nav-wrapper">
-    <div class="container">
-      <div class="nav-inner-card">
-        <button class="mobile-menu-btn" id="mobileNavToggle" aria-label="Toggle Menu">
-          ☰
-        </button>
-
-        <ul class="nav-list" id="navMenuList">
-          <!-- 1. Home Link -->
-          <li class="nav-item-rel">
-            <button class="nav-btn active-tab" id="navHomeBtn" onclick="navigateToPage('home')">
-              🏠 मुख्य पृष्ठ (Home)
-            </button>
-          </li>
-
-          <!-- 2. About Us Link -->
-          <li class="nav-item-rel">
-            <a href="#about" class="nav-btn" onclick="navigateToPage('about'); return false;">
-              ℹ️ हमारे बारे में (About Us)
-            </a>
-          </li>
-
-          <!-- 3. Student Module Dropdown (All Student Features Consolidated) -->
-          <li class="nav-item-rel has-sub">
-            <button class="nav-btn" onclick="toggleDropdown(this)">
-              🎓 विद्यार्थी मॉड्यूल (Student Module) <span class="dropdown-arrow-icon">▼</span>
-            </button>
-            <ul class="sub-dropdown">
-              <li>
-                <a href="#admission" class="dropdown-item-link" onclick="navigateToPage('admission'); return false;">
-                  <span class="icon-prefix">📝</span> ऑनलाइन प्रवेश फॉर्म (Admission 2026-27)
-                </a>
-              </li>
-              <li>
-                <a href="https://mpboardbooks.com/" target="_blank" rel="noopener noreferrer" class="dropdown-item-link">
-                  <span class="icon-prefix">📚</span> म.प्र. बोर्ड ई-बुक्स (mpboardbooks.com) ↗
-                </a>
-              </li>
-              <li>
-                <a href="#whatsapp-page" class="dropdown-item-link" onclick="navigateToPage('whatsapp'); return false;">
-                  <span class="icon-prefix">💬</span> कक्षा व्हाट्सएप ग्रुप्स (Class 4th to 12th)
-                </a>
-              </li>
-              <li>
-                <a href="#student-page" class="dropdown-item-link" onclick="navigateToPage('student'); return false;">
-                  <span class="icon-prefix">🏆</span> परीक्षा परिणाम एवं रिजल्ट पोर्टल (View Result)
-                </a>
-              </li>
-              <li>
-                <a href="#books-page" class="dropdown-item-link" onclick="navigateToPage('books'); return false;">
-                  <span class="icon-prefix">📖</span> ई-नोट्स एवं अध्ययन सामग्री (E-Notes)
-                </a>
-              </li>
-              <li>
-                <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="dropdown-item-link">
-                  <span class="icon-prefix">📸</span> स्कूल गैलरी (Google Photos Album) ↗
-                </a>
-              </li>
-              <li>
-                <a href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20need%20information%20regarding%20admission." target="_blank" rel="noopener noreferrer" class="dropdown-item-link">
-                  <span class="icon-prefix">📲</span> स्कूल व्हाट्सएप हेल्पलाइन ↗
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <!-- 4. Contact Us Dropdown (Containing Staff, Feedback & Facilities) -->
-          <li class="nav-item-rel has-sub">
-            <button class="nav-btn" onclick="toggleDropdown(this)">
-              📞 संपर्क व सुविधाएं (Contact Us) <span class="dropdown-arrow-icon">▼</span>
-            </button>
-            <ul class="sub-dropdown">
-              <li>
-                <a href="#staff-directory" class="dropdown-item-link" onclick="navigateToPage('staff'); return false;">
-                  <span class="icon-prefix">📞</span> संपर्क सूत्र एवं स्टाफ डायरेक्टरी (Staff Directory)
-                </a>
-              </li>
-              <li>
-                <a href="#feedback-section" class="dropdown-item-link" onclick="navigateToPage('feedback'); return false;">
-                  <span class="icon-prefix">💬</span> अभिभावक / छात्र प्रतिक्रिया (Feedback)
-                </a>
-              </li>
-              <li>
-                <a href="#facilities-page" class="dropdown-item-link" onclick="navigateToPage('facilities'); return false;">
-                  <span class="icon-prefix">🏫</span> स्कूल सुविधाएं - बस, लैब व लाइब्रेरी (Facilities)
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <!-- 5. Feedback Direct Link -->
-          <li class="nav-item-rel">
-            <a href="#feedback-section" class="nav-btn" onclick="navigateToPage('feedback'); return false;">
-              💬 फीडबैक (Feedback)
-            </a>
-          </li>
-
-          <!-- 6. Unified Portal Login Button (Teacher & Admin) -->
-          <li class="nav-item-rel">
-            <a href="#teacher-login" class="nav-btn" onclick="navigateToPage('teacher'); return false;" style="color:#0284c7; font-weight:700; background:#f0f9ff; border:1px solid #bae6fd;">
-              🔐 लॉगिन पोर्टल (Teacher / Admin)
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
   <!-- 6. DEDICATED PAGES VIEW CONTAINER (Page-Wise Multi-Screen Architecture) -->
   <div class="container" id="pages-container" style="display: none; margin-bottom: 2.5rem;">
@@ -2600,8 +2989,9 @@
             <button type="submit" class="btn-hero-pri" style="border:none; cursor:pointer;">
               ✓ ऑनलाइन प्रवेश आवेदन जमा करें (Save to Drive & Excel)
             </button>
-            <a href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20know%20about%20admission." target="_blank" rel="noopener noreferrer" class="btn-hero-sec">
-              💬 व्हाट्सएप पर पूछताछ करें ↗
+            <a href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20know%20about%20admission." target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="display:inline-flex; align-items:center; color:#15803d; border-color:#86efac;">
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              व्हाट्सएप पर पूछताछ करें ↗
             </a>
           </div>
         </form>
@@ -2616,7 +3006,10 @@
     <div class="subpage-view" id="view-whatsapp" style="display: none;">
       <div class="glass-card page-card-body">
         <div class="page-header-block">
-          <span class="section-chip" style="background:#dcfce7; color:#15803d; border-color:#86efac;">💬 आधिकारिक व्हाट्सएप ग्रुप्स</span>
+          <span class="section-chip" style="background:#dcfce7; color:#15803d; border-color:#86efac; display:inline-flex; align-items:center;">
+            <svg class="wa-svg-inline" viewBox="0 0 24 24" style="width:1rem; height:1rem;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+            आधिकारिक व्हाट्सएप ग्रुप्स
+          </span>
           <h2 class="page-title-main">कक्षावार आधिकारिक व्हाट्सएप ग्रुप लिंक्स</h2>
           <p class="page-subtitle-text">
             दैनिक होमवर्क, समय सारिणी, परीक्षा सूचनाएं एवं शैक्षणिक सामग्री प्राप्त करने हेतु अपनी कक्षा के ग्रुप से सीधे जुड़ें:
@@ -2630,7 +3023,8 @@
             <h4 class="wa-class-title">Class 4th Group</h4>
             <p class="wa-class-sub">कक्षा 4थी आधिकारिक ग्रुप</p>
             <a href="https://chat.whatsapp.com/KL8gLpiBNrc6lhVEPnwVmP" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 4th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 4th Group ↗
             </a>
           </div>
 
@@ -2640,7 +3034,8 @@
             <h4 class="wa-class-title">Class 5th Group</h4>
             <p class="wa-class-sub">कक्षा 5वीं आधिकारिक ग्रुप</p>
             <a href="https://chat.whatsapp.com/DwZKKN3R5ixIc92LwjfCvS" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 5th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 5th Group ↗
             </a>
           </div>
 
@@ -2650,7 +3045,8 @@
             <h4 class="wa-class-title">Class 8th Group</h4>
             <p class="wa-class-sub">कक्षा 8वीं बोर्ड आधिकारिक ग्रुप</p>
             <a href="https://chat.whatsapp.com/LGqCRBl4EubE8NoF0YMSf6" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 8th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 8th Group ↗
             </a>
           </div>
 
@@ -2660,7 +3056,8 @@
             <h4 class="wa-class-title">Class 9th Group</h4>
             <p class="wa-class-sub">कक्षा 9वीं आधिकारिक ग्रुप</p>
             <a href="https://chat.whatsapp.com/IbDfB52AEkU5ev0wAK7GXb" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 9th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 9th Group ↗
             </a>
           </div>
 
@@ -2670,7 +3067,8 @@
             <h4 class="wa-class-title">Class 10th Board</h4>
             <p class="wa-class-sub">कक्षा 10वीं बोर्ड विशेष ग्रुप</p>
             <a href="https://chat.whatsapp.com/CWcP1g8k9HJBr27fGy04n0" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 10th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 10th Group ↗
             </a>
           </div>
 
@@ -2680,7 +3078,8 @@
             <h4 class="wa-class-title">क्लास 11th (Science & Commerce)</h4>
             <p class="wa-class-sub">11वीं गणित, विज्ञान, वाणिज्य संकाय</p>
             <a href="https://chat.whatsapp.com/EmLysOwKpYqEHp5cCR3mOE" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 11th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 11th Group ↗
             </a>
           </div>
 
@@ -2690,17 +3089,19 @@
             <h4 class="wa-class-title">Class 12th Board</h4>
             <p class="wa-class-sub">12वीं हायर सेकेंडरी बोर्ड ग्रुप</p>
             <a href="https://chat.whatsapp.com/BOcoXHvJZ8SCPyv2Mm1RBL" target="_blank" rel="noopener noreferrer" class="btn-join-wa">
-              💬 Join Class 12th Group ↗
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Join Class 12th Group ↗
             </a>
           </div>
 
           <!-- General Admission Helpline -->
-          <div class="wa-class-card" style="background:#f0f9ff; border-color:#bae6fd;">
-            <div class="wa-icon-bubble" style="background: linear-gradient(135deg, #0284c7, #2563eb);">MD</div>
+          <div class="wa-class-card" style="background:#f0fdf4; border-color:#86efac;">
+            <div class="wa-icon-bubble" style="background: linear-gradient(135deg, #16a34a, #15803d);">MD</div>
             <h4 class="wa-class-title">School Admission Care</h4>
             <p class="wa-class-sub">प्रवेश सहायता व सामान्य पूछताछ</p>
-            <a href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20know%20about%20admission." target="_blank" rel="noopener noreferrer" class="btn-join-wa" style="background: linear-gradient(135deg, #0284c7, #2563eb);">
-              💬 Chat on WhatsApp ↗
+            <a href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20know%20about%20admission." target="_blank" rel="noopener noreferrer" class="btn-join-wa" style="background: linear-gradient(135deg, #16a34a, #15803d);">
+              <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              Chat on WhatsApp ↗
             </a>
           </div>
         </div>
@@ -3564,44 +3965,54 @@
     <div class="subpage-view" id="view-student" style="display: none;">
       <div class="glass-card page-card-body">
         <div class="page-header-block">
-          <span class="section-chip">🎓 विद्यार्थी व अभिभावक कॉर्नर</span>
-          <h2 class="page-title-main">विद्यार्थी पोर्टल, परीक्षा परिणाम एवं प्रगति एनालिटिक्स</h2>
+          <span class="section-chip">🎓 विद्यार्थी कॉर्नर</span>
+          <h2 class="page-title-main">विद्यार्थी अधिकृत परीक्षा परिणाम पोर्टल</h2>
           <p class="page-subtitle-text">
-            डिजिटल रिजल्ट खोजें, Recharts विजुअल प्रोग्रेस एनालिटिक्स से समय के साथ प्रदर्शन ट्रैक करें
+            सत्र 2026-27 वार्षिक एवं बोर्ड परीक्षा परिणाम देखने हेतु अधिकृत वेबसाइट लिंक
           </p>
         </div>
 
-        <!-- Student Progress Analytics React Root -->
-        <div id="student-analytics-root" style="margin-top: 1.5rem;"></div>
-
-        <div style="display:grid; grid-template-columns: 1fr; gap:1.5rem; margin-top:2rem;">
-          <!-- Result Search -->
-          <div class="glass-card" style="padding:1.75rem; background:#ffffff; border:1.5px solid #bae6fd;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.75rem;">
-              <h3 style="color:#0369a1; margin:0;">🏆 आधिकारिक डिजिटल अंकपत्र एवं परीक्षा परिणाम (Student Marksheet)</h3>
-              <span style="font-size:0.8rem; background:#e0f2fe; color:#0369a1; padding:3px 10px; border-radius:9999px; font-weight:700;">गोपनीयता मानक: केवल अनुक्रमांक (No Names)</span>
+        <!-- PRIMARY EXTERNAL RESULT PORTAL GATEWAY CARD (Configured by Admin) -->
+        <div class="glass-card" style="padding: 2.25rem; background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%); border: 2px solid #fecdd3; border-radius: var(--radius-lg); margin-top: 1rem; box-shadow: 0 12px 35px rgba(190, 18, 60, 0.1);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 54px; height: 54px; border-radius: 50%; background: #be123c; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; color: #ffffff; box-shadow: 0 4px 14px rgba(190, 18, 60, 0.35);">
+                🏆
+              </div>
+              <div>
+                <h3 style="color: #9f1239; margin: 0; font-size: 1.4rem; font-weight: 800;" id="portalResultHeading">माँ दुर्गा उ.मा.वि. अधिकृत परीक्षा परिणाम पोर्टल</h3>
+                <span style="font-size: 0.85rem; background: #ffe4e6; color: #9f1239; padding: 3px 12px; border-radius: 9999px; font-weight: 700; border: 1px solid #fecdd3;" id="portalResultTag">🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27</span>
+              </div>
             </div>
-            <p style="font-size:0.9rem; color:#64748b; margin-bottom:1.2rem;">सत्र 2026-27 का 6 अंकों का रोल नंबर दर्ज करें (उदा. 279201, 279202, 279203, 279204):</p>
-            
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem;">
-              <input type="text" id="natRollInput" class="form-input-custom" inputmode="numeric" placeholder="उदा. 279201" style="max-width:300px;" value="279201" />
-              <button type="button" class="btn-hero-pri" style="border:none; cursor:pointer;" onclick="searchStudentResult()">
-                🔍 अंकपत्र एवं परिणाम देखें (Show Marksheet)
+            <span style="font-size: 0.85rem; background: #dcfce7; color: #15803d; padding: 5px 14px; border-radius: 9999px; font-weight: 700; border: 1px solid #86efac;">
+              🟢 अधिकृत लाइव वेब लिंक (New Window)
+            </span>
+          </div>
+
+          <p style="font-size: 1rem; color: #475569; line-height: 1.65; margin-bottom: 1.5rem;" id="portalResultNote">
+            सत्र 2026-27 के सभी छात्र एवं अभिभावक अपने अनुक्रमांक (Roll Number) द्वारा परीक्षा परिणाम व अंकपत्र देखने हेतु नीचे दिए गए अधिकृत परीक्षा परिणाम पोर्टल लिंक पर क्लिक करें। यह लिंक सीधे अलग विंडो/टैब में खुलेगा।
+          </p>
+
+          <div style="background: #ffffff; border: 1.5px solid #fecdd3; border-radius: var(--radius-md); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: #9f1239; text-transform: uppercase; letter-spacing: 0.5px;">अधिकृत परिणाम पोर्टल वेब पता (Result Web URL):</div>
+                <div id="portalResultUrlDisplay" style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: #0284c7; word-break: break-all; margin-top: 4px;">
+                  https://online.edumentsolution.com/
+                </div>
+              </div>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.88rem; padding: 0.55rem 1.1rem; border: 1px solid #cbd5e1; cursor: pointer;" onclick="copyResultPortalUrl()">
+                📋 लिंक कॉपी करें
               </button>
             </div>
 
-            <!-- Quick Roll Number Chips -->
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:1rem;">
-              <span style="font-size:0.82rem; color:#64748b; font-weight:700;">त्वरित रोल नंबर उदाहरण:</span>
-              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279201'; searchStudentResult();">Roll: 279201</button>
-              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279202'; searchStudentResult();">Roll: 279202</button>
-              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279203'; searchStudentResult();">Roll: 279203</button>
-              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279204'; searchStudentResult();">Roll: 279204</button>
-            </div>
-
-            <!-- Result Marksheet Certificate Output -->
-            <div id="natResultDisplay" style="display:none; margin-top:1.25rem;">
-              <!-- Dynamic certificate injected via searchStudentResult() -->
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center; padding-top: 0.75rem; border-top: 1px solid #f1f5f9;">
+              <a id="portalResultMainBtn" href="https://online.edumentsolution.com/" target="_blank" rel="noopener noreferrer" class="btn-hero-pri" onclick="openStudentResultDirect(event)" style="background: linear-gradient(135deg, #be123c 0%, #9f1239 100%); border: none; font-size: 1.15rem; padding: 1rem 2.2rem; box-shadow: 0 4px 18px rgba(190, 18, 60, 0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 10px; cursor:pointer;">
+                <span id="portalResultBtnLabel">🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें (Open Result Portal) ↗</span>
+              </a>
+              <span style="font-size: 0.88rem; color: #64748b;">
+                ℹ️ एडमिन पैनल द्वारा इस लिंक को कभी भी अपडेट व परिवर्तित किया जा सकता है।
+              </span>
             </div>
           </div>
         </div>
@@ -3765,17 +4176,26 @@
 
           <!-- Admin Navigation Tabs -->
           <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
-            <button type="button" class="btn-hero-sec active-admin-tab" id="adminTabBtnAdm" style="cursor: pointer; padding: 0.75rem 1.25rem; font-weight: 700; border-radius: var(--radius-sm);" onclick="switchAdminTab('admissions')">
-              📝 ऑनलाइन प्रवेश आवेदन (<span id="tabAdmCountBadge">0</span>)
+            <button type="button" class="btn-hero-sec active-admin-tab" id="adminTabBtnAdm" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm);" onclick="switchAdminTab('admissions')">
+              📝 ऑनलाइन प्रवेश (<span id="tabAdmCountBadge">0</span>)
             </button>
-            <button type="button" class="btn-hero-sec" id="adminTabBtnMarks" style="cursor: pointer; padding: 0.75rem 1.25rem; font-weight: 700; border-radius: var(--radius-sm); color: #c2410c; border: 1px solid #fed7aa;" onclick="switchAdminTab('marks')">
-              📊 परीक्षा अंक रिकॉर्ड्स (<span id="tabMarksCountBadge">0</span>)
+            <button type="button" class="btn-hero-sec" id="adminTabBtnMarks" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #c2410c; border: 1px solid #fed7aa;" onclick="switchAdminTab('marks')">
+              📊 परीक्षा अंक (<span id="tabMarksCountBadge">0</span>)
             </button>
-            <button type="button" class="btn-hero-sec" id="adminTabBtnFb" style="cursor: pointer; padding: 0.75rem 1.25rem; font-weight: 700; border-radius: var(--radius-sm);" onclick="switchAdminTab('feedbacks')">
-              ⭐ प्राप्त फीडबैक एवं रेटिंग्स (<span id="tabFbCountBadge">0</span>)
+            <button type="button" class="btn-hero-sec" id="adminTabBtnFb" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm);" onclick="switchAdminTab('feedbacks')">
+              ⭐ फीडबैक (<span id="tabFbCountBadge">0</span>)
             </button>
-            <button type="button" class="btn-hero-sec" id="adminTabBtnSheets" style="cursor: pointer; padding: 0.75rem 1.25rem; font-weight: 700; border-radius: var(--radius-sm); color: #0284c7; border: 1px solid #bae6fd;" onclick="switchAdminTab('sheets')">
-              📑 Google Sheets डेटा गाइड & सेटअप
+            <button type="button" class="btn-hero-sec" id="adminTabBtnNotice" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #0284c7; border: 1px solid #bae6fd;" onclick="switchAdminTab('notice')">
+              📢 सूचना पॉपअप नियंत्रण
+            </button>
+            <button type="button" class="btn-hero-sec" id="adminTabBtnGallery" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #7c3aed; border: 1px solid #ddd6fe;" onclick="switchAdminTab('gallery')">
+              📸 ऑटो-स्क्रॉलिंग गैलरी
+            </button>
+            <button type="button" class="btn-hero-sec" id="adminTabBtnResultLink" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #be123c; border: 1px solid #fecdd3;" onclick="switchAdminTab('resultlink')">
+              🏆 छात्र परिणाम लिंक
+            </button>
+            <button type="button" class="btn-hero-sec" id="adminTabBtnSheets" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #166534; border: 1px solid #bbf7d0;" onclick="switchAdminTab('sheets')">
+              📑 Sheets सिंक
             </button>
           </div>
 
@@ -4012,6 +4432,216 @@ function doPost(e) {
             </div>
           </div>
 
+          <!-- TAB 4: POPUP NOTIFICATION CONTROL -->
+          <div id="adminTabContentNotice" style="display: none;">
+            <div class="glass-card" style="padding: 1.75rem; background: #ffffff; border: 1.5px solid #bae6fd; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #ffffff;">
+                    📢
+                  </div>
+                  <div>
+                    <h3 style="color: #0369a1; margin: 0; font-size: 1.25rem;">मुख्य वेबसाइट प्रवेश व सूचना पॉपअप सेटिंग्स</h3>
+                    <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.88rem;">जब कोई नया यूजर वेबसाइट खोलेगा तो यह सूचना पॉपअप तुरंत खुलेगा। यहाँ से पूरा कंटेंट कंट्रोल करें।</p>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn-hero-sec" style="background:#f0f9ff; color:#0284c7; border:1px solid #bae6fd; font-size:0.85rem; padding:0.5rem 1rem; cursor:pointer;" onclick="testLiveNoticeModal()">
+                    👁️ लाइव पॉपअप टेस्ट करें
+                  </button>
+                  <button type="button" class="btn-hero-sec" style="background:#f8fafc; color:#64748b; border:1px solid #cbd5e1; font-size:0.85rem; padding:0.5rem 0.85rem; cursor:pointer;" onclick="resetDefaultNoticeSettings()">
+                    🔄 डिफ़ॉल्ट बहाल करें
+                  </button>
+                </div>
+              </div>
+
+              <form id="adminNoticeConfigForm" onsubmit="saveAdminNoticeSettings(event)">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+                  
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">पॉपअप बैज / चिप टेक्स्ट (Notice Badge Chip) *</label>
+                    <input type="text" id="cfgNoticeBadge" class="form-input-custom" required value="🔔 आवश्यक सूचना • सत्र 2026-27" placeholder="उदा. 🔔 आवश्यक सूचना • सत्र 2026-27" />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">पॉपअप सक्रिय स्थिति (Enable / Disable)</label>
+                    <select id="cfgNoticeEnabled" class="form-select-custom">
+                      <option value="true">🟢 सक्रिय (वेबसाइट खुलने पर पॉपअप दिखाएं)</option>
+                      <option value="false">🔴 निष्क्रिय (पॉपअप बंद रखें)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group-custom" style="grid-column: 1 / -1;">
+                    <label class="form-label-custom">मुख्य शीर्षक (Notice Title / Heading) *</label>
+                    <input type="text" id="cfgNoticeTitle" class="form-input-custom" required value="माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!" placeholder="उदा. माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!" />
+                  </div>
+
+                  <div class="form-group-custom" style="grid-column: 1 / -1;">
+                    <label class="form-label-custom">सूचना विवरण (Notice Body Text / Message) *</label>
+                    <textarea id="cfgNoticeBody" class="form-textarea-custom" rows="3" required placeholder="विस्तृत सूचना लिखें...">नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।</textarea>
+                  </div>
+
+                  <div class="form-group-custom" style="grid-column: 1 / -1;">
+                    <label class="form-label-custom">प्रमुख विशेषताएं हाइलाइट्स (Key Highlights Ribbon)</label>
+                    <input type="text" id="cfgNoticeHighlights" class="form-input-custom" value="✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा" placeholder="उदा. ✅ डिजिटल स्मार्ट क्लासरूम..." />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">हेल्पलाइन व UDISE विवरण (Helpline / Contact)</label>
+                    <input type="text" id="cfgNoticeHelpline" class="form-input-custom" value="📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055" placeholder="हेल्पलाइन व स्कूल कोड" />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">बटन का नाम (Action Button Label) *</label>
+                    <input type="text" id="cfgNoticeBtnText" class="form-input-custom" required value="✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें" placeholder="बटन टेक्स्ट" />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">बटन क्लिक करने पर क्या खुले? (Action Target) *</label>
+                    <select id="cfgNoticeBtnAction" class="form-select-custom" onchange="toggleNoticeCustomUrlInput()">
+                      <option value="admission">📝 ऑनलाइन प्रवेश फॉर्म (Admission Form)</option>
+                      <option value="student">🎓 परीक्षा परिणाम पोर्टल (Student Results)</option>
+                      <option value="whatsapp">💬 व्हाट्सएप ग्रुप्स (WhatsApp Groups)</option>
+                      <option value="books">📚 म.प्र. बोर्ड बुक्स (MP Board Books)</option>
+                      <option value="custom">🌐 कस्टम वेबसाइट लिंक (Custom External URL)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group-custom" id="cfgNoticeCustomUrlGroup" style="display:none;">
+                    <label class="form-label-custom">कस्टम वेबसाइट URL (Custom Web URL)</label>
+                    <input type="url" id="cfgNoticeCustomUrl" class="form-input-custom" placeholder="https://example.com" value="https://online.edumentsolution.com/" />
+                  </div>
+
+                </div>
+
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                  <button type="submit" class="btn-hero-pri" style="border: none; cursor: pointer; padding: 0.8rem 1.6rem; font-size: 1rem;">
+                    💾 सूचना पॉपअप सेटिंग्स सुरक्षित करें (Save Notice Settings)
+                  </button>
+                  <span id="noticeSaveSuccessBadge" style="display:none; color:#16a34a; font-weight:700; font-size:0.9rem; background:#dcfce7; border:1px solid #86efac; padding:6px 14px; border-radius:9999px;">
+                    ✅ सूचना पॉपअप सेटिंग्स सुरक्षित हो गईं!
+                  </span>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 5: AUTO-SCROLLING GALLERY MANAGER -->
+          <div id="adminTabContentGallery" style="display: none;">
+            <div class="glass-card" style="padding: 1.75rem; background: #ffffff; border: 1.5px solid #ddd6fe; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #ffffff;">
+                    📸
+                  </div>
+                  <div>
+                    <h3 style="color: #6d28d9; margin: 0; font-size: 1.25rem;">होमपेज ऑटो-स्क्रॉलिंग फोटो व गतिविधि गैलरी प्रबंधन</h3>
+                    <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.88rem;">कैंपस, लैब्स, खेलकूद एवं शैक्षणिक गतिविधियों की फोटो यहाँ से जोड़ें, एडिट करें या हटाएं।</p>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn-hero-sec" style="background:#f5f3ff; color:#7c3aed; border:1px solid #ddd6fe; font-size:0.85rem; padding:0.5rem 1rem; cursor:pointer;" onclick="resetDefaultGalleryImages()">
+                    🔄 मूल 8 डिफ़ॉल्ट तस्वीरें बहाल करें
+                  </button>
+                  <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.85rem; padding:0.5rem 1rem;">
+                    📸 गूगल एलबम ↗
+                  </a>
+                </div>
+              </div>
+
+              <!-- Add New Image Section -->
+              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1.5rem;">
+                <h4 style="color: #0f172a; margin: 0 0 1rem 0; font-size: 1.05rem;">➕ गैलरी में नई फोटो / गतिविधि जोड़ें (Add New Image)</h4>
+                <form onsubmit="handleAdminAddNewImage(event)">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group-custom">
+                      <label class="form-label-custom">फोटो शीर्षक (Title) *</label>
+                      <input type="text" id="admNewImgTitle" class="form-input-custom" required placeholder="उदा. अत्याधुनिक भौतिकी एवं रसायन विज्ञान लैब" />
+                    </div>
+                    <div class="form-group-custom">
+                      <label class="form-label-custom">फोटो URL या पाथ (Image URL / Path) *</label>
+                      <input type="url" id="admNewImgUrl" class="form-input-custom" required placeholder="https://images.unsplash.com/... या /images/my_photo.jpg" />
+                    </div>
+                    <div class="form-group-custom">
+                      <label class="form-label-custom">श्रेणी टैग (Category Tag) *</label>
+                      <input type="text" id="admNewImgTag" class="form-input-custom" required value="🔬 साइंस लैब" placeholder="उदा. 🔬 साइंस लैब / 💻 कंप्यूटर लैब / 🏆 खेल" />
+                    </div>
+                    <div class="form-group-custom">
+                      <label class="form-label-custom">संक्षिप्त विवरण (Description)</label>
+                      <input type="text" id="admNewImgDesc" class="form-input-custom" placeholder="उदा. छात्रों के लिए अत्याधुनिक प्रायोगिक उपकरण" />
+                    </div>
+                  </div>
+                  <button type="submit" class="btn-hero-pri" style="background: #7c3aed; border: none; cursor: pointer; padding: 0.65rem 1.25rem; font-size: 0.92rem;">
+                    ➕ गैलरी में फोटो शामिल करें (Add to Auto Gallery)
+                  </button>
+                </form>
+              </div>
+
+              <!-- Current Gallery Items Grid/List -->
+              <h4 style="color: #0f172a; margin: 0 0 0.75rem 0; font-size: 1.05rem;">
+                🖼️ वर्तमान में सक्रिय गैलरी तस्वीरें (<span id="admGalleryCountBadge">0</span>)
+              </h4>
+              <div id="adminGalleryGridList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+                <!-- Dynamically populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: STUDENT RESULT LINK CONFIGURATION -->
+          <div id="adminTabContentResultLink" style="display: none;">
+            <div class="glass-card" style="padding: 1.75rem; background: #ffffff; border: 1.5px solid #fecdd3; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem;">
+                <div style="width: 42px; height: 42px; border-radius: 50%; background: #be123c; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #ffffff;">
+                  🏆
+                </div>
+                <div>
+                  <h3 style="color: #9f1239; margin: 0; font-size: 1.25rem;">छात्र परीक्षा परिणाम पोर्टल लिंक प्रबंधन (Student Result Website Link)</h3>
+                  <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.88rem;">यहाँ आप अपनी परीक्षा परिणाम वेबसाइट का लिंक सेट करें। छात्र जब 'Student Result' पर क्लिक करेंगे, तो यह लिंक सीधे नए पेज/टैब में खुलेगा।</p>
+                </div>
+              </div>
+
+              <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:var(--radius-sm); padding:1rem; margin-bottom:1.5rem; color:#9f1239; font-size:0.9rem; line-height:1.6;">
+                💡 <strong>निर्देश:</strong> आप अपनी परीक्षा परिणाम के लिए जो भी अलग वेबसाइट या पोर्टल बनाएंगे (उदा. Edument पोर्टल, Google Sites, Web Portal आदि), उसका पूरा URL नीचे दर्ज करें। छात्र एवं अभिभावक इस लिंक के माध्यम से सीधे परिणाम देख सकेंगे।
+              </div>
+
+              <form onsubmit="saveAdminResultLinkConfig(event)">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+                  <div class="form-group-custom" style="grid-column: 1 / -1;">
+                    <label class="form-label-custom">रिजल्ट वेबसाइट का पूरा लिंक (External Result Website URL) *</label>
+                    <input type="url" id="cfgResultPortalUrl" class="form-input-custom" required value="https://online.edumentsolution.com/" placeholder="https://..." style="font-family:monospace; font-size:0.95rem; font-weight:700; color:#0369a1;" />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">बटन का शीर्षक (Button CTA Title) *</label>
+                    <input type="text" id="cfgResultBtnText" class="form-input-custom" required value="🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें (Open Result Portal) ↗" placeholder="बटन टेक्स्ट" />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">सत्र / टैग विवरण (Session Tag)</label>
+                    <input type="text" id="cfgResultTag" class="form-input-custom" value="🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27" placeholder="सत्र टैग" />
+                  </div>
+
+                  <div class="form-group-custom" style="grid-column: 1 / -1;">
+                    <label class="form-label-custom">छात्रों एवं पालकों के लिए सूचना संदेश (Notice / Instructions for Students)</label>
+                    <textarea id="cfgResultNote" class="form-textarea-custom" rows="3" placeholder="निर्देश...">सत्र 2026-27 के सभी छात्र एवं अभिभावक अपने अनुक्रमांक (Roll Number) द्वारा परीक्षा परिणाम व अंकपत्र देखने हेतु दिए गए अधिकृत पोर्टल लिंक पर क्लिक करें। लिंक नए पेज में खुलेगा।</textarea>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                  <button type="submit" class="btn-hero-pri" style="background: #be123c; border: none; cursor: pointer; padding: 0.8rem 1.6rem; font-size: 1rem;">
+                    💾 रिजल्ट वेबसाइट लिंक सेव करें (Save Result Link)
+                  </button>
+                  <button type="button" class="btn-hero-sec" style="background: #ffffff; color: #be123c; border: 1.5px solid #fecdd3; padding: 0.8rem 1.25rem; font-weight: 700; cursor: pointer;" onclick="testOpenExternalResultLink()">
+                    🔗 लिंक खोलकर टेस्ट करें (Test Link ↗)
+                  </button>
+                  <span id="resultLinkSaveBadge" style="display:none; color:#16a34a; font-weight:700; font-size:0.9rem; background:#dcfce7; border:1px solid #86efac; padding:6px 14px; border-radius:9999px;">
+                    ✅ रिजल्ट पोर्टल लिंक सुरक्षित हो गया!
+                  </span>
+                </div>
+              </form>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -4159,7 +4789,9 @@ function doPost(e) {
 
           <!-- Hub 2: Class WhatsApp Groups -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('whatsapp')" style="cursor:pointer;">
-            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #22c55e, #16a34a); color:#fff;">💬</div>
+            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #22c55e, #16a34a); color:#fff; display:flex; align-items:center; justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:#ffffff;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+            </div>
             <div class="hub-content">
               <h4>कक्षावार व्हाट्सएप ग्रुप्स</h4>
               <p>Class 4th, 5th, 8th, 9th, 10th, 11th, 12th के आधिकारिक लिंक्स।</p>
@@ -4217,19 +4849,19 @@ function doPost(e) {
             </div>
           </div>
 
-          <!-- Hub 8: Student & Result Portal -->
-          <div class="quick-hub-card glass-card" onclick="navigateToPage('student')" style="cursor:pointer;">
-            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #e11d48, #be123c); color:#fff;">🎓</div>
+          <!-- Hub 8: Student & Result Portal (DIRECT ONE-CLICK EXTERNAL GATEWAY) -->
+          <div class="quick-hub-card glass-card" onclick="openStudentResultDirect(event)" style="cursor:pointer; border:1.5px solid #fecdd3; background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);">
+            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #e11d48, #be123c); color:#fff;">🏆</div>
             <div class="hub-content">
-              <h4>Student Zone & Results</h4>
-              <p>रोल नंबर द्वारा ऑनलाइन परीक्षा परिणाम एवं अंकपत्र देखें।</p>
-              <span class="hub-link-tag" style="background:#ffe4e6; color:#be123c; border-color:#fecdd3;">रिजल्ट खोजें →</span>
+              <h4 style="color:#9f1239;">Student Result Portal ↗</h4>
+              <p>अधिकृत परीक्षा परिणाम वेबसाइट (ऑनलाइन अंकपत्र) सीधे खोलें।</p>
+              <span class="hub-link-tag" style="background:#ffe4e6; color:#be123c; border-color:#fecdd3; font-weight:700;">वेबसाइट खोलें ↗</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- AUTO-SCROLLING VISUAL IMAGE GALLERY -->
+      <!-- AUTO-SCROLLING VISUAL IMAGE GALLERY (MANAGED VIA ADMIN PANEL) -->
       <section class="section-wrapper auto-gallery-section" id="homeAutoGallerySection">
         <div class="section-heading-box" style="margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div>
@@ -4238,7 +4870,6 @@ function doPost(e) {
             <p style="font-size:0.9rem; color:#64748b; margin-top:4px;">हमारे विद्यालय का आधुनिक परिवेश, स्मार्ट क्लासरूम, प्रयोगशालाएं एवं खेल गतिविधियां</p>
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn-hero-sec" style="font-size:0.85rem; padding:0.45rem 1rem; cursor:pointer;" onclick="openAddImageModal()">➕ नई फोटो जोड़ें</button>
             <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.85rem; padding:0.45rem 1rem;">📸 गूगल एलबम ↗</a>
           </div>
         </div>
@@ -4386,7 +5017,7 @@ function doPost(e) {
     title="Chat with us on WhatsApp"
     aria-label="WhatsApp Helpline"
   >
-    💬
+    <svg viewBox="0 0 24 24" style="width:32px; height:32px; fill:#ffffff;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
   </a>
 
   <!-- Scroll To Top Button -->
@@ -4400,6 +5031,76 @@ function doPost(e) {
   <script>
     // Live Google Apps Script Webhook Endpoint (Provided by User)
     const DEFAULT_GOOGLE_APPS_SCRIPT_WEBHOOK = 'https://script.google.com/macros/s/AKfycbw5eo9huYxTRr6hnIASFXTFiuDJaXXr6o5WG9ErOsXLbii9BM59hbVdQAPyUMx-qGbAtw/exec';
+
+    // Default School Campus Visual Gallery Images
+    const DEFAULT_GALLERY_IMAGES = [
+      {
+        id: 'img-1',
+        title: 'मुख्य विद्यालय भवन व भव्य प्रांगण',
+        desc: 'सेमरिया नगर का सर्वसुविधायुक्त एवं अनुशासित शैक्षणिक परिसर।',
+        tag: '🏫 मुख्य परिसर',
+        url: '/images/school_building.svg'
+      },
+      {
+        id: 'img-2',
+        title: 'डिजिटल स्मार्ट क्लासरूम',
+        desc: 'इंटरैक्टिव स्मार्ट बोर्ड एवं ऑडियो-विजुअल शिक्षा प्रणाली।',
+        tag: '💻 स्मार्ट क्लास',
+        url: '/images/smart_classroom.svg'
+      },
+      {
+        id: 'img-3',
+        title: 'हाई-टेक साइंस लैबोरेटरी',
+        desc: 'भौतिकी, रसायन व जीव विज्ञान के संपूर्ण प्रायोगिक उपकरण।',
+        tag: '🔬 साइंस लैब',
+        url: '/images/science_lab.svg'
+      },
+      {
+        id: 'img-4',
+        title: 'आधुनिक कंप्यूटर एवं आईटी लैब',
+        desc: 'हाई-स्पीड इंटरनेट, कोडिंग एवं डिजिटल कौशल प्रशिक्षण।',
+        tag: '🖥️ कंप्यूटर लैब',
+        url: '/images/computer_lab.svg'
+      },
+      {
+        id: 'img-5',
+        title: 'समृद्ध पुस्तकालय व रीडिंग रूम',
+        desc: 'एनसीईआरटी, म.प्र. बोर्ड पुस्तकें एवं प्रतियोगी संदर्भ ग्रंथ।',
+        tag: '📚 पुस्तकालय',
+        url: '/images/library_books.svg'
+      },
+      {
+        id: 'img-6',
+        title: 'खेलकूद एवं एथलेटिक्स ग्राउंड',
+        desc: 'क्रिकेट, वॉलीबॉल, खो-खो एवं शारीरिक दक्षता प्रशिक्षण।',
+        tag: '🏆 खेलकूद',
+        url: '/images/sports_activities.svg'
+      },
+      {
+        id: 'img-7',
+        title: 'वार्षिक सांस्कृतिक उत्सव व मंच',
+        desc: 'छात्र-छात्राओं की प्रतिभा एवं भारतीय संस्कारों का उत्सव।',
+        tag: '🎭 सांस्कृतिक मंच',
+        url: '/images/cultural_event.svg'
+      },
+      {
+        id: 'img-8',
+        title: 'सुरक्षित बस एवं परिवहन सेवा',
+        desc: 'सेमरिया नगर एवं आसपास के समस्त ग्रामों तक सुरक्षित आवागमन।',
+        tag: '🚌 स्कूल बस',
+        url: '/images/school_bus.svg'
+      }
+    ];
+
+    function toggleDropdown(btn) {
+      if (btn && btn.closest) {
+        const parent = btn.closest('.nav-item-rel') || btn.parentElement;
+        if (parent) {
+          parent.classList.toggle('open-dropdown');
+        }
+      }
+    }
+    window.toggleDropdown = toggleDropdown;
 
     // 1. Preloader dismissal after 1 second & Initial Seeding
     window.addEventListener('DOMContentLoaded', () => {
@@ -4490,6 +5191,9 @@ function doPost(e) {
       generateMarksGrid();
       updateMarksSeriesInfo();
 
+      // Load Result Portal Gateway Configuration
+      loadAdminResultLinkConfig();
+
       // Render Home Auto-Scrolling Image Gallery
       renderAutoGallery();
 
@@ -4499,24 +5203,61 @@ function doPost(e) {
       }, 1200);
     });
 
-    // 2. Mobile Menu Toggle
-    const mobileNavToggle = document.getElementById('mobileNavToggle');
-    const navMenuList = document.getElementById('navMenuList');
-
-    if (mobileNavToggle && navMenuList) {
-      mobileNavToggle.addEventListener('click', () => {
-        navMenuList.classList.toggle('open-mobile');
-      });
+    // 2. Mobile Menu, 3-Dot Drawer & Navigation Functions
+    function openThreeDotMenu() {
+      const drawer = document.getElementById('threeDotDrawer');
+      const backdrop = document.getElementById('threeDotBackdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
     }
+    window.openThreeDotMenu = openThreeDotMenu;
 
-    function toggleDropdown(btn) {
-      if (window.innerWidth <= 768) {
-        const parentLi = btn.closest('.nav-item-rel');
-        if (parentLi) {
-          parentLi.classList.toggle('open-dropdown');
-        }
+    function closeThreeDotMenu() {
+      const drawer = document.getElementById('threeDotDrawer');
+      const backdrop = document.getElementById('threeDotBackdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    window.closeThreeDotMenu = closeThreeDotMenu;
+
+    function navigateToPageAndClose(pageId) {
+      closeThreeDotMenu();
+      navigateToPage(pageId);
+    }
+    window.navigateToPageAndClose = navigateToPageAndClose;
+
+    // Close 3-Dot Drawer on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeThreeDotMenu();
+      }
+    });
+
+    function toggleMobileNavMenu() {
+      const navMenuList = document.getElementById('navMenuList');
+      if (navMenuList) {
+        navMenuList.classList.toggle('open-mobile');
       }
     }
+    window.toggleMobileNavMenu = toggleMobileNavMenu;
+
+    function openStudentResultDirect(event) {
+      if (event && event.preventDefault) event.preventDefault();
+      let resultUrl = 'https://online.edumentsolution.com/';
+      try {
+        const saved = localStorage.getItem('mdhss_result_link_config');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.url && parsed.url.trim()) {
+            resultUrl = parsed.url.trim();
+          }
+        }
+      } catch (e) {}
+      window.open(resultUrl, '_blank');
+    }
+    window.openStudentResultDirect = openStudentResultDirect;
 
     // 3. PAGE ROUTING CONTROLLER (Page-Wise Multi-Screen Architecture)
     const PAGE_TITLES = {
@@ -4536,28 +5277,26 @@ function doPost(e) {
       const homeSection = document.getElementById('home-main-section');
       const pagesContainer = document.getElementById('pages-container');
       const navHomeBtn = document.getElementById('navHomeBtn');
+      const navMenuList = document.getElementById('navMenuList');
       const breadcrumbTitle = document.getElementById('pageBreadcrumbTitle');
       const headerPill = document.getElementById('pageHeaderPill');
 
-      // Close mobile menu if open
+      // Close mobile menu or 3-dot drawer if open
       if (navMenuList) navMenuList.classList.remove('open-mobile');
+      closeThreeDotMenu();
 
-      // Top ribbon, Header & Navigation visibility (Hide when in Teacher or Admin mode as requested)
-      const topInfoBar = document.querySelector('.top-info-bar');
+      // Top navbar remains persistent across ALL pages
+      const topNavbar = document.getElementById('mainTopNavbar');
+      if (topNavbar) {
+        topNavbar.style.removeProperty('display');
+      }
+
+      // Marquee Bar toggle (keep clean in teacher/admin mode)
       const marqueeBar = document.querySelector('.marquee-bar');
-      const stickyNav = document.querySelector('.sticky-nav-wrapper');
-      const mainHeader = document.querySelector('.header-section');
-
       if (pageId === 'admin' || pageId === 'teacher' || pageId === 'login') {
-        if (topInfoBar) topInfoBar.style.setProperty('display', 'none', 'important');
         if (marqueeBar) marqueeBar.style.setProperty('display', 'none', 'important');
-        if (stickyNav) stickyNav.style.setProperty('display', 'none', 'important');
-        if (mainHeader) mainHeader.style.setProperty('display', 'none', 'important');
       } else {
-        if (topInfoBar) topInfoBar.style.removeProperty('display');
         if (marqueeBar) marqueeBar.style.removeProperty('display');
-        if (stickyNav) stickyNav.style.removeProperty('display');
-        if (mainHeader) mainHeader.style.removeProperty('display');
       }
 
       // 1. If returning to Home
@@ -4569,7 +5308,7 @@ function doPost(e) {
         document.querySelectorAll('.subpage-view').forEach(v => v.style.display = 'none');
 
         // Reset active nav button
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
+        document.querySelectorAll('.nav-link-btn').forEach(btn => btn.classList.remove('active-tab'));
         if (navHomeBtn) navHomeBtn.classList.add('active-tab');
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4611,7 +5350,7 @@ function doPost(e) {
       if (headerPill) headerPill.textContent = pageMeta.pill;
 
       // Scroll to page top
-      window.scrollTo({ top: 120, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Scroll helper methods
@@ -5840,19 +6579,26 @@ function doPost(e) {
       const admContent = document.getElementById('adminTabContentAdmissions');
       const marksContent = document.getElementById('adminTabContentMarks');
       const fbContent = document.getElementById('adminTabContentFeedbacks');
+      const noticeContent = document.getElementById('adminTabContentNotice');
+      const galleryContent = document.getElementById('adminTabContentGallery');
+      const resultLinkContent = document.getElementById('adminTabContentResultLink');
       const sheetsContent = document.getElementById('adminTabContentSheets');
 
       const btnAdm = document.getElementById('adminTabBtnAdm');
       const btnMarks = document.getElementById('adminTabBtnMarks');
       const btnFb = document.getElementById('adminTabBtnFb');
+      const btnNotice = document.getElementById('adminTabBtnNotice');
+      const btnGallery = document.getElementById('adminTabBtnGallery');
+      const btnResultLink = document.getElementById('adminTabBtnResultLink');
       const btnSheets = document.getElementById('adminTabBtnSheets');
 
-      [admContent, marksContent, fbContent, sheetsContent].forEach(c => { if (c) c.style.display = 'none'; });
-      [btnAdm, btnMarks, btnFb, btnSheets].forEach(b => { 
+      [admContent, marksContent, fbContent, noticeContent, galleryContent, resultLinkContent, sheetsContent].forEach(c => { if (c) c.style.display = 'none'; });
+      [btnAdm, btnMarks, btnFb, btnNotice, btnGallery, btnResultLink, btnSheets].forEach(b => { 
         if (b) {
           b.style.background = '#f8fafc';
           b.style.color = '#334155';
           b.style.border = '1px solid #cbd5e1';
+          b.style.boxShadow = 'none';
         }
       });
 
@@ -5861,21 +6607,46 @@ function doPost(e) {
         btnAdm.style.background = '#0284c7';
         btnAdm.style.color = '#ffffff';
         btnAdm.style.border = '1px solid #0284c7';
+        btnAdm.style.boxShadow = '0 2px 8px rgba(2,132,199,0.25)';
       } else if (tab === 'marks' && marksContent && btnMarks) {
         marksContent.style.display = 'block';
         btnMarks.style.background = '#c2410c';
         btnMarks.style.color = '#ffffff';
         btnMarks.style.border = '1px solid #c2410c';
+        btnMarks.style.boxShadow = '0 2px 8px rgba(194,65,12,0.25)';
       } else if (tab === 'feedbacks' && fbContent && btnFb) {
         fbContent.style.display = 'block';
         btnFb.style.background = '#059669';
         btnFb.style.color = '#ffffff';
         btnFb.style.border = '1px solid #059669';
+        btnFb.style.boxShadow = '0 2px 8px rgba(5,150,105,0.25)';
+      } else if (tab === 'notice' && noticeContent && btnNotice) {
+        noticeContent.style.display = 'block';
+        btnNotice.style.background = '#0284c7';
+        btnNotice.style.color = '#ffffff';
+        btnNotice.style.border = '1px solid #0284c7';
+        btnNotice.style.boxShadow = '0 2px 8px rgba(2,132,199,0.25)';
+        loadAdminNoticeSettings();
+      } else if (tab === 'gallery' && galleryContent && btnGallery) {
+        galleryContent.style.display = 'block';
+        btnGallery.style.background = '#7c3aed';
+        btnGallery.style.color = '#ffffff';
+        btnGallery.style.border = '1px solid #7c3aed';
+        btnGallery.style.boxShadow = '0 2px 8px rgba(124,58,237,0.25)';
+        renderAdminGalleryList();
+      } else if (tab === 'resultlink' && resultLinkContent && btnResultLink) {
+        resultLinkContent.style.display = 'block';
+        btnResultLink.style.background = '#be123c';
+        btnResultLink.style.color = '#ffffff';
+        btnResultLink.style.border = '1px solid #be123c';
+        btnResultLink.style.boxShadow = '0 2px 8px rgba(190,18,60,0.25)';
+        loadAdminResultLinkConfig();
       } else if (tab === 'sheets' && sheetsContent && btnSheets) {
         sheetsContent.style.display = 'block';
-        btnSheets.style.background = '#7c3aed';
+        btnSheets.style.background = '#166534';
         btnSheets.style.color = '#ffffff';
-        btnSheets.style.border = '1px solid #7c3aed';
+        btnSheets.style.border = '1px solid #166534';
+        btnSheets.style.boxShadow = '0 2px 8px rgba(22,101,52,0.25)';
       }
     }
 
@@ -6559,7 +7330,7 @@ function doPost(e) {
     }
 
     // ==========================================================================
-    // 9. FIRST-TIME NOTIFICATION POPUP LOGIC (ADMIN CONTROLLED & SESSION CONTROLLED)
+    // 9. NOTIFICATION POPUP LOGIC (ADMIN CONTROLLED & SESSION CONTROLLED)
     // ==========================================================================
     function checkAndShowFirstTimeNotice() {
       // Check if dismissed in this session
@@ -6571,10 +7342,14 @@ function doPost(e) {
       // Load admin notification configuration or default
       let noticeData = {
         badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
+        enabled: 'true',
         title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
         body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
+        highlights: '✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
+        helpline: '📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
         btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
-        btnAction: 'admission'
+        btnAction: 'admission',
+        customUrl: ''
       };
 
       try {
@@ -6585,20 +7360,49 @@ function doPost(e) {
         }
       } catch (e) {}
 
-      const badgeEl = document.getElementById('firstNoticeBadge');
-      const titleEl = document.getElementById('firstNoticeTitle');
-      const bodyEl = document.getElementById('firstNoticeBodyText');
-      const btnEl = document.getElementById('firstNoticeActionBtn');
+      if (noticeData.enabled === 'false') {
+        return;
+      }
+
+      applyNoticeDataToPopup(noticeData);
+
       const modalEl = document.getElementById('firstTimeNoticeModal');
-
-      if (badgeEl) badgeEl.textContent = noticeData.badge;
-      if (titleEl) titleEl.textContent = noticeData.title;
-      if (bodyEl) bodyEl.textContent = noticeData.body;
-      if (btnEl) btnEl.textContent = noticeData.btnText;
-
       if (modalEl) {
         modalEl.style.display = 'flex';
       }
+    }
+
+    function applyNoticeDataToPopup(noticeData) {
+      const badgeEl = document.getElementById('firstNoticeBadge');
+      const titleEl = document.getElementById('firstNoticeTitle');
+      const bodyEl = document.getElementById('firstNoticeBodyText');
+      const highlightsEl = document.getElementById('firstNoticeHighlights');
+      const helplineEl = document.getElementById('firstNoticeHelpline');
+      const btnEl = document.getElementById('firstNoticeActionBtn');
+
+      if (badgeEl) badgeEl.textContent = noticeData.badge || '🔔 आवश्यक सूचना';
+      if (titleEl) titleEl.textContent = noticeData.title || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया';
+      if (bodyEl) bodyEl.textContent = noticeData.body || '';
+      
+      if (highlightsEl) {
+        if (noticeData.highlights && noticeData.highlights.trim()) {
+          highlightsEl.textContent = noticeData.highlights;
+          highlightsEl.style.display = 'block';
+        } else {
+          highlightsEl.style.display = 'none';
+        }
+      }
+
+      if (helplineEl) {
+        if (noticeData.helpline && noticeData.helpline.trim()) {
+          helplineEl.textContent = noticeData.helpline;
+          helplineEl.style.display = 'block';
+        } else {
+          helplineEl.style.display = 'none';
+        }
+      }
+
+      if (btnEl) btnEl.textContent = noticeData.btnText || 'देखें ↗';
     }
 
     function closeFirstTimeNotice() {
@@ -6611,6 +7415,27 @@ function doPost(e) {
     }
 
     function openFirstTimeNoticeManually() {
+      let noticeData = {
+        badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
+        enabled: 'true',
+        title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
+        body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
+        highlights: '✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
+        helpline: '📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
+        btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
+        btnAction: 'admission',
+        customUrl: ''
+      };
+
+      try {
+        const saved = localStorage.getItem('mdhss_popup_notification');
+        if (saved) {
+          noticeData = { ...noticeData, ...JSON.parse(saved) };
+        }
+      } catch (e) {}
+
+      applyNoticeDataToPopup(noticeData);
+
       const modalEl = document.getElementById('firstTimeNoticeModal');
       if (modalEl) {
         modalEl.style.display = 'flex';
@@ -6619,71 +7444,117 @@ function doPost(e) {
 
     function onFirstNoticeActionClick() {
       closeFirstTimeNotice();
-      navigateToPage('admission');
+      let noticeData = { btnAction: 'admission', customUrl: '' };
+      try {
+        const saved = localStorage.getItem('mdhss_popup_notification');
+        if (saved) noticeData = { ...noticeData, ...JSON.parse(saved) };
+      } catch (e) {}
+
+      if (noticeData.btnAction === 'custom' && noticeData.customUrl) {
+        window.open(noticeData.customUrl, '_blank');
+      } else if (noticeData.btnAction) {
+        navigateToPage(noticeData.btnAction);
+      } else {
+        navigateToPage('admission');
+      }
+    }
+
+    function loadAdminNoticeSettings() {
+      let noticeData = {
+        badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
+        enabled: 'true',
+        title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
+        body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
+        highlights: '✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
+        helpline: '📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
+        btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
+        btnAction: 'admission',
+        customUrl: 'https://online.edumentsolution.com/'
+      };
+
+      try {
+        const saved = localStorage.getItem('mdhss_popup_notification');
+        if (saved) {
+          noticeData = { ...noticeData, ...JSON.parse(saved) };
+        }
+      } catch (e) {}
+
+      if (document.getElementById('cfgNoticeBadge')) document.getElementById('cfgNoticeBadge').value = noticeData.badge;
+      if (document.getElementById('cfgNoticeEnabled')) document.getElementById('cfgNoticeEnabled').value = noticeData.enabled || 'true';
+      if (document.getElementById('cfgNoticeTitle')) document.getElementById('cfgNoticeTitle').value = noticeData.title;
+      if (document.getElementById('cfgNoticeBody')) document.getElementById('cfgNoticeBody').value = noticeData.body;
+      if (document.getElementById('cfgNoticeHighlights')) document.getElementById('cfgNoticeHighlights').value = noticeData.highlights || '';
+      if (document.getElementById('cfgNoticeHelpline')) document.getElementById('cfgNoticeHelpline').value = noticeData.helpline || '';
+      if (document.getElementById('cfgNoticeBtnText')) document.getElementById('cfgNoticeBtnText').value = noticeData.btnText;
+      if (document.getElementById('cfgNoticeBtnAction')) document.getElementById('cfgNoticeBtnAction').value = noticeData.btnAction || 'admission';
+      if (document.getElementById('cfgNoticeCustomUrl')) document.getElementById('cfgNoticeCustomUrl').value = noticeData.customUrl || '';
+
+      toggleNoticeCustomUrlInput();
+    }
+
+    function toggleNoticeCustomUrlInput() {
+      const action = document.getElementById('cfgNoticeBtnAction')?.value;
+      const group = document.getElementById('cfgNoticeCustomUrlGroup');
+      if (group) {
+        group.style.display = (action === 'custom') ? 'block' : 'none';
+      }
+    }
+
+    function saveAdminNoticeSettings(event) {
+      if (event && event.preventDefault) event.preventDefault();
+
+      const noticeData = {
+        badge: document.getElementById('cfgNoticeBadge')?.value.trim() || '🔔 आवश्यक सूचना',
+        enabled: document.getElementById('cfgNoticeEnabled')?.value || 'true',
+        title: document.getElementById('cfgNoticeTitle')?.value.trim() || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया',
+        body: document.getElementById('cfgNoticeBody')?.value.trim() || '',
+        highlights: document.getElementById('cfgNoticeHighlights')?.value.trim() || '',
+        helpline: document.getElementById('cfgNoticeHelpline')?.value.trim() || '',
+        btnText: document.getElementById('cfgNoticeBtnText')?.value.trim() || 'खोलें',
+        btnAction: document.getElementById('cfgNoticeBtnAction')?.value || 'admission',
+        customUrl: document.getElementById('cfgNoticeCustomUrl')?.value.trim() || ''
+      };
+
+      localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
+
+      // Update popup elements in DOM
+      applyNoticeDataToPopup(noticeData);
+
+      const badge = document.getElementById('noticeSaveSuccessBadge');
+      if (badge) {
+        badge.style.display = 'inline-block';
+        setTimeout(() => { badge.style.display = 'none'; }, 4000);
+      }
+    }
+
+    function testLiveNoticeModal() {
+      const noticeData = {
+        badge: document.getElementById('cfgNoticeBadge')?.value.trim() || '🔔 आवश्यक सूचना',
+        enabled: 'true',
+        title: document.getElementById('cfgNoticeTitle')?.value.trim() || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया',
+        body: document.getElementById('cfgNoticeBody')?.value.trim() || '',
+        highlights: document.getElementById('cfgNoticeHighlights')?.value.trim() || '',
+        helpline: document.getElementById('cfgNoticeHelpline')?.value.trim() || '',
+        btnText: document.getElementById('cfgNoticeBtnText')?.value.trim() || 'खोलें',
+        btnAction: document.getElementById('cfgNoticeBtnAction')?.value || 'admission',
+        customUrl: document.getElementById('cfgNoticeCustomUrl')?.value.trim() || ''
+      };
+
+      applyNoticeDataToPopup(noticeData);
+      const modalEl = document.getElementById('firstTimeNoticeModal');
+      if (modalEl) modalEl.style.display = 'flex';
+    }
+
+    function resetDefaultNoticeSettings() {
+      if (!confirm('क्या आप सूचना पॉपअप सेटिंग्स को डिफ़ॉल्ट रूप में रीसेट करना चाहते हैं?')) return;
+      localStorage.removeItem('mdhss_popup_notification');
+      loadAdminNoticeSettings();
+      alert('सूचना पॉपअप सेटिंग्स रीसेट कर दी गई हैं!');
     }
 
     // ==========================================================================
-    // 10. AUTO-SCROLLING VISUAL IMAGE GALLERY ON HOMEPAGE
+    // 10. AUTO-SCROLLING VISUAL IMAGE GALLERY (HOMEPAGE & ADMIN CONTROLLER)
     // ==========================================================================
-    const DEFAULT_GALLERY_IMAGES = [
-      {
-        id: 'img-1',
-        title: 'मुख्य विद्यालय भवन व भव्य प्रांगण',
-        desc: 'सेमरिया नगर का सर्वसुविधायुक्त एवं अनुशासित शैक्षणिक परिसर।',
-        tag: '🏫 मुख्य परिसर',
-        url: '/images/school_building.svg'
-      },
-      {
-        id: 'img-2',
-        title: 'डिजिटल स्मार्ट क्लासरूम',
-        desc: 'इंटरैक्टिव स्मार्ट बोर्ड एवं ऑडियो-विजुअल शिक्षा प्रणाली।',
-        tag: '💻 स्मार्ट क्लास',
-        url: '/images/smart_classroom.svg'
-      },
-      {
-        id: 'img-3',
-        title: 'हाई-टेक साइंस लैबोरेटरी',
-        desc: 'भौतिकी, रसायन व जीव विज्ञान के संपूर्ण प्रायोगिक उपकरण।',
-        tag: '🔬 साइंस लैब',
-        url: '/images/science_lab.svg'
-      },
-      {
-        id: 'img-4',
-        title: 'आधुनिक कंप्यूटर एवं आईटी लैब',
-        desc: 'हाई-स्पीड इंटरनेट, कोडिंग एवं डिजिटल कौशल प्रशिक्षण।',
-        tag: '🖥️ कंप्यूटर लैब',
-        url: '/images/computer_lab.svg'
-      },
-      {
-        id: 'img-5',
-        title: 'समृद्ध पुस्तकालय व रीडिंग रूम',
-        desc: 'एनसीईआरटी, म.प्र. बोर्ड पुस्तकें एवं प्रतियोगी संदर्भ ग्रंथ।',
-        tag: '📚 पुस्तकालय',
-        url: '/images/library_books.svg'
-      },
-      {
-        id: 'img-6',
-        title: 'खेलकूद एवं एथलेटिक्स ग्राउंड',
-        desc: 'क्रिकेट, वॉलीबॉल, खो-खो एवं शारीरिक दक्षता प्रशिक्षण।',
-        tag: '🏆 खेलकूद',
-        url: '/images/sports_activities.svg'
-      },
-      {
-        id: 'img-7',
-        title: 'वार्षिक सांस्कृतिक उत्सव व मंच',
-        desc: 'छात्र-छात्राओं की प्रतिभा एवं भारतीय संस्कारों का उत्सव।',
-        tag: '🎭 सांस्कृतिक मंच',
-        url: '/images/cultural_event.svg'
-      },
-      {
-        id: 'img-8',
-        title: 'सुरक्षित बस एवं परिवहन सेवा',
-        desc: 'सेमरिया नगर एवं आसपास के समस्त ग्रामों तक सुरक्षित आवागमन।',
-        tag: '🚌 स्कूल बस',
-        url: '/images/school_bus.svg'
-      }
-    ];
-
     function renderAutoGallery() {
       const track = document.getElementById('galleryTrack');
       if (!track) return;
@@ -6757,11 +7628,195 @@ function doPost(e) {
 
       localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
       renderAutoGallery();
+      renderAdminGalleryList();
       closeAddImageModal();
       alert('✅ नई फोटो सफलतापूर्वक गैलरी में जोड़ दी गई है!');
     }
 
-    // 11. Scroll to top button visibility
+    function renderAdminGalleryList() {
+      const grid = document.getElementById('adminGalleryGridList');
+      const countBadge = document.getElementById('admGalleryCountBadge');
+      if (!grid) return;
+
+      let customImages = [];
+      try {
+        customImages = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
+      } catch (e) {}
+
+      const allImages = [
+        ...customImages.map(img => ({ ...img, isCustom: true })),
+        ...DEFAULT_GALLERY_IMAGES.map(img => ({ ...img, isCustom: false }))
+      ];
+
+      if (countBadge) countBadge.textContent = allImages.length;
+
+      grid.innerHTML = allImages.map((img, idx) => `
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column;">
+          <div style="height: 140px; background: #f1f5f9; position: relative; overflow: hidden;">
+            <img src="${img.url}" alt="${img.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/school_building.svg'">
+            <span style="position: absolute; top: 8px; left: 8px; background: rgba(15, 23, 42, 0.85); color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
+              ${img.tag || '📸 फोटो'}
+            </span>
+            ${img.isCustom ? `<span style="position: absolute; top: 8px; right: 8px; background: #7c3aed; color: #ffffff; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">कस्टम (User Added)</span>` : `<span style="position: absolute; top: 8px; right: 8px; background: #0284c7; color: #ffffff; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">डिफ़ॉल्ट</span>`}
+          </div>
+          <div style="padding: 0.85rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <h5 style="margin: 0 0 4px 0; font-size: 0.92rem; color: #0f172a;">${img.title}</h5>
+              <p style="margin: 0 0 8px 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">${img.desc || '-'}</p>
+              <div style="font-size: 0.75rem; color: #0284c7; word-break: break-all; font-family: monospace;">${img.url}</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+              <a href="${img.url}" target="_blank" rel="noopener noreferrer" style="font-size: 0.78rem; color: #0284c7; font-weight: 700; text-decoration: none;">👁️ देखें ↗</a>
+              ${img.isCustom ? `
+                <button type="button" class="btn-hero-sec" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; font-size: 0.75rem; padding: 0.25rem 0.6rem; cursor: pointer;" onclick="deleteAdminGalleryImage('${img.id}')">
+                  🗑️ हटाएं
+                </button>
+              ` : `
+                <span style="font-size: 0.72rem; color: #94a3b8;">सुरक्षित डिफ़ॉल्ट</span>
+              `}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleAdminAddNewImage(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const title = document.getElementById('admNewImgTitle')?.value.trim();
+      const url = document.getElementById('admNewImgUrl')?.value.trim();
+      const tag = document.getElementById('admNewImgTag')?.value.trim() || '📸 स्कूल फोटो';
+      const desc = document.getElementById('admNewImgDesc')?.value.trim() || '';
+
+      if (!title || !url) {
+        alert('कृपया फोटो का शीर्षक और URL दर्ज करें!');
+        return;
+      }
+
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
+      } catch (err) {}
+
+      stored.unshift({
+        id: 'img-' + Date.now(),
+        title: title,
+        url: url,
+        tag: tag,
+        desc: desc
+      });
+
+      localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
+      renderAdminGalleryList();
+      renderAutoGallery();
+
+      // Reset add form
+      if (document.getElementById('admNewImgTitle')) document.getElementById('admNewImgTitle').value = '';
+      if (document.getElementById('admNewImgUrl')) document.getElementById('admNewImgUrl').value = '';
+      if (document.getElementById('admNewImgDesc')) document.getElementById('admNewImgDesc').value = '';
+
+      alert('✅ नई फोटो सफलतापूर्वक गैलरी में शामिल हो गई है!');
+    }
+
+    function deleteAdminGalleryImage(imgId) {
+      if (!confirm('क्या आप वाकई इस फोटो को गैलरी से हटाना चाहते हैं?')) return;
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
+        stored = stored.filter(img => img.id !== imgId);
+        localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
+      } catch (err) {}
+
+      renderAdminGalleryList();
+      renderAutoGallery();
+    }
+
+    function resetDefaultGalleryImages() {
+      if (!confirm('क्या आप सभी कस्टम तस्वीरों को हटाकर मूल 8 डिफ़ॉल्ट तस्वीरें बहाल करना चाहते हैं?')) return;
+      localStorage.removeItem('mdhss_gallery_images');
+      renderAdminGalleryList();
+      renderAutoGallery();
+      alert('गैलरी मूल डिफ़ॉल्ट में बहाल कर दी गई है!');
+    }
+
+    // ==========================================================================
+    // 11. STUDENT RESULT PORTAL LINK GATEWAY CONTROLLER
+    // ==========================================================================
+    function loadAdminResultLinkConfig() {
+      let config = {
+        url: 'https://online.edumentsolution.com/',
+        btnText: '🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें (Open Result Portal) ↗',
+        tag: '🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27',
+        note: 'सत्र 2026-27 के सभी छात्र एवं अभिभावक अपने अनुक्रमांक (Roll Number) द्वारा परीक्षा परिणाम व अंकपत्र देखने हेतु नीचे दिए गए अधिकृत परीक्षा परिणाम पोर्टल लिंक पर क्लिक करें। यह लिंक सीधे नए पेज/टैब में खुलेगा।'
+      };
+
+      try {
+        const saved = localStorage.getItem('mdhss_result_link_config');
+        if (saved) {
+          config = { ...config, ...JSON.parse(saved) };
+        }
+      } catch (e) {}
+
+      // Fill Admin Form
+      if (document.getElementById('cfgResultPortalUrl')) document.getElementById('cfgResultPortalUrl').value = config.url;
+      if (document.getElementById('cfgResultBtnText')) document.getElementById('cfgResultBtnText').value = config.btnText;
+      if (document.getElementById('cfgResultTag')) document.getElementById('cfgResultTag').value = config.tag;
+      if (document.getElementById('cfgResultNote')) document.getElementById('cfgResultNote').value = config.note;
+
+      // Update Student Page View Gateway Card
+      const displayUrl = document.getElementById('portalResultUrlDisplay');
+      const mainBtn = document.getElementById('portalResultMainBtn');
+      const btnLabel = document.getElementById('portalResultBtnLabel');
+      const tagEl = document.getElementById('portalResultTag');
+      const noteEl = document.getElementById('portalResultNote');
+
+      if (displayUrl) displayUrl.textContent = config.url;
+      if (mainBtn) mainBtn.href = config.url;
+      if (btnLabel) btnLabel.textContent = config.btnText;
+      if (tagEl) tagEl.textContent = config.tag;
+      if (noteEl) noteEl.textContent = config.note;
+
+      // Update Top Navbar Direct Result Link
+      const navResultLink = document.getElementById('navResultLinkDirect');
+      if (navResultLink) {
+        navResultLink.href = config.url;
+      }
+    }
+
+    function saveAdminResultLinkConfig(event) {
+      if (event && event.preventDefault) event.preventDefault();
+
+      const config = {
+        url: document.getElementById('cfgResultPortalUrl')?.value.trim() || 'https://online.edumentsolution.com/',
+        btnText: document.getElementById('cfgResultBtnText')?.value.trim() || '🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें ↗',
+        tag: document.getElementById('cfgResultTag')?.value.trim() || '🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27',
+        note: document.getElementById('cfgResultNote')?.value.trim() || ''
+      };
+
+      localStorage.setItem('mdhss_result_link_config', JSON.stringify(config));
+      loadAdminResultLinkConfig();
+
+      const badge = document.getElementById('resultLinkSaveBadge');
+      if (badge) {
+        badge.style.display = 'inline-block';
+        setTimeout(() => { badge.style.display = 'none'; }, 4000);
+      }
+    }
+
+    function testOpenExternalResultLink() {
+      const url = document.getElementById('cfgResultPortalUrl')?.value.trim() || 'https://online.edumentsolution.com/';
+      window.open(url, '_blank');
+    }
+
+    function copyResultPortalUrl() {
+      const displayUrl = document.getElementById('portalResultUrlDisplay')?.textContent.trim() || 'https://online.edumentsolution.com/';
+      navigator.clipboard.writeText(displayUrl).then(() => {
+        alert('✅ परीक्षा परिणाम पोर्टल लिंक क्लिपबोर्ड पर कॉपी हो गया है:\n' + displayUrl);
+      }).catch(() => {
+        alert('रिजल्ट लिंक: ' + displayUrl);
+      });
+    }
+
+    // Scroll to top button visibility
     window.addEventListener('scroll', () => {
       const topBtn = document.getElementById('scrollTopBtn');
       if (topBtn) {
@@ -6772,6 +7827,28 @@ function doPost(e) {
         }
       }
     });
+
+    // Expose all admin and modal configuration methods on window
+    window.switchAdminTab = switchAdminTab;
+    window.saveAdminNoticeSettings = saveAdminNoticeSettings;
+    window.loadAdminNoticeSettings = loadAdminNoticeSettings;
+    window.testLiveNoticeModal = testLiveNoticeModal;
+    window.resetDefaultNoticeSettings = resetDefaultNoticeSettings;
+    window.toggleNoticeCustomUrlInput = toggleNoticeCustomUrlInput;
+    window.renderAdminGalleryList = renderAdminGalleryList;
+    window.handleAdminAddNewImage = handleAdminAddNewImage;
+    window.deleteAdminGalleryImage = deleteAdminGalleryImage;
+    window.resetDefaultGalleryImages = resetDefaultGalleryImages;
+    window.saveAdminResultLinkConfig = saveAdminResultLinkConfig;
+    window.loadAdminResultLinkConfig = loadAdminResultLinkConfig;
+    window.testOpenExternalResultLink = testOpenExternalResultLink;
+    window.copyResultPortalUrl = copyResultPortalUrl;
+    window.openFirstTimeNoticeManually = openFirstTimeNoticeManually;
+    window.closeFirstTimeNotice = closeFirstTimeNotice;
+    window.onFirstNoticeActionClick = onFirstNoticeActionClick;
+    window.openAddImageModal = openAddImageModal;
+    window.closeAddImageModal = closeAddImageModal;
+    window.saveNewCustomGalleryImage = saveNewCustomGalleryImage;
   </script>
 
   <!-- ==========================================================================
@@ -6797,11 +7874,11 @@ function doPost(e) {
           नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।
         </div>
         
-        <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 14px; font-size:0.85rem; color:#166534; margin-bottom:1rem;">
+        <div id="firstNoticeHighlights" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 14px; font-size:0.85rem; color:#166534; margin-bottom:1rem;">
           ✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा
         </div>
         
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:0.82rem; color:#64748b; margin-bottom:1.25rem;">
+        <div id="firstNoticeHelpline" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:0.82rem; color:#64748b; margin-bottom:1.25rem;">
           <span>📞 हेल्पलाइन: <strong>9200178385, 7024036526</strong></span>
           <span>🏫 UDISE: <strong>23140402055</strong></span>
         </div>
