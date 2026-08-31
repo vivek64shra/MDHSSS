@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>शिक्षक पोर्टल (Teacher Panel) | Maa Durga H.S. School Semariya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --navy: #0f172a;
+      --bg: #f0f9ff;
+      --card-bg: rgba(255,255,255,0.94);
+      --border: #bae6fd;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Tiro Devanagari Hindi', sans-serif; }
+    body { background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%); min-height: 100vh; padding: 1rem; color: #1e293b; }
+    .container { max-width: 1050px; margin: 0 auto; }
+    .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: 0 10px 25px rgba(2,132,199,0.08); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 2px solid #e0f2fe; padding-bottom: 1rem; margin-bottom: 1.25rem; }
+    .brand-flex { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.92rem; border: none; cursor: pointer; text-decoration: none; transition: 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; }
+    .btn-primary:hover { background: #0369a1; }
+    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .btn-success { background: #16a34a; color: #fff; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.88rem; margin-bottom: 0.35rem; color: #334155; }
+    .form-control { width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; }
+    .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2,132,199,0.15); }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .table-container { width: 100%; overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; margin: 1rem 0; max-height: 480px; }
+    table { width: 100%; min-width: 580px; border-collapse: collapse; font-size: 0.9rem; }
+    th { background: #0369a1; color: #fff; padding: 10px 12px; text-align: left; position: sticky; top: 0; z-index: 2; }
+    td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; }
+    .num-input { width: 110px; padding: 6px 10px; font-size: 1.05rem; font-weight: 700; text-align: center; border: 1.5px solid #94a3b8; border-radius: 6px; }
+    .num-input:focus { border-color: #0284c7; outline: none; box-shadow: 0 0 0 2px rgba(2,132,199,0.2); }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; }
+    .badge-pass { background: #dcfce7; color: #15803d; }
+    .badge-fail { background: #fee2e2; color: #b91c1c; }
+    .badge-ab { background: #fef2f2; color: #991b1b; }
+    .stats-ribbon { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 1rem 0; }
+    .stat-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; text-align: center; }
+    .stat-num { font-size: 1.3rem; font-weight: 800; color: var(--primary-dark); }
+    .stat-lbl { font-size: 0.78rem; color: #64748b; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="glass-card">
+      <div class="header-bar">
+        <div class="brand-flex">
+          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.src='https://placehold.co/80x80/0284c7/ffffff?text=MDHSS'" class="brand-logo" alt="MDHSS Logo">
+          <div>
+            <h1 style="font-size: 1.25rem; color: #0369a1; font-weight: 800;">माँ दुर्गा उच्चतर माध्यमिक विद्यालय</h1>
+            <p style="font-size: 0.85rem; color: #64748b;">सेमरिया, रीवा (म.प्र.) • अधिकृत शिक्षक पोर्टल (Teacher Panel)</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <a href="../index.html" class="btn btn-secondary">🏠 मुख्य वेबसाइट (Home)</a>
+          <button id="logoutBtn" class="btn btn-danger" style="display:none;" onclick="logoutTeacher()">🚪 लॉगआउट</button>
+        </div>
+      </div>
+
+      <!-- 1. LOGIN SCREEN -->
+      <div id="loginView">
+        <div style="max-width: 460px; margin: 2rem auto; text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">👨‍🏫</div>
+          <h2 style="font-size: 1.35rem; color: #0f172a; margin-bottom: 0.5rem;">शिक्षक लॉगिन (Google Sheet Verification)</h2>
+          <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 1.5rem;">Google Spreadsheet में पंजीकृत अपना 10 अंकों का मोबाइल नंबर दर्ज करें।</p>
+          
+          <form onsubmit="handleLogin(event)" style="text-align: left;">
+            <div class="form-group">
+              <label>शिक्षक का नाम (Teacher Name):</label>
+              <input type="text" id="tName" required class="form-control" placeholder="उदा. Akhilesh Tiwari / अखिलेश तिवारी">
+            </div>
+            <div class="form-group">
+              <label>पंजीकृत मोबाइल नंबर (10 Digits - Numeric):</label>
+              <input type="tel" id="tPhone" pattern="[0-9]{10}" inputmode="numeric" required class="form-control" placeholder="उदा. 7024036526 / 9516234519">
+            </div>
+            <div id="loginErr" style="display:none; color: #b91c1c; background: #fee2e2; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem;"></div>
+            <button type="submit" id="subBtn" class="btn btn-primary" style="width: 100%; justify-content: center;">🔐 लॉगिन करें (Verify from Sheet)</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 2. TEACHER DASHBOARD SCREEN -->
+      <div id="dashboardView" style="display: none;">
+        <!-- Teacher Profile Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span style="font-size: 0.85rem; color: #64748b;">लॉगिन शिक्षक:</span>
+            <h3 id="activeTeacherName" style="font-size: 1.1rem; color: #0369a1;">-</h3>
+            <p id="activeTeacherPhone" style="font-size: 0.82rem; color: #475569;">-</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary" onclick="setTab('marks')">📊 परीक्षा अंक प्रविष्टि (Marks Entry)</button>
+            <button class="btn btn-secondary" onclick="setTab('attendance')">📋 दैनिक उपस्थिति (Attendance)</button>
+          </div>
+        </div>
+
+        <!-- TAB A: MARKS ENTRY -->
+        <div id="marksTab">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>कक्षा (Class):</label>
+              <select id="marksClass" class="form-control" onchange="renderGrid()">
+                <option value="9">Class 9th (कक्षा 9वीं)</option>
+                <option value="10">Class 10th (कक्षा 10वीं)</option>
+                <option value="11">Class 11th (कक्षा 11वीं)</option>
+                <option value="12">Class 12th (कक्षा 12वीं)</option>
+                <option value="8">Class 8th (कक्षा 8वीं)</option>
+                <option value="7">Class 7th (कक्षा 7वीं)</option>
+                <option value="6">Class 6th (कक्षा 6वीं)</option>
+                <option value="5">Class 5th (कक्षा 5वीं)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>सेक्शन / संकाय (Section):</label>
+              <select id="marksSection" class="form-control" onchange="renderGrid()">
+                <option value="A">Section A</option>
+                <option value="B" selected>Section B</option>
+                <option value="C">Section C</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>परीक्षा प्रकार (Exam Type):</label>
+              <select id="marksExam" class="form-control">
+                <option value="त्रैमासिक परीक्षा 2026-27">त्रैमासिक परीक्षा 2026-27</option>
+                <option value="अर्द्धवार्षिक परीक्षा 2026-27">अर्द्धवार्षिक परीक्षा 2026-27</option>
+                <option value="मासिक टेस्ट">मासिक टेस्ट</option>
+                <option value="वार्षिक मुख्य परीक्षा 2026-27">वार्षिक मुख्य परीक्षा 2026-27</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>विषय (Subject):</label>
+              <select id="marksSub" class="form-control">
+                <option value="गणित (Mathematics)">गणित (Mathematics)</option>
+                <option value="विज्ञान (Science)">विज्ञान (Science)</option>
+                <option value="सामाजिक विज्ञान (Social Science)">सामाजिक विज्ञान (Social Science)</option>
+                <option value="हिन्दी (Hindi)">हिन्दी (Hindi)</option>
+                <option value="अंग्रेजी (English)">अंग्रेजी (English)</option>
+                <option value="संस्कृत (Sanskrit)">संस्कृत (Sanskrit)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2" style="background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 1rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>पूर्णांक (Max Marks):</label>
+              <input type="number" id="marksMax" class="form-control" value="100">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>उत्तीर्णांक (Pass Marks):</label>
+              <input type="number" id="marksPass" class="form-control" value="33">
+            </div>
+          </div>
+
+          <!-- Quick Auto-Fill Notice -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#e0f2fe; border:1px solid #bae6fd; padding:8px 14px; border-radius:8px; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:0.85rem; color:#0369a1; font-weight:600;">
+              💡 <strong>नोट:</strong> खाली (Blank) छोड़े गए सभी रोल नंबर स्वतः अनुपस्थित (Absent - AB) दर्ज हो जाएंगे।
+            </span>
+            <button type="button" class="btn btn-secondary" style="font-size:0.8rem; padding:4px 10px;" onclick="autoFillBlanksAsAbsent()">
+              ⚡ खाली स्थानों को AB भरें
+            </button>
+          </div>
+
+          <!-- Stats Ribbon -->
+          <div class="stats-ribbon">
+            <div class="stat-card">
+              <div class="stat-num" id="stTotal">99</div>
+              <div class="stat-lbl">कुल अनुक्रमांक</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="stEntered" style="color:#0284c7;">0</div>
+              <div class="stat-lbl">प्रविष्टि संख्या</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="stPass" style="color:#16a34a;">0</div>
+              <div class="stat-lbl">उत्तीर्ण</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="stFail" style="color:#dc2626;">0</div>
+              <div class="stat-lbl">अनुत्तीर्ण</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="stAb" style="color:#78350f;">0</div>
+              <div class="stat-lbl">अनुपस्थित (AB)</div>
+            </div>
+          </div>
+
+          <!-- Student Marks Table -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 50px; text-align:center;">क्र.</th>
+                  <th style="width: 140px;">अनुक्रमांक (Roll No)</th>
+                  <th style="text-align:center; width: 140px;">प्राप्तांक (Marks / AB)</th>
+                  <th style="text-align:center;">स्थिति (Status)</th>
+                  <th style="text-align:center; width: 90px;">क्विक AB</th>
+                </tr>
+              </thead>
+              <tbody id="gridTbody">
+                <!-- 99 Roll Numbers -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:1rem;">
+            <button type="button" class="btn btn-success" onclick="saveMarksSheet()">
+              💾 परीक्षा अंक पत्र सुरक्षित करें (Save & Publish to Student Result)
+            </button>
+            <span id="saveNotice" style="display:none; color:#16a34a; font-weight:700;">
+              ✅ अंक पत्र सुरक्षित कर दिया गया है! छात्र पोर्टल पर परिणाम लाइव है।
+            </span>
+          </div>
+        </div>
+
+        <!-- TAB B: ATTENDANCE -->
+        <div id="attendanceTab" style="display: none;">
+          <h3 style="color: #0f172a; margin-bottom: 1rem;">📋 दैनिक अनुपस्थिति दर्ज करें (Attendance)</h3>
+          <form onsubmit="handleAttendanceSubmit(event)">
+            <div class="grid-2">
+              <div class="form-group">
+                <label>दिनांक (Date):</label>
+                <input type="date" id="attDate" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>कक्षा एवं सेक्शन:</label>
+                <input type="text" id="attClassSec" class="form-control" placeholder="उदा. Class 9th - Section B" value="Class 9th B" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>अनुपस्थित छात्रों के रोल नंबर (कॉमा लगाकर लिखें):</label>
+              <textarea id="attRolls" rows="3" class="form-control" placeholder="उदा. 279201, 279205, 279214..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">📤 उपस्थिति सुरक्षित करें (Submit Attendance)</button>
+          </form>
+          <div id="attSuccessMsg" style="display:none; margin-top: 1rem; padding: 12px; background: #dcfce7; color: #166534; border-radius: 8px; font-weight: 700;">
+            ✅ उपस्थिति सफलतापूर्वक दर्ज कर दी गई है!
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TEACHER_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSuC9gle08lRMyMk8bjSGcXyRUSiZ-d6dJRqBWlHmw8Vjmi6yJfBeag3OI6w_UlJk10DsnxarzXKoBy/pub?output=csv";
+    const BACKUP_STAFF = [
+      { name: 'Nirmal K. Dwivedi', hindi: 'निर्मल के. द्विवेदी', phone: '9200178385' },
+      { name: 'Murlidhar Sharma', hindi: 'मुरलीधर शर्मा', phone: '9201431631' },
+      { name: 'Akhilesh Tiwari', hindi: 'अखिलेश तिवारी', phone: '7024036526' },
+      { name: 'Ram Ratan Tiwari', hindi: 'रामरतन तिवारी', phone: '7000570538' },
+      { name: 'Pushpendra Dwivedi', hindi: 'पुष्पेन्द्र द्विवेदी', phone: '9753443093' },
+      { name: 'Ramnaresh Tiwari', hindi: 'रामनरेश तिवारी', phone: '7000084424' },
+      { name: 'Rajmani Shukla', hindi: 'राजमणि शुक्ला', phone: '9981452293' },
+      { name: 'Krishna Kumar Pandey', hindi: 'कृष्ण कुमार पाण्डेय', phone: '6265613772' },
+      { name: 'Ganga Mishra', hindi: 'गंगा मिश्रा', phone: '8269419720' },
+      { name: 'Vivek Kumar Mishra', hindi: 'विवेक कुमार मिश्रा', phone: '9516234519' },
+      { name: 'Ashok Kumar Shukla', hindi: 'अशोक कुमार शुक्ला', phone: '9630327393' },
+      { name: 'Gyanendra Mishra', hindi: 'ज्ञानेन्द्र मिश्रा', phone: '8839063673' },
+      { name: 'Sunita Dwivedi', hindi: 'सुनीता द्विवेदी', phone: '9755497914' },
+      { name: 'Pratibha Tiwari', hindi: 'प्रतिभा तिवारी', phone: '9179836247' },
+      { name: 'Priyanka Shukla', hindi: 'प्रियंका शुक्ला', phone: '8319622538' },
+      { name: 'Geeta Pandey', hindi: 'गीता पाण्डेय', phone: '7489569720' },
+      { name: 'Sangeeta Mishra', hindi: 'संगीता मिश्रा', phone: '8818985833' },
+      { name: 'Vandana Dwivedi', hindi: 'वंदना द्विवेदी', phone: '9977824177' },
+      { name: 'Archana Tiwari', hindi: 'अर्चना तिवारी', phone: '9926515259' },
+      { name: 'Rekha Sharma', hindi: 'रेखा शर्मा', phone: '9752358321' }
+    ];
+
+    let currentTeacher = null;
+
+    function init() {
+      const attDateInput = document.getElementById('attDate');
+      if (attDateInput) attDateInput.value = new Date().toISOString().slice(0, 10);
+      const saved = sessionStorage.getItem('mdhss_teacher_session');
+      if (saved) {
+        currentTeacher = JSON.parse(saved);
+        showDashboard();
+      }
+      renderGrid();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const name = document.getElementById('tName').value.trim();
+      const phone = document.getElementById('tPhone').value.trim().slice(-10);
+      const errEl = document.getElementById('loginErr');
+      const btn = document.getElementById('subBtn');
+
+      errEl.style.display = 'none';
+      btn.textContent = '⏳ Google Sheet से सत्यापन हो रहा है...';
+      btn.disabled = true;
+
+      try {
+        let verified = null;
+        try {
+          const res = await fetch(TEACHER_SHEET_CSV_URL + '&_nocache=' + Date.now());
+          if (res.ok) {
+            const csv = await res.text();
+            const lines = csv.split(/[\r\n,]+/).map(l => l.replace(/['"]/g, '').trim()).filter(Boolean);
+            for (let part of lines) {
+              const p = part.replace(/\D/g, '').slice(-10);
+              if (p && p.length === 10 && p === phone) {
+                verified = { name: name || 'अधिकृत शिक्षक', phone: phone, source: 'Google Sheet CSV' };
+                break;
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Google Sheet fetch error:', err);
+        }
+
+        if (!verified) {
+          const backup = BACKUP_STAFF.find(s => s.phone.slice(-10) === phone);
+          if (backup) verified = { name: backup.hindi + ' (' + backup.name + ')', phone: backup.phone, source: 'Staff Directory' };
+        }
+
+        if (verified) {
+          currentTeacher = verified;
+          sessionStorage.setItem('mdhss_teacher_session', JSON.stringify(verified));
+          showDashboard();
+        } else {
+          errEl.textContent = '❌ शिक्षक मोबाइल नंबर Google Sheet रिकॉर्ड में नहीं मिला। कृपया पंजीकृत मोबाइल नंबर दर्ज करें।';
+          errEl.style.display = 'block';
+        }
+      } catch (e) {
+        errEl.textContent = 'त्रुटि हुई। कृपया पुनः प्रयास करें।';
+        errEl.style.display = 'block';
+      } finally {
+        btn.textContent = '🔐 लॉगिन करें (Verify from Sheet)';
+        btn.disabled = false;
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('dashboardView').style.display = 'block';
+      document.getElementById('logoutBtn').style.display = 'inline-flex';
+      document.getElementById('activeTeacherName').textContent = currentTeacher.name;
+      document.getElementById('activeTeacherPhone').textContent = '📞 ' + currentTeacher.phone;
+    }
+
+    function logoutTeacher() {
+      sessionStorage.removeItem('mdhss_teacher_session');
+      location.reload();
+    }
+
+    function setTab(tab) {
+      document.getElementById('marksTab').style.display = (tab === 'marks' ? 'block' : 'none');
+      document.getElementById('attendanceTab').style.display = (tab === 'attendance' ? 'block' : 'none');
+    }
+
+    function renderGrid() {
+      const cls = document.getElementById('marksClass')?.value || '9';
+      const sec = document.getElementById('marksSection')?.value || 'B';
+      const secCode = (sec === 'A' ? '1' : sec === 'B' ? '2' : '3');
+      const tbody = document.getElementById('gridTbody');
+      if (!tbody) return;
+
+      let html = '';
+      for (let i = 1; i <= 99; i++) {
+        const rollStr = String(i).padStart(2, '0');
+        const roll = `27${cls}${secCode}${rollStr}`;
+        html += `
+          <tr id="row-${i}">
+            <td style="text-align:center; font-weight:700; color:#64748b;">${i}</td>
+            <td style="font-family:monospace; font-weight:800; color:#0284c7;">${roll}</td>
+            <td style="text-align:center;">
+              <input type="text" id="m-${i}" class="num-input" inputmode="numeric" pattern="[0-9]*" placeholder="अंक (Blank=AB)" oninput="handleInput(${i})">
+            </td>
+            <td style="text-align:center;" id="st-${i}"><span class="badge" style="background:#f1f5f9; color:#94a3b8;">खाली (स्वतः AB)</span></td>
+            <td style="text-align:center;">
+              <button type="button" class="btn btn-danger" style="padding:2px 8px; font-size:0.75rem;" onclick="setAb(${i})">AB</button>
+            </td>
+          </tr>
+        `;
+      }
+      tbody.innerHTML = html;
+      updateStats();
+    }
+
+    function handleInput(i) {
+      const el = document.getElementById(`m-${i}`);
+      const stEl = document.getElementById(`st-${i}`);
+      const pass = parseFloat(document.getElementById('marksPass')?.value) || 33;
+      const v = (el.value || '').trim().toUpperCase();
+
+      if (v === 'AB' || v === 'A') {
+        el.value = 'AB';
+        stEl.innerHTML = '<span class="badge badge-ab">अनुपस्थित (AB)</span>';
+      } else if (v === '') {
+        stEl.innerHTML = '<span class="badge" style="background:#f1f5f9; color:#94a3b8;">खाली (स्वतः AB)</span>';
+      } else {
+        const num = parseFloat(v);
+        if (isNaN(num)) {
+          stEl.innerHTML = '<span class="badge badge-fail">अमान्य</span>';
+        } else if (num >= pass) {
+          stEl.innerHTML = '<span class="badge badge-pass">उत्तीर्ण</span>';
+        } else {
+          stEl.innerHTML = '<span class="badge badge-fail">अनुत्तीर्ण</span>';
+        }
+      }
+      updateStats();
+    }
+
+    function setAb(i) {
+      const el = document.getElementById(`m-${i}`);
+      if (el) {
+        el.value = 'AB';
+        handleInput(i);
+      }
+    }
+
+    function autoFillBlanksAsAbsent() {
+      for (let i = 1; i <= 99; i++) {
+        const el = document.getElementById(`m-${i}`);
+        if (el && el.value.trim() === '') {
+          el.value = 'AB';
+          handleInput(i);
+        }
+      }
+    }
+
+    function updateStats() {
+      let ent = 0, p = 0, f = 0, ab = 0;
+      const pass = parseFloat(document.getElementById('marksPass')?.value) || 33;
+      for (let i = 1; i <= 99; i++) {
+        const val = document.getElementById(`m-${i}`)?.value?.trim().toUpperCase();
+        if (val) {
+          ent++;
+          if (val === 'AB') ab++;
+          else {
+            const num = parseFloat(val);
+            if (!isNaN(num)) {
+              if (num >= pass) p++;
+              else f++;
+            }
+          }
+        }
+      }
+      document.getElementById('stEntered').textContent = ent;
+      document.getElementById('stPass').textContent = p;
+      document.getElementById('stFail').textContent = f;
+      document.getElementById('stAb').textContent = ab;
+    }
+
+    function saveMarksSheet() {
+      const cls = document.getElementById('marksClass').value;
+      const sec = document.getElementById('marksSection').value;
+      const exam = document.getElementById('marksExam').value;
+      const sub = document.getElementById('marksSub').value;
+      const max = document.getElementById('marksMax').value;
+      const pass = document.getElementById('marksPass').value;
+      const secCode = (sec === 'A' ? '1' : sec === 'B' ? '2' : '3');
+
+      const students = [];
+      for (let i = 1; i <= 99; i++) {
+        const rollStr = String(i).padStart(2, '0');
+        const roll = `27${cls}${secCode}${rollStr}`;
+        const inputVal = (document.getElementById(`m-${i}`)?.value || '').trim();
+        
+        // Blank is automatically taken as Absent!
+        const marks = (inputVal === '' || inputVal.toUpperCase() === 'AB') ? 'AB' : inputVal;
+        const status = marks === 'AB' ? 'Absent' : (parseFloat(marks) >= parseFloat(pass) ? 'Pass' : 'Fail');
+
+        students.push({
+          srNo: i,
+          rollNo: roll,
+          roll: roll,
+          marks: marks,
+          status: status
+        });
+      }
+
+      const sheetData = {
+        id: 'sheet_' + Date.now(),
+        date: new Date().toLocaleString('en-IN'),
+        className: `Class ${cls}th`,
+        section: sec,
+        examType: exam,
+        subject: sub,
+        maxMarks: max,
+        passMarks: pass,
+        teacher: currentTeacher ? currentTeacher.name : 'शिक्षक',
+        students: students
+      };
+
+      const existing = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+      existing.unshift(sheetData);
+      localStorage.setItem('mdhss_marks_sheets', JSON.stringify(existing));
+
+      const notice = document.getElementById('saveNotice');
+      if (notice) {
+        notice.style.display = 'inline-block';
+        setTimeout(() => { notice.style.display = 'none'; }, 4000);
+      }
+    }
+
+    function handleAttendanceSubmit(e) {
+      e.preventDefault();
+      const msg = document.getElementById('attSuccessMsg');
+      if (msg) {
+        msg.style.display = 'block';
+        setTimeout(() => { msg.style.display = 'none'; }, 4000);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

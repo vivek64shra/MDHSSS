@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="60%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#f0f9ff"/>
+    </linearGradient>
+    <linearGradient id="bldgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="50%" stop-color="#0369a1"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#skyGrad)"/>
+  <!-- Sun & Clouds -->
+  <circle cx="700" cy="90" r="50" fill="#fde047" opacity="0.9"/>
+  <path d="M120,80 Q140,50 170,70 Q200,50 230,70 Q250,90 230,110 Q120,110 120,80 Z" fill="#ffffff" opacity="0.8"/>
+  <path d="M480,90 Q500,65 530,85 Q560,65 590,85 Q610,105 590,120 Q480,120 480,90 Z" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="380" width="800" height="120" fill="url(#grassGrad)"/>
+  <path d="M 0,380 Q 200,365 400,380 T 800,380 L 800,500 L 0,500 Z" fill="#22c55e" opacity="0.4"/>
+  
+  <!-- Main School Building -->
+  <polygon points="400,130 200,210 600,210" fill="url(#roofGrad)"/>
+  <rect x="220" y="210" width="360" height="170" fill="url(#bldgGrad)" stroke="#0284c7" stroke-width="3" rx="4"/>
+  
+  <!-- Side Wings -->
+  <rect x="100" y="240" width="120" height="140" fill="#f8fafc" stroke="#0284c7" stroke-width="2" rx="4"/>
+  <rect x="580" y="240" width="120" height="140" fill="#f8fafc" stroke="#0284c7" stroke-width="2" rx="4"/>
+  
+  <!-- Pillars & Arch Door -->
+  <rect x="250" y="220" width="20" height="160" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="530" y="220" width="20" height="160" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <path d="M360,380 L360,300 Q400,270 440,300 L440,380 Z" fill="#0369a1"/>
+  
+  <!-- Windows -->
+  <g fill="#38bdf8" stroke="#0284c7" stroke-width="1.5">
+    <rect x="280" y="230" width="35" height="40" rx="3"/>
+    <rect x="330" y="230" width="35" height="40" rx="3"/>
+    <rect x="435" y="230" width="35" height="40" rx="3"/>
+    <rect x="485" y="230" width="35" height="40" rx="3"/>
+    <rect x="120" y="260" width="35" height="35" rx="3"/>
+    <rect x="165" y="260" width="35" height="35" rx="3"/>
+    <rect x="600" y="260" width="35" height="35" rx="3"/>
+    <rect x="645" y="260" width="35" height="35" rx="3"/>
+  </g>
+  
+  <!-- School Flag -->
+  <line x1="400" y1="130" x2="400" y2="70" stroke="#475569" stroke-width="4"/>
+  <polygon points="400,70 460,85 400,100" fill="#ea580c"/>
+  
+  <!-- Banner Text -->
+  <rect x="250" y="185" width="300" height="32" fill="#ffffff" rx="16" filter="drop-shadow(0 2px 5px rgba(0,0,0,0.15))"/>
+  <text x="400" y="206" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="bold" fill="#0369a1" text-anchor="middle">MAA DURGA H.S. SCHOOL SEMARIYA</text>
+  
+  <!-- Bottom Caption Badge -->
+  <rect x="30" y="430" width="340" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
+  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🏫 भव्य विद्यालय परिसर (Campus View)</text>
+</svg>

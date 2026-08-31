@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>फीडबैक एवं सुझाव (Feedback Portal) | Maa Durga H.S. School Semariya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Tiro Devanagari Hindi', sans-serif; }
+    body { background: #fdf2f8; color: #1e293b; min-height: 100vh; padding: 1.5rem 1rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    .card { background: #fff; border: 1.5px solid #fbcfe8; border-radius: 12px; padding: 1.75rem; box-shadow: 0 8px 20px rgba(219,39,119,0.08); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; text-decoration: none; }
+    .btn-fb { background: #db2777; color: #fff; }
+    .btn-sec { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.35rem; }
+    .form-control { width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fce7f3; padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" style="width: 48px; height: 48px; border-radius: 50%;" alt="Logo">
+          <div>
+            <h1 style="font-size: 1.3rem; color: #be185d; font-weight: 800;">माँ दुर्गा उच्चतर माध्यमिक विद्यालय</h1>
+            <p style="font-size: 0.82rem; color: #64748b;">सेमरिया (रीवा) • अभिभावक व छात्र फीडबैक</p>
+          </div>
+        </div>
+        <a href="../index.html" class="btn btn-sec">🏠 मुख्य पृष्ठ (Home)</a>
+      </div>
+
+      <form onsubmit="handleFeedback(event)">
+        <div class="form-group">
+          <label>आपका नाम (Your Name) *</label>
+          <input type="text" id="fbName" class="form-control" placeholder="उदा. राजेश कुमार पटेल" required>
+        </div>
+        <div class="form-group">
+          <label>मोबाइल नंबर (Mobile No.) *</label>
+          <input type="tel" id="fbPhone" class="form-control" pattern="[0-9]{10}" inputmode="numeric" placeholder="10 अंकों का फोन नंबर" required>
+        </div>
+        <div class="form-group">
+          <label>रेटिंग (Rating):</label>
+          <select id="fbRating" class="form-control">
+            <option value="5">⭐⭐⭐⭐⭐ उत्कृष्ट (5 / 5)</option>
+            <option value="4">⭐⭐⭐⭐ बहुत अच्छा (4 / 5)</option>
+            <option value="3">⭐⭐⭐ अच्छा (3 / 5)</option>
+            <option value="2">⭐⭐ सुधार की आवश्यकता (2 / 5)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>आपका सुझाव / संदेश (Feedback Message) *</label>
+          <textarea id="fbMsg" class="form-control" rows="3" placeholder="विद्यालय की शिक्षण व्यवस्था या अन्य सुविधाओं के संबंध में अपना विचार लिखें..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-fb" style="width: 100%; justify-content: center;">💌 फीडबैक सबमिट करें (Submit)</button>
+      </form>
+
+      <div id="fbSuccess" style="display:none; margin-top: 1.25rem; padding: 1rem; background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 8px; color: #be185d; text-align: center; font-weight: 700;">
+        💖 आपके बहुमूल्य सुझाव के लिए धन्यवाद!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleFeedback(e) {
+      e.preventDefault();
+      const fb = {
+        name: document.getElementById('fbName').value.trim(),
+        phone: document.getElementById('fbPhone').value.trim(),
+        rating: document.getElementById('fbRating').value,
+        message: document.getElementById('fbMsg').value.trim(),
+        date: new Date().toLocaleString('hi-IN')
+      };
+      try {
+        const list = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
+        list.unshift(fb);
+        localStorage.setItem('mdhss_feedbacks', JSON.stringify(list));
+      } catch (err) {}
+      document.getElementById('fbSuccess').style.display = 'block';
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>

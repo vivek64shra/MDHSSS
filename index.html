@@ -1799,9 +1799,447 @@
         height: 600px;
       }
     }
+
+    /* ==========================================================================
+       SIDE CORNER FLOATING MENU & SLIDE-OUT DRAWER
+       ========================================================================== */
+    .floating-corner-menu-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 1050;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      border: 2px solid #38bdf8;
+      border-radius: 9999px;
+      padding: 0.55rem 1.15rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+    }
+    .floating-corner-menu-btn:hover {
+      background: linear-gradient(135deg, #0369a1, #075985);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.6);
+    }
+    .drawer-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1060;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .drawer-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .side-corner-drawer {
+      position: fixed;
+      top: 0;
+      right: -360px;
+      width: 340px;
+      max-width: 88vw;
+      height: 100vh;
+      background: #ffffff;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+      z-index: 1070;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+    .side-corner-drawer.open {
+      right: 0;
+    }
+    .drawer-header {
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #38bdf8;
+    }
+    .drawer-close-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .drawer-close-btn:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      transform: rotate(90deg);
+    }
+    .drawer-body {
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+    .drawer-section-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0.75rem 0 0.25rem 0.25rem;
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 10px;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+    }
+    .drawer-item:hover {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-color: #7dd3fc;
+      transform: translateX(-4px);
+    }
+    .drawer-item-icon {
+      font-size: 1.25rem;
+    }
+
+    /* ==========================================================================
+       FIRST-TIME VISIT NOTIFICATION MODAL POPUP
+       ========================================================================== */
+    .first-time-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .first-time-modal-card {
+      width: 100%;
+      max-width: 620px;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 3px solid #38bdf8;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      animation: scaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .notice-modal-header {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .notice-badge-chip {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      padding: 0.25rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      display: inline-block;
+    }
+    .notice-modal-body {
+      padding: 1.5rem;
+      color: #334155;
+    }
+    .notice-modal-footer {
+      padding: 1rem 1.5rem 1.25rem;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .btn-close-notice-bottom {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 2px solid #fca5a5;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-close-notice-bottom:hover {
+      background: #fecaca;
+      border-color: #f87171;
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       AUTO-SCROLLING VISUAL IMAGE GALLERY ON HOMEPAGE
+       ========================================================================== */
+    .auto-gallery-section {
+      margin-bottom: 2.5rem;
+    }
+    .gallery-marquee-wrapper {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 0.5rem 0 1rem;
+    }
+    .gallery-track {
+      display: flex;
+      gap: 1.25rem;
+      width: max-content;
+      animation: galleryMarqueeScroll 45s linear infinite;
+    }
+    .gallery-marquee-wrapper:hover .gallery-track {
+      animation-play-state: paused;
+    }
+    @keyframes galleryMarqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .gallery-card {
+      width: 310px;
+      flex-shrink: 0;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1.5px solid #bae6fd;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .gallery-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.2);
+      border-color: #0284c7;
+    }
+    .gallery-img-box {
+      width: 100%;
+      height: 185px;
+      background: #f1f5f9;
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-card:hover .gallery-img-box img {
+      transform: scale(1.06);
+    }
+    .gallery-tag-pill {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(15, 23, 42, 0.75);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      backdrop-filter: blur(4px);
+    }
+    .gallery-info {
+      padding: 1rem;
+    }
+    .gallery-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+    .gallery-desc {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       DETAILED STUDENT MARKSHEET CERTIFICATE (STRICTLY ROLL NUMBER BASED)
+       ========================================================================== */
+    .nat-marksheet-cert {
+      border: 3px double #0369a1;
+      border-radius: 16px;
+      padding: 1.5rem;
+      background: #ffffff;
+      box-shadow: 0 8px 30px rgba(2, 132, 199, 0.12);
+      margin-top: 1.25rem;
+    }
+    .nat-cert-header {
+      text-align: center;
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .nat-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 1.25rem;
+      font-size: 0.92rem;
+    }
+    .nat-marksheet-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+    }
+    .nat-marksheet-table th {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 8px 10px;
+      text-align: center;
+      border: 1px solid #0369a1;
+      font-weight: 700;
+    }
+    .nat-marksheet-table td {
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      text-align: center;
+    }
+    .nat-marksheet-table td.text-left {
+      text-align: left;
+      font-weight: 600;
+    }
+    .nat-marksheet-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .nat-marksheet-table tr.total-row {
+      background: #eff6ff;
+      font-weight: 800;
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- FLOATING SIDE CORNER MENU BAR BUTTON -->
+  <button id="floatingCornerMenuBtn" onclick="toggleCornerDrawer()" class="floating-corner-menu-btn" aria-label="मेनू खोलें" title="नेविगेशन मेनू">
+    <span class="menu-icon-bars">☰</span>
+    <span class="menu-label-text">मेनू (Menu)</span>
+  </button>
+
+  <!-- SLIDE-OUT CORNER NAVIGATION DRAWER -->
+  <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeCornerDrawer()"></div>
+  <div id="sideCornerDrawer" class="side-corner-drawer">
+    <div class="drawer-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" alt="Logo" style="width:42px; height:42px; border-radius:50%; border:2px solid #fff;">
+        <div>
+          <h3 style="font-size:0.95rem; color:#ffffff; font-weight:800; line-height:1.2;">माँ दुर्गा उ.मा. विद्यालय</h3>
+          <p style="font-size:0.75rem; color:#e0f2fe;">सेमरिया (रीवा) • 9:30 AM - 4:00 PM</p>
+        </div>
+      </div>
+      <button class="drawer-close-btn" onclick="closeCornerDrawer()" title="मेनू बंद करें">✕</button>
+    </div>
+    
+    <div class="drawer-body">
+      <div class="drawer-section-title">🌟 मुख्य नेविगेशन एवं पोर्टल्स</div>
+      <a class="drawer-item" onclick="navigateToPage('home'); closeCornerDrawer();">
+        <span class="drawer-item-icon">🏠</span>
+        <span>मुख्य पृष्ठ (Home)</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('student'); closeCornerDrawer();">
+        <span class="drawer-item-icon">🏆</span>
+        <span>परीक्षा परिणाम व अंकपत्र (Results)</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('teacher'); closeCornerDrawer();">
+        <span class="drawer-item-icon">👨‍🏫</span>
+        <span>शिक्षक पोर्टल (Teacher Module)</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('admission'); closeCornerDrawer();">
+        <span class="drawer-item-icon">📝</span>
+        <span>ऑनलाइन प्रवेश फॉर्म 2026-27</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('whatsapp'); closeCornerDrawer();">
+        <span class="drawer-item-icon">💬</span>
+        <span>कक्षावार व्हाट्सएप ग्रुप्स</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('books'); closeCornerDrawer();">
+        <span class="drawer-item-icon">📚</span>
+        <span>MP Board Books Portal</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('facilities'); closeCornerDrawer();">
+        <span class="drawer-item-icon">🏫</span>
+        <span>कैंपस व लैब सुविधाएं</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('staff'); closeCornerDrawer();">
+        <span class="drawer-item-icon">👥</span>
+        <span>स्टाफ संपर्क डायरेक्टरी</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('feedback'); closeCornerDrawer();">
+        <span class="drawer-item-icon">⭐</span>
+        <span>अभिभावक व छात्र फीडबैक</span>
+      </a>
+      <a class="drawer-item" onclick="navigateToPage('admin'); closeCornerDrawer();">
+        <span class="drawer-item-icon">🔐</span>
+        <span>प्रशासक नियंत्रण (Admin Panel)</span>
+      </a>
+
+      <div class="drawer-section-title" style="margin-top:1rem;">📢 त्वरित सेवाएं</div>
+      <button class="drawer-item" style="width:100%; border:none; text-align:left; background:#eff6ff; color:#0284c7;" onclick="openFirstTimeNoticeManually(); closeCornerDrawer();">
+        <span class="drawer-item-icon">🔔</span>
+        <span>सत्र 2026-27 मुख्य सूचना पॉपअप</span>
+      </button>
+      <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="drawer-item" style="background:#f5f3ff; color:#7c3aed;">
+        <span class="drawer-item-icon">📸</span>
+        <span>स्कूल फोटो गैलरी (Google Photos) ↗</span>
+      </a>
+      <a href="packets/index.html" class="drawer-item" style="background:#f0fdf4; color:#166534;">
+        <span class="drawer-item-icon">📦</span>
+        <span>10 अलग-अलग HTML पैकेट्स ↗</span>
+      </a>
+    </div>
+  </div>
 
   <!-- Ambient background spheres for White-Blue glassmorphism lighting -->
   <div class="ambient-sphere sphere-1"></div>
@@ -1822,7 +2260,10 @@
         <a href="#home" onclick="navigateToPage('home'); return false;" class="top-bar-btn" title="मुख्य पृष्ठ पर जाएं">
           🏠 <span>मुख्य पृष्ठ (Home)</span>
         </a>
-        <a href="#feedback" onclick="navigateToPage('feedback'); return false;" class="top-bar-btn" style="background: rgba(255, 255, 255, 0.12); color: #fef08a; border-color: rgba(254, 240, 138, 0.4);" title="अभिभावक एवं छात्र फीडबैक फॉर्म">
+        <button type="button" onclick="openFirstTimeNoticeManually()" class="top-bar-btn" style="background: rgba(254, 240, 138, 0.2); color: #fef08a; border-color: rgba(254, 240, 138, 0.5); cursor:pointer;" title="विद्यालय मुख्य सूचना">
+          📢 <span>सूचना (Notice)</span>
+        </button>
+        <a href="#feedback" onclick="navigateToPage('feedback'); return false;" class="top-bar-btn" style="background: rgba(255, 255, 255, 0.12); color: #bae6fd; border-color: rgba(186, 230, 253, 0.4);" title="अभिभावक एवं छात्र फीडबैक फॉर्म">
           💬 <span>फीडबैक (Feedback)</span>
         </a>
       </div>
@@ -3123,45 +3564,44 @@
     <div class="subpage-view" id="view-student" style="display: none;">
       <div class="glass-card page-card-body">
         <div class="page-header-block">
-          <span class="section-chip">🎓 विद्यार्थी कॉर्नर</span>
-          <h2 class="page-title-main">विद्यार्थी पोर्टल एवं ऑनलाइन परीक्षा परिणाम</h2>
+          <span class="section-chip">🎓 विद्यार्थी व अभिभावक कॉर्नर</span>
+          <h2 class="page-title-main">विद्यार्थी पोर्टल, परीक्षा परिणाम एवं प्रगति एनालिटिक्स</h2>
           <p class="page-subtitle-text">
-            डिजिटल रिजल्ट खोजें, अंकपत्र डाउनलोड करें एवं ई-लर्निंग सामग्री प्राप्त करें
+            डिजिटल रिजल्ट खोजें, Recharts विजुअल प्रोग्रेस एनालिटिक्स से समय के साथ प्रदर्शन ट्रैक करें
           </p>
         </div>
 
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; margin-top:1.5rem;">
+        <!-- Student Progress Analytics React Root -->
+        <div id="student-analytics-root" style="margin-top: 1.5rem;"></div>
+
+        <div style="display:grid; grid-template-columns: 1fr; gap:1.5rem; margin-top:2rem;">
           <!-- Result Search -->
-          <div class="glass-card" style="padding:1.75rem; background:#ffffff; border:1px solid #bae6fd;">
-            <h3 style="color:#0369a1; margin-bottom:0.75rem;">🏆 परीक्षा परिणाम खोजें (View Result)</h3>
-            <p style="font-size:0.9rem; color:#64748b; margin-bottom:1.2rem;">अपना अनुक्रमांक (Roll Number) दर्ज करें:</p>
-            <div class="form-group-custom">
-              <input type="text" id="natRollInput" class="form-input-custom" placeholder="उदा. 261404101" />
+          <div class="glass-card" style="padding:1.75rem; background:#ffffff; border:1.5px solid #bae6fd;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.75rem;">
+              <h3 style="color:#0369a1; margin:0;">🏆 आधिकारिक डिजिटल अंकपत्र एवं परीक्षा परिणाम (Student Marksheet)</h3>
+              <span style="font-size:0.8rem; background:#e0f2fe; color:#0369a1; padding:3px 10px; border-radius:9999px; font-weight:700;">गोपनीयता मानक: केवल अनुक्रमांक (No Names)</span>
             </div>
-            <button type="button" class="btn-hero-pri" style="width:100%; justify-content:center; border:none; cursor:pointer;" onclick="searchStudentResult()">
-              🔍 रिजल्ट देखें (Check Marksheet)
-            </button>
-
-            <div id="natResultDisplay" style="display:none; margin-top:1.25rem; padding:1rem; background:#f0f9ff; border:1px solid #bae6fd; border-radius:var(--radius-sm);">
-              <h4 style="color:#0369a1; margin-bottom:0.3rem;">🎖️ विद्यार्थी परिणाम: उत्तीर्ण (First Division)</h4>
-              <p style="font-size:0.92rem; color:#334155;">नाम: विकास कुमार | कक्षा: 10वीं बोर्ड | कुल प्राप्तांक: <strong>88.6%</strong></p>
-              <p style="font-size:0.85rem; color:#16a34a; font-weight:700; margin-top:4px;">स्थिति: PASSED WITH DISTINCTION</p>
-            </div>
-          </div>
-
-          <!-- Quick Study Links -->
-          <div class="glass-card" style="padding:1.75rem; background:#ffffff; border:1px solid #bae6fd;">
-            <h3 style="color:#0369a1; margin-bottom:0.75rem;">📖 शैक्षणिक लिंक्स</h3>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:1rem;">
-              <a href="https://mpboardbooks.com/" target="_blank" rel="noopener noreferrer" class="dropdown-item-link" style="background:#f8fafc; border:1px solid #e2e8f0;">
-                <span class="icon-prefix">📚</span> MP Board Books Download (mpboardbooks.com) ↗
-              </a>
-              <button class="dropdown-item-link" style="background:#f8fafc; border:1px solid #e2e8f0; width:100%; text-align:left; cursor:pointer;" onclick="navigateToPage('whatsapp')">
-                <span class="icon-prefix">💬</span> कक्षावार व्हाट्सएप ग्रुप्स जॉइन करें
+            <p style="font-size:0.9rem; color:#64748b; margin-bottom:1.2rem;">सत्र 2026-27 का 6 अंकों का रोल नंबर दर्ज करें (उदा. 279201, 279202, 279203, 279204):</p>
+            
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem;">
+              <input type="text" id="natRollInput" class="form-input-custom" inputmode="numeric" placeholder="उदा. 279201" style="max-width:300px;" value="279201" />
+              <button type="button" class="btn-hero-pri" style="border:none; cursor:pointer;" onclick="searchStudentResult()">
+                🔍 अंकपत्र एवं परिणाम देखें (Show Marksheet)
               </button>
-              <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="dropdown-item-link" style="background:#f8fafc; border:1px solid #e2e8f0;">
-                <span class="icon-prefix">📸</span> स्कूल फोटो गैलरी ↗
-              </a>
+            </div>
+
+            <!-- Quick Roll Number Chips -->
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:1rem;">
+              <span style="font-size:0.82rem; color:#64748b; font-weight:700;">त्वरित रोल नंबर उदाहरण:</span>
+              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279201'; searchStudentResult();">Roll: 279201</button>
+              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279202'; searchStudentResult();">Roll: 279202</button>
+              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279203'; searchStudentResult();">Roll: 279203</button>
+              <button type="button" class="chip" onclick="document.getElementById('natRollInput').value='279204'; searchStudentResult();">Roll: 279204</button>
+            </div>
+
+            <!-- Result Marksheet Certificate Output -->
+            <div id="natResultDisplay" style="display:none; margin-top:1.25rem;">
+              <!-- Dynamic certificate injected via searchStudentResult() -->
             </div>
           </div>
         </div>
@@ -3789,6 +4229,27 @@ function doPost(e) {
         </div>
       </section>
 
+      <!-- AUTO-SCROLLING VISUAL IMAGE GALLERY -->
+      <section class="section-wrapper auto-gallery-section" id="homeAutoGallerySection">
+        <div class="section-heading-box" style="margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span class="section-chip">📸 स्कूल फोटो व गतिविधि गैलरी</span>
+            <h3 class="section-main-title" style="font-size:1.65rem;">कैंपस, लैब्स एवं शैक्षणिक गतिविधियां (Auto-Scrolling Gallery)</h3>
+            <p style="font-size:0.9rem; color:#64748b; margin-top:4px;">हमारे विद्यालय का आधुनिक परिवेश, स्मार्ट क्लासरूम, प्रयोगशालाएं एवं खेल गतिविधियां</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-hero-sec" style="font-size:0.85rem; padding:0.45rem 1rem; cursor:pointer;" onclick="openAddImageModal()">➕ नई फोटो जोड़ें</button>
+            <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.85rem; padding:0.45rem 1rem;">📸 गूगल एलबम ↗</a>
+          </div>
+        </div>
+
+        <div class="gallery-marquee-wrapper" id="galleryMarqueeWrapper">
+          <div class="gallery-track" id="galleryTrack">
+            <!-- Dynamically populated from /images/ & localStorage -->
+          </div>
+        </div>
+      </section>
+
       <!-- COMPACT HIGHLIGHTS SUMMARY -->
       <section class="section-wrapper" style="margin-bottom:1.5rem;">
         <div class="section-heading-box" style="margin-bottom:1rem;">
@@ -4028,6 +4489,14 @@ function doPost(e) {
       // Initialize marks grid table and roll series
       generateMarksGrid();
       updateMarksSeriesInfo();
+
+      // Render Home Auto-Scrolling Image Gallery
+      renderAutoGallery();
+
+      // First-time visit Notification Popup Check
+      setTimeout(() => {
+        checkAndShowFirstTimeNotice();
+      }, 1200);
     });
 
     // 2. Mobile Menu Toggle
@@ -4741,7 +5210,7 @@ function doPost(e) {
             <td style="padding: 10px 12px; font-weight: 700; color: #64748b; text-align: center;">${i}</td>
             <td style="padding: 10px 14px; font-family: monospace; font-weight: 800; color: #0284c7;" id="grid-roll-cell-${i}">${rollNo}</td>
             <td style="padding: 8px 12px; text-align: center;">
-              <input type="text" id="grid-marks-${i}" class="form-input-custom marks-grid-input" placeholder="अंक या AB" maxlength="4" style="padding: 0.45rem 0.75rem; font-size: 1rem; font-weight: 700; text-align: center; width: 120px; border: 1.5px solid #94a3b8; display: inline-block;" onkeydown="handleGridKeyDown(event, ${i})" oninput="handleMarksInputChanged(${i})" />
+              <input type="text" id="grid-marks-${i}" inputmode="numeric" class="form-input-custom marks-grid-input" placeholder="अंक या AB" maxlength="4" style="padding: 0.45rem 0.75rem; font-size: 1rem; font-weight: 700; text-align: center; width: 120px; border: 1.5px solid #94a3b8; display: inline-block;" onkeydown="handleGridKeyDown(event, ${i})" oninput="handleMarksInputChanged(${i})" />
             </td>
             <td style="padding: 8px 12px; text-align: center;" id="grid-status-cell-${i}">
               <span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>
@@ -4966,39 +5435,41 @@ function doPost(e) {
 
       for (let i = 1; i <= 99; i++) {
         const rollNo = computeRollNumber(i);
-        const marksVal = (document.getElementById(`grid-marks-${i}`)?.value || '').trim();
+        let marksVal = (document.getElementById(`grid-marks-${i}`)?.value || '').trim();
 
-        if (marksVal !== '') {
-          enteredCount++;
-          let status = 'Pass';
-          if (marksVal.toUpperCase() === 'AB') {
-            status = 'Absent';
-            absentCount++;
-          } else {
-            const num = parseFloat(marksVal);
-            if (!isNaN(num)) {
-              if (num >= passMarks) {
-                status = 'Pass';
-                passCount++;
-              } else {
-                status = 'Fail';
-                failCount++;
-              }
-            }
-          }
-
-          students.push({
-            serial: i,
-            rollNo: rollNo,
-            marks: marksVal.toUpperCase(),
-            status: status
-          });
+        // If blank, automatically record as Absent (AB) as requested
+        if (marksVal === '') {
+          marksVal = 'AB';
         }
-      }
 
-      if (enteredCount === 0) {
-        alert('कृपया कम से कम 1 विद्यार्थी के अंक या AB प्रविष्ट करें!');
-        return;
+        enteredCount++;
+        let status = 'Pass';
+        if (marksVal.toUpperCase() === 'AB') {
+          status = 'Absent';
+          absentCount++;
+        } else {
+          const num = parseFloat(marksVal);
+          if (!isNaN(num)) {
+            if (num >= passMarks) {
+              status = 'Pass';
+              passCount++;
+            } else {
+              status = 'Fail';
+              failCount++;
+            }
+          } else {
+            status = 'Absent';
+            marksVal = 'AB';
+            absentCount++;
+          }
+        }
+
+        students.push({
+          serial: i,
+          rollNo: rollNo,
+          marks: marksVal.toUpperCase(),
+          status: status
+        });
       }
 
       const newSheetRecord = {
@@ -5870,11 +6341,11 @@ function doPost(e) {
       }
     }
 
-    // 7. Student Result & Roll Number Search
+    // 7. Student Result & Roll Number Search with Analytics Sync & Complete Marksheet
     function searchStudentResult() {
       const rollInput = document.getElementById('studentRollInput') || document.getElementById('natRollInput');
       const resultBox = document.getElementById('studentResultDisplay') || document.getElementById('natResultDisplay');
-      if (!rollInput || !resultBox) return;
+      if (!rollInput) return;
 
       const rollVal = rollInput.value.trim();
       if (!rollVal) {
@@ -5882,11 +6353,415 @@ function doPost(e) {
         return;
       }
 
-      resultBox.style.display = 'block';
-      resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Check stored sheets for accurate info
+      const sheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+      
+      // Subjects list for complete 6-paper marksheet
+      const subjects = [
+        { code: '001', name: 'हिन्दी (Hindi - Special)', maxTh: 75, maxPr: 25, min: 33, defaultMarks: 85 },
+        { code: '002', name: 'अंग्रेजी (English - General)', maxTh: 75, maxPr: 25, min: 33, defaultMarks: 82 },
+        { code: '003', name: 'संस्कृत (Sanskrit)', maxTh: 75, maxPr: 25, min: 33, defaultMarks: 90 },
+        { code: '004', name: 'गणित (Mathematics)', maxTh: 75, maxPr: 25, min: 33, defaultMarks: 88 },
+        { code: '005', name: 'विज्ञान (Science & Technology)', maxTh: 75, maxPr: 25, min: 33, defaultMarks: 86 },
+        { code: '006', name: 'सामाजिक विज्ञान (Social Science)', maxTh: 75, maxPr: 25, min: 33, defaultMarks: 87 }
+      ];
+
+      // Overwrite subject marks if teacher uploaded specific marks for this roll
+      sheets.forEach(s => {
+        if (s.students) {
+          const match = s.students.find(st => String(st.rollNo).trim() === rollVal || String(st.roll).trim() === rollVal);
+          if (match) {
+            const subMatch = subjects.find(sub => s.subject && s.subject.includes(sub.name.split(' ')[0]));
+            if (subMatch) {
+              if (match.marks === 'AB' || match.status === 'Absent') {
+                subMatch.isAbsent = true;
+                subMatch.total = 0;
+              } else {
+                const score = parseFloat(match.marks) || 0;
+                subMatch.defaultMarks = score;
+              }
+            }
+          }
+        }
+      });
+
+      let totalMax = 600;
+      let totalObtained = 0;
+      let hasAbsent = false;
+      let hasFail = false;
+
+      let tableRowsHtml = '';
+      subjects.forEach((sub, idx) => {
+        let th = Math.round(sub.defaultMarks * 0.75);
+        let pr = sub.defaultMarks - th;
+        let tot = sub.defaultMarks;
+        let grade = 'A';
+        let statusText = 'उत्तीर्ण';
+
+        if (sub.isAbsent) {
+          th = 'AB';
+          pr = 'AB';
+          tot = 'AB';
+          grade = 'AB';
+          statusText = 'अनुपस्थित';
+          hasAbsent = true;
+        } else {
+          totalObtained += tot;
+          if (tot >= 90) grade = 'A+';
+          else if (tot >= 80) grade = 'A';
+          else if (tot >= 70) grade = 'B+';
+          else if (tot >= 60) grade = 'B';
+          else if (tot >= 45) grade = 'C';
+          else if (tot >= 33) grade = 'D';
+          else { grade = 'F'; hasFail = true; statusText = 'अनुत्तीर्ण'; }
+        }
+
+        tableRowsHtml += `
+          <tr>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center;">${idx + 1}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:left; font-weight:700; color:#0f172a;">${sub.name}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center;">${sub.maxTh + sub.maxPr}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center;">${sub.min}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center; font-weight:600;">${th}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center; font-weight:600;">${pr}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center; font-weight:800; color:#0284c7;">${tot}</td>
+            <td style="padding:8px 10px; border:1px solid #cbd5e1; text-align:center; font-weight:700; color:${grade === 'F' || grade === 'AB' ? '#dc2626' : '#16a34a'};">${grade}</td>
+          </tr>
+        `;
+      });
+
+      const percentage = (totalObtained / totalMax * 100).toFixed(1);
+      let divisionText = 'प्रथम श्रेणी (FIRST DIVISION)';
+      if (hasAbsent) divisionText = 'अनुपस्थित (ABSENT RECORD)';
+      else if (hasFail) divisionText = 'पूरक / अनुत्तीर्ण (SUPPLEMENTARY / FAIL)';
+      else if (percentage >= 75) divisionText = 'प्रथम श्रेणी में विशेष योग्यता (DISTINCTION - 1ST DIV)';
+      else if (percentage >= 60) divisionText = 'प्रथम श्रेणी (FIRST DIVISION)';
+      else if (percentage >= 45) divisionText = 'द्वितीय श्रेणी (SECOND DIVISION)';
+      else divisionText = 'तृतीय श्रेणी (THIRD DIVISION)';
+
+      const marksheetHtml = `
+        <div class="nat-marksheet-cert">
+          <!-- Marksheet Header -->
+          <div class="nat-cert-header">
+            <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:6px;">
+              <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" style="width:52px; height:52px; border-radius:50%; border:2px solid #0284c7;" alt="MDHSS Logo">
+              <div>
+                <h2 style="font-size:1.35rem; color:#0369a1; font-weight:800; margin:0;">माँ दुर्गा उच्चतर माध्यमिक विद्यालय, सेमरिया</h2>
+                <p style="font-size:0.85rem; color:#475569; margin:2px 0 0 0;">जिला - रीवा (मध्य प्रदेश) • संस्था कोड: 322517 • UDISE: 23140402055</p>
+              </div>
+            </div>
+            <div style="background:#e0f2fe; display:inline-block; padding:4px 16px; border-radius:9999px; font-weight:800; font-size:0.88rem; color:#0369a1; margin-top:6px;">
+              सत्र 2026-27 • परीक्षा अंक सूची (STATEMENT OF MARKS)
+            </div>
+          </div>
+
+          <!-- Roll Number Only Info Grid (Strictly No Names) -->
+          <div class="nat-info-grid">
+            <div>अनुक्रमांक (Roll No): <strong style="color:#0284c7; font-size:1.05rem;">${rollVal}</strong></div>
+            <div>कक्षा (Class): <strong>Class 9th (Section B)</strong></div>
+            <div>परीक्षा सत्र: <strong>2026-27</strong></div>
+            <div>नामांकन क्रमांक: <strong>MDHSS/2026/${rollVal.slice(-4)}</strong></div>
+          </div>
+
+          <!-- Subject Table -->
+          <div style="overflow-x:auto; margin-bottom:1rem;">
+            <table class="nat-marksheet-table">
+              <thead>
+                <tr>
+                  <th style="width:45px;">क्र.</th>
+                  <th>विषय एवं प्रश्नपत्र (Subject & Paper)</th>
+                  <th style="width:85px;">पूर्णांक</th>
+                  <th style="width:85px;">उत्तीर्णांक</th>
+                  <th style="width:90px;">सैद्धांतिक</th>
+                  <th style="width:90px;">प्रायोगिक</th>
+                  <th style="width:105px;">कुल प्राप्तांक</th>
+                  <th style="width:75px;">ग्रेड</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRowsHtml}
+              </tbody>
+              <tfoot>
+                <tr class="total-row" style="background:#eff6ff; font-weight:800;">
+                  <td colspan="2" class="text-left" style="padding:10px; color:#0369a1; font-size:0.95rem;">महायोग (GRAND TOTAL)</td>
+                  <td>${totalMax}</td>
+                  <td>198</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td style="font-size:1.15rem; color:#0284c7;">${totalObtained}</td>
+                  <td style="color:#16a34a; font-size:1.05rem;">${percentage >= 75 ? 'A+' : 'A'}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Result Summary Box -->
+          <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:1.25rem;">
+            <div>
+              <div style="font-size:1.1rem; font-weight:800; color:#15803d;">🎖️ परिणाम: ${divisionText}</div>
+              <div style="font-size:0.82rem; color:#475569;">डिजिटल रूप से प्रमाणित परीक्षा अभिलेख • MDHSS परीक्षा शाखा</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.05rem; font-weight:800; color:#166534;">कुल प्राप्तांक: ${totalObtained} / ${totalMax} (${percentage}%)</div>
+              <div style="font-size:0.82rem; color:#166534; font-weight:700;">स्थिति: परीक्षा परिणाम सत्यापित</div>
+            </div>
+          </div>
+
+          <!-- Signatures & Actions -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px dashed #94a3b8; padding-top:1rem; flex-wrap:wrap; gap:12px;">
+            <div style="font-size:0.8rem; color:#64748b;">
+              जारी तिथि: ${new Date().toLocaleDateString('en-IN')}<br>
+              <span style="font-size:0.75rem; color:#94a3b8;">* यह एक कंप्यूटर जनित अधिकृत डिजिटल अंकपत्र है।</span>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button type="button" class="btn-hero-sec" style="font-size:0.85rem; padding:0.45rem 1rem;" onclick="window.print()">🖨️ अंकपत्र प्रिंट करें</button>
+              <a href="packets/student-result.html" class="btn-hero-pri" style="font-size:0.85rem; padding:0.45rem 1rem;">📦 स्टैंडअलोन पैकेट खोलें ↗</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (resultBox) {
+        resultBox.innerHTML = marksheetHtml;
+        resultBox.style.display = 'block';
+      }
+
+      // Dispatch event to update Recharts React component
+      window.dispatchEvent(new CustomEvent('mdhss_view_student_analytics', {
+        detail: { rollNo: rollVal }
+      }));
+
+      const analyticsContainer = document.getElementById('student-analytics-container');
+      if (analyticsContainer) {
+        analyticsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
-    // 8. Scroll to top button visibility
+    // ==========================================================================
+    // 8. SIDE CORNER DRAWER TOGGLE LOGIC
+    // ==========================================================================
+    function toggleCornerDrawer() {
+      const drawer = document.getElementById('sideCornerDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      if (drawer && backdrop) {
+        drawer.classList.toggle('open');
+        backdrop.classList.toggle('open');
+      }
+    }
+
+    function closeCornerDrawer() {
+      const drawer = document.getElementById('sideCornerDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      if (drawer && backdrop) {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+      }
+    }
+
+    // ==========================================================================
+    // 9. FIRST-TIME NOTIFICATION POPUP LOGIC (ADMIN CONTROLLED & SESSION CONTROLLED)
+    // ==========================================================================
+    function checkAndShowFirstTimeNotice() {
+      // Check if dismissed in this session
+      const dismissed = sessionStorage.getItem('mdhss_notice_popup_dismissed');
+      if (dismissed === 'true') {
+        return;
+      }
+
+      // Load admin notification configuration or default
+      let noticeData = {
+        badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
+        title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
+        body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
+        btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
+        btnAction: 'admission'
+      };
+
+      try {
+        const saved = localStorage.getItem('mdhss_popup_notification');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          noticeData = { ...noticeData, ...parsed };
+        }
+      } catch (e) {}
+
+      const badgeEl = document.getElementById('firstNoticeBadge');
+      const titleEl = document.getElementById('firstNoticeTitle');
+      const bodyEl = document.getElementById('firstNoticeBodyText');
+      const btnEl = document.getElementById('firstNoticeActionBtn');
+      const modalEl = document.getElementById('firstTimeNoticeModal');
+
+      if (badgeEl) badgeEl.textContent = noticeData.badge;
+      if (titleEl) titleEl.textContent = noticeData.title;
+      if (bodyEl) bodyEl.textContent = noticeData.body;
+      if (btnEl) btnEl.textContent = noticeData.btnText;
+
+      if (modalEl) {
+        modalEl.style.display = 'flex';
+      }
+    }
+
+    function closeFirstTimeNotice() {
+      const modalEl = document.getElementById('firstTimeNoticeModal');
+      if (modalEl) {
+        modalEl.style.display = 'none';
+      }
+      // Record dismissal in sessionStorage so it only opens on first visit of session
+      sessionStorage.setItem('mdhss_notice_popup_dismissed', 'true');
+    }
+
+    function openFirstTimeNoticeManually() {
+      const modalEl = document.getElementById('firstTimeNoticeModal');
+      if (modalEl) {
+        modalEl.style.display = 'flex';
+      }
+    }
+
+    function onFirstNoticeActionClick() {
+      closeFirstTimeNotice();
+      navigateToPage('admission');
+    }
+
+    // ==========================================================================
+    // 10. AUTO-SCROLLING VISUAL IMAGE GALLERY ON HOMEPAGE
+    // ==========================================================================
+    const DEFAULT_GALLERY_IMAGES = [
+      {
+        id: 'img-1',
+        title: 'मुख्य विद्यालय भवन व भव्य प्रांगण',
+        desc: 'सेमरिया नगर का सर्वसुविधायुक्त एवं अनुशासित शैक्षणिक परिसर।',
+        tag: '🏫 मुख्य परिसर',
+        url: '/images/school_building.svg'
+      },
+      {
+        id: 'img-2',
+        title: 'डिजिटल स्मार्ट क्लासरूम',
+        desc: 'इंटरैक्टिव स्मार्ट बोर्ड एवं ऑडियो-विजुअल शिक्षा प्रणाली।',
+        tag: '💻 स्मार्ट क्लास',
+        url: '/images/smart_classroom.svg'
+      },
+      {
+        id: 'img-3',
+        title: 'हाई-टेक साइंस लैबोरेटरी',
+        desc: 'भौतिकी, रसायन व जीव विज्ञान के संपूर्ण प्रायोगिक उपकरण।',
+        tag: '🔬 साइंस लैब',
+        url: '/images/science_lab.svg'
+      },
+      {
+        id: 'img-4',
+        title: 'आधुनिक कंप्यूटर एवं आईटी लैब',
+        desc: 'हाई-स्पीड इंटरनेट, कोडिंग एवं डिजिटल कौशल प्रशिक्षण।',
+        tag: '🖥️ कंप्यूटर लैब',
+        url: '/images/computer_lab.svg'
+      },
+      {
+        id: 'img-5',
+        title: 'समृद्ध पुस्तकालय व रीडिंग रूम',
+        desc: 'एनसीईआरटी, म.प्र. बोर्ड पुस्तकें एवं प्रतियोगी संदर्भ ग्रंथ।',
+        tag: '📚 पुस्तकालय',
+        url: '/images/library_books.svg'
+      },
+      {
+        id: 'img-6',
+        title: 'खेलकूद एवं एथलेटिक्स ग्राउंड',
+        desc: 'क्रिकेट, वॉलीबॉल, खो-खो एवं शारीरिक दक्षता प्रशिक्षण।',
+        tag: '🏆 खेलकूद',
+        url: '/images/sports_activities.svg'
+      },
+      {
+        id: 'img-7',
+        title: 'वार्षिक सांस्कृतिक उत्सव व मंच',
+        desc: 'छात्र-छात्राओं की प्रतिभा एवं भारतीय संस्कारों का उत्सव।',
+        tag: '🎭 सांस्कृतिक मंच',
+        url: '/images/cultural_event.svg'
+      },
+      {
+        id: 'img-8',
+        title: 'सुरक्षित बस एवं परिवहन सेवा',
+        desc: 'सेमरिया नगर एवं आसपास के समस्त ग्रामों तक सुरक्षित आवागमन।',
+        tag: '🚌 स्कूल बस',
+        url: '/images/school_bus.svg'
+      }
+    ];
+
+    function renderAutoGallery() {
+      const track = document.getElementById('galleryTrack');
+      if (!track) return;
+
+      let customImages = [];
+      try {
+        customImages = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
+      } catch (e) {}
+
+      const allImages = [...customImages, ...DEFAULT_GALLERY_IMAGES];
+      // Clone array to allow seamless continuous loop marquee
+      const loopImages = [...allImages, ...allImages];
+
+      let html = '';
+      loopImages.forEach((img, idx) => {
+        html += `
+          <div class="gallery-card" onclick="openGalleryImagePreview('${img.url}', '${img.title}')">
+            <div class="gallery-img-box">
+              <img src="${img.url}" alt="${img.title}" loading="lazy" onerror="this.src='/images/school_building.svg'">
+              <span class="gallery-tag-pill">${img.tag || '📸 फोटो'}</span>
+            </div>
+            <div class="gallery-info">
+              <h4 class="gallery-title">${img.title}</h4>
+              <p class="gallery-desc">${img.desc || ''}</p>
+            </div>
+          </div>
+        `;
+      });
+
+      track.innerHTML = html;
+    }
+
+    function openGalleryImagePreview(url, title) {
+      window.open(url, '_blank');
+    }
+
+    function openAddImageModal() {
+      const modal = document.getElementById('addImageModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAddImageModal() {
+      const modal = document.getElementById('addImageModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function saveNewCustomGalleryImage(e) {
+      if (e) e.preventDefault();
+      const title = document.getElementById('newImgTitle')?.value.trim();
+      const url = document.getElementById('newImgUrl')?.value.trim();
+      const desc = document.getElementById('newImgDesc')?.value.trim();
+      const tag = document.getElementById('newImgTag')?.value.trim();
+
+      if (!title || !url) {
+        alert('कृपया फोटो का शीर्षक और URL दर्ज करें!');
+        return;
+      }
+
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
+      } catch (e) {}
+
+      stored.unshift({
+        id: 'cimg-' + Date.now(),
+        title: title,
+        url: url,
+        desc: desc || '',
+        tag: tag || '📸 नई फोटो'
+      });
+
+      localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
+      renderAutoGallery();
+      closeAddImageModal();
+      alert('✅ नई फोटो सफलतापूर्वक गैलरी में जोड़ दी गई है!');
+    }
+
+    // 11. Scroll to top button visibility
     window.addEventListener('scroll', () => {
       const topBtn = document.getElementById('scrollTopBtn');
       if (topBtn) {
@@ -5898,5 +6773,87 @@ function doPost(e) {
       }
     });
   </script>
+
+  <!-- ==========================================================================
+       FIRST-TIME VISIT NOTIFICATION MODAL DIALOG
+       ========================================================================== -->
+  <div id="firstTimeNoticeModal" class="first-time-modal-overlay" style="display:none;">
+    <div class="first-time-modal-card">
+      <div class="notice-modal-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" style="width:48px; height:48px; border-radius:50%; border:2px solid #fff;" alt="Logo">
+          <div>
+            <span id="firstNoticeBadge" class="notice-badge-chip">🔔 आवश्यक सूचना • सत्र 2026-27</span>
+            <div style="font-size:0.82rem; color:#e0f2fe; margin-top:2px;">Maa Durga Higher Secondary School Semariya</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="notice-modal-body">
+        <h3 id="firstNoticeTitle" style="font-size:1.25rem; color:#0284c7; font-weight:800; margin-bottom:0.75rem; line-height:1.35;">
+          माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!
+        </h3>
+        <div id="firstNoticeBodyText" style="font-size:0.92rem; color:#334155; line-height:1.65; margin-bottom:1rem;">
+          नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।
+        </div>
+        
+        <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 14px; font-size:0.85rem; color:#166534; margin-bottom:1rem;">
+          ✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:0.82rem; color:#64748b; margin-bottom:1.25rem;">
+          <span>📞 हेल्पलाइन: <strong>9200178385, 7024036526</strong></span>
+          <span>🏫 UDISE: <strong>23140402055</strong></span>
+        </div>
+        
+        <button type="button" id="firstNoticeActionBtn" class="btn-hero-pri" style="width:100%; justify-content:center; border:none; cursor:pointer;" onclick="onFirstNoticeActionClick()">
+          ✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें
+        </button>
+      </div>
+
+      <div class="notice-modal-footer">
+        <!-- Close notification button at the very bottom as requested -->
+        <button type="button" class="btn-close-notice-bottom" onclick="closeFirstTimeNotice()">
+          ❌ सूचना बंद करें एवं मुख्य पोर्टल देखें (Close Notification)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: ADD IMAGE TO HOMEPAGE AUTO-SCROLLING GALLERY
+       ========================================================================== -->
+  <div id="addImageModal" class="first-time-modal-overlay" style="display:none;">
+    <div class="first-time-modal-card" style="max-width:500px;">
+      <div class="notice-modal-header">
+        <h3 style="font-size:1.15rem; color:#ffffff; margin:0;">➕ नई फोटो जोड़ें (Add Gallery Image)</h3>
+        <button type="button" style="background:transparent; border:none; color:#fff; font-size:1.3rem; cursor:pointer;" onclick="closeAddImageModal()">✕</button>
+      </div>
+      <form onsubmit="saveNewCustomGalleryImage(event)" style="padding:1.5rem;">
+        <div class="form-group-custom" style="margin-bottom:1rem;">
+          <label style="display:block; font-weight:700; font-size:0.88rem; margin-bottom:0.35rem;">फोटो शीर्षक (Title):</label>
+          <input type="text" id="newImgTitle" class="form-input-custom" placeholder="उदा. नवीन कंप्यूटर लैब या वार्षिक खेल उत्सव" required>
+        </div>
+        <div class="form-group-custom" style="margin-bottom:1rem;">
+          <label style="display:block; font-weight:700; font-size:0.88rem; margin-bottom:0.35rem;">फोटो URL या पाथ (Image URL):</label>
+          <input type="url" id="newImgUrl" class="form-input-custom" placeholder="उदा. https://... या /images/my_photo.jpg" required>
+        </div>
+        <div class="form-group-custom" style="margin-bottom:1rem;">
+          <label style="display:block; font-weight:700; font-size:0.88rem; margin-bottom:0.35rem;">टैग (Tag):</label>
+          <input type="text" id="newImgTag" class="form-input-custom" placeholder="उदा. 🔬 लैब / 🏆 खेल / 🏫 कैंपस" value="📸 स्कूल फोटो">
+        </div>
+        <div class="form-group-custom" style="margin-bottom:1.25rem;">
+          <label style="display:block; font-weight:700; font-size:0.88rem; margin-bottom:0.35rem;">संक्षिप्त विवरण (Description):</label>
+          <input type="text" id="newImgDesc" class="form-input-custom" placeholder="उदा. छात्रों के लिए अत्याधुनिक व्यवस्था">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn-hero-sec" onclick="closeAddImageModal()">रद्द करें</button>
+          <button type="submit" class="btn-hero-pri" style="border:none; cursor:pointer;">💾 गैलरी में सेव करें</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

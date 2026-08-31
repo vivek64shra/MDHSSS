@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ऑनलाइन प्रवेश फॉर्म 2026-27 | Maa Durga H.S. School Semariya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Tiro Devanagari Hindi', sans-serif; }
+    body { background: #f0f9ff; color: #1e293b; min-height: 100vh; padding: 1.5rem 1rem; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 1.75rem; box-shadow: 0 10px 25px rgba(2,132,199,0.08); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; text-decoration: none; }
+    .btn-pri { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; }
+    .btn-sec { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.35rem; color: #334155; }
+    .form-control { width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0f2fe; padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" style="width: 48px; height: 48px; border-radius: 50%;" alt="Logo">
+          <div>
+            <h1 style="font-size: 1.3rem; color: #0369a1; font-weight: 800;">माँ दुर्गा उच्चतर माध्यमिक विद्यालय</h1>
+            <p style="font-size: 0.82rem; color: #64748b;">सेमरिया (रीवा) • शैक्षणिक सत्र 2026-27 प्रवेश आवेदन पत्र</p>
+          </div>
+        </div>
+        <a href="../index.html" class="btn btn-sec">🏠 मुख्य पृष्ठ (Home)</a>
+      </div>
+
+      <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 1.5rem; color: #065f46; font-size: 0.9rem; font-weight: 600;">
+        ✨ नर्सरी से कक्षा 12वीं (कला, विज्ञान, वाणिज्य, कृषि) में नवीन प्रवेश हेतु आवेदन फॉर्म भरें।
+      </div>
+
+      <form onsubmit="handleAdmissionSubmit(event)">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>विद्यार्थी का पूरा नाम (Student Name) *</label>
+            <input type="text" id="admName" class="form-control" placeholder="उदा. अमन तिवारी" required>
+          </div>
+          <div class="form-group">
+            <label>पिता का नाम (Father's Name) *</label>
+            <input type="text" id="admFather" class="form-control" placeholder="उदा. श्री रामगोपाल तिवारी" required>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>माता का नाम (Mother's Name)</label>
+            <input type="text" id="admMother" class="form-control" placeholder="माता का नाम दर्ज करें">
+          </div>
+          <div class="form-group">
+            <label>मोबाइल नंबर (WhatsApp No.) *</label>
+            <input type="tel" id="admPhone" class="form-control" pattern="[0-9]{10}" inputmode="numeric" placeholder="10 अंकों का फोन नंबर" required>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>प्रवेश हेतु कक्षा (Class) *</label>
+            <select id="admClass" class="form-control" required>
+              <option value="">-- कक्षा चुनें --</option>
+              <option value="Nursery">Nursery / LKG / UKG</option>
+              <option value="Class 1st to 5th">कक्षा 1 से 5वीं (Primary)</option>
+              <option value="Class 6th">कक्षा 6वीं</option>
+              <option value="Class 7th">कक्षा 7वीं</option>
+              <option value="Class 8th">कक्षा 8वीं</option>
+              <option value="Class 9th">कक्षा 9वीं</option>
+              <option value="Class 10th">कक्षा 10वीं</option>
+              <option value="Class 11th Maths">कक्षा 11वीं (गणित संकाय)</option>
+              <option value="Class 11th Biology">कक्षा 11वीं (जीव विज्ञान)</option>
+              <option value="Class 11th Commerce">कक्षा 11वीं (वाणिज्य)</option>
+              <option value="Class 12th">कक्षा 12वीं (समस्त संकाय)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ऐच्छिक विषय / संकाय</label>
+            <input type="text" id="admSubject" class="form-control" placeholder="उदा. PCM, PCB, Commerce, Computer...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>पूरा पता (Address) *</label>
+          <input type="text" id="admAddress" class="form-control" placeholder="ग्राम / पोस्ट / सेमरिया, जिला रीवा (म.प्र.)" required>
+        </div>
+
+        <div class="form-group">
+          <label>अतिरिक्त टिप्पणी / बस सुविधा की आवश्यकता</label>
+          <textarea id="admRemarks" class="form-control" rows="2" placeholder="बस स्टॉप, पूर्व विद्यालय या अन्य विवरण..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-pri" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.8rem;">
+          ✍️ ऑनलाइन प्रवेश आवेदन जमा करें (Submit Application)
+        </button>
+      </form>
+
+      <div id="admSuccess" style="display: none; margin-top: 1.5rem; padding: 1.25rem; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; color: #166534; text-align: center;">
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">🎉 प्रवेश आवेदन सफलतापूर्वक स्वीकार कर लिया गया है!</h3>
+        <p style="font-size: 0.9rem;">आवेदन क्रमांक: <strong>MDHSS-2026-ADM-<span id="admId"></span></strong> • विद्यालय प्रबंधन शीघ्र आपसे संपर्क करेगा।</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleAdmissionSubmit(e) {
+      e.preventDefault();
+      const id = Date.now().toString().slice(-4);
+      document.getElementById('admId').textContent = id;
+
+      const record = {
+        id: 'ADM-' + id,
+        studentName: document.getElementById('admName').value.trim(),
+        fatherName: document.getElementById('admFather').value.trim(),
+        motherName: document.getElementById('admMother').value.trim(),
+        phone: document.getElementById('admPhone').value.trim(),
+        class: document.getElementById('admClass').value,
+        subject: document.getElementById('admSubject').value.trim(),
+        address: document.getElementById('admAddress').value.trim(),
+        remarks: document.getElementById('admRemarks').value.trim(),
+        date: new Date().toLocaleString('hi-IN')
+      };
+
+      try {
+        const list = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
+        list.unshift(record);
+        localStorage.setItem('mdhss_admissions', JSON.stringify(list));
+      } catch (e) {}
+
+      document.getElementById('admSuccess').style.display = 'block';
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>
