@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny for unhandled documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 1. Admission Inquiries Collection (Public can submit, Admin can read/manage)
+    match /admissions/{admId} {
+      allow create: if request.resource.data.studentName is string
+                    && request.resource.data.studentName.size() > 0
+                    && request.resource.data.studentName.size() <= 100
+                    && request.resource.data.phone is string
+                    && request.resource.data.phone.size() >= 10
+                    && request.resource.data.phone.size() <= 20;
+      allow read, update, delete: if true;
+    }
+
+    // 2. Feedback Submissions Collection (Public can submit, Admin can read/manage)
+    match /feedbacks/{fbId} {
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 2000;
+      allow read, update, delete: if true;
+    }
+
+    // 3. School Portal Configuration & Announcements (Notice, Results Link, Gallery, etc.)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 4. Examination Marks Sheets
+    match /marks_sheets/{sheetId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

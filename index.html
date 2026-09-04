@@ -4121,6 +4121,9 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn-hero-sec" id="btnAdminCloudSync" style="background:#0284c7; color:#ffffff; border:none; padding:0.6rem 1rem; font-size:0.85rem; font-weight:700; cursor:pointer;" onclick="triggerManualCloudSync()" title="क्लाउड फायरबेस से सभी डिवाइसेज का डेटा रिफ्रेश करें">
+                🔄 क्लाउड डेटा रीफ्रेश (Sync Now)
+              </button>
               <button type="button" class="btn-hero-sec" style="background:#ffffff; color:#312e81; border:none; padding:0.6rem 1rem; font-size:0.85rem; font-weight:700; cursor:pointer;" onclick="navigateToPage('home')">
                 🏠 मुख्य पृष्ठ (Home)
               </button>
@@ -4130,6 +4133,20 @@
               <button type="button" class="btn-hero-sec" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:0.6rem 1rem; font-size:0.85rem; font-weight:700; cursor:pointer;" onclick="handleAdminLogout()">
                 🚪 एडमिन लॉगआउट
               </button>
+            </div>
+          </div>
+
+          <!-- Cloud Database Status Banner -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:var(--radius-sm); padding:0.85rem 1.25rem; margin-bottom:1.5rem; color:#166534; font-size:0.88rem; box-shadow: 0 2px 6px rgba(22, 101, 52, 0.05);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:1.3rem;">☁️</span>
+              <div>
+                <strong>Firebase क्लाउड डेटाबेस लाइव सक्रिय (All-Device Sync):</strong>
+                <span style="display:block; font-size:0.8rem; color:#15803d; margin-top:2px;">कोई भी छात्र या अभिभावक किसी भी मोबाइल या कंप्यूटर से प्रवेश या फीडबैक फॉर्म भरेगा, तो वह तुरंत आपके एडमिन पैनल में दिखेगा। Netlify/GitHub पर पब्लिश करने के बाद भी यह 100% लाइव रहेगा।</span>
+              </div>
+            </div>
+            <div id="adminCloudSyncBadge" style="display:none; background:#15803d; color:#ffffff; font-weight:700; font-size:0.78rem; padding:4px 12px; border-radius:9999px;">
+              ✅ क्लाउड सिंक सफल
             </div>
           </div>
 
@@ -6252,10 +6269,15 @@ function doPost(e) {
         console.error('Error saving marks record:', e);
       }
 
-      // 2. Dispatch to Google Sheets Webhook
+      // 2. Dispatched to Firebase Cloud Database for Live Admin View
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveMarksSheet === 'function') {
+        window.mdhssCloud.saveMarksSheet(newSheetRecord);
+      }
+
+      // 3. Dispatch to Google Sheets Webhook
       postToGoogleSheetsWebhook(newSheetRecord);
 
-      // 3. Show Success Alert
+      // 4. Show Success Alert
       const alertBox = document.getElementById('marksSuccessAlert');
       if (alertBox) {
         alertBox.innerHTML = `
@@ -6393,7 +6415,12 @@ function doPost(e) {
         console.error(e);
       }
 
-      // 2. Dispatched directly to Google Sheets Webhook for Admissions Sheet
+      // 2. Dispatched to Firebase Cloud Database so Admin receives it across all devices
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveAdmission === 'function') {
+        window.mdhssCloud.saveAdmission(newAdmission);
+      }
+
+      // 3. Dispatched directly to Google Sheets Webhook for Admissions Sheet
       postToGoogleSheetsWebhook(newAdmission);
 
       const successBox = document.getElementById('natAdmSuccessBox');
@@ -6454,7 +6481,12 @@ function doPost(e) {
         console.error(e);
       }
 
-      // 2. Dispatched directly to Google Sheets Webhook for Feedbacks Sheet
+      // 2. Dispatched to Firebase Cloud Database so Admin receives it across all devices
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveFeedback === 'function') {
+        window.mdhssCloud.saveFeedback(newFeedback);
+      }
+
+      // 3. Dispatched directly to Google Sheets Webhook for Feedbacks Sheet
       postToGoogleSheetsWebhook(newFeedback);
 
       const successMsg = document.getElementById('feedback-success-msg');
@@ -6565,6 +6597,9 @@ function doPost(e) {
           if (webhookInput) webhookInput.value = savedWebhook;
 
           renderAdminTables();
+
+          // Automatically sync and pull all records from Firebase Cloud Database in background
+          triggerManualCloudSync();
         } catch (e) {
           if (loginScreen) loginScreen.style.display = 'block';
           if (dashboardScreen) dashboardScreen.style.display = 'none';
@@ -6572,6 +6607,71 @@ function doPost(e) {
       } else {
         if (loginScreen) loginScreen.style.display = 'block';
         if (dashboardScreen) dashboardScreen.style.display = 'none';
+      }
+    }
+
+    async function triggerManualCloudSync() {
+      const btn = document.getElementById('btnAdminCloudSync');
+      const badge = document.getElementById('adminCloudSyncBadge');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '🔄 सिंक हो रहा है...';
+      }
+      try {
+        if (window.mdhssCloud) {
+          // 1. Fetch latest admissions from Firestore
+          const cloudAdms = await window.mdhssCloud.fetchAdmissions();
+          if (cloudAdms && cloudAdms.length > 0) {
+            const localAdmissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
+            const map = new Map();
+            localAdmissions.forEach(item => { if (item.id) map.set(item.id, item); });
+            cloudAdms.forEach(item => { if (item.id) map.set(item.id, item); });
+            const merged = Array.from(map.values()).sort((a, b) => (b.id || '').localeCompare(a.id || ''));
+            localStorage.setItem('mdhss_admissions', JSON.stringify(merged));
+          }
+
+          // 2. Fetch latest feedbacks from Firestore
+          const cloudFbs = await window.mdhssCloud.fetchFeedbacks();
+          if (cloudFbs && cloudFbs.length > 0) {
+            const localFeedbacks = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
+            const map = new Map();
+            localFeedbacks.forEach(item => { if (item.id) map.set(item.id, item); });
+            cloudFbs.forEach(item => { if (item.id) map.set(item.id, item); });
+            const merged = Array.from(map.values()).sort((a, b) => (b.id || '').localeCompare(a.id || ''));
+            localStorage.setItem('mdhss_feedbacks', JSON.stringify(merged));
+          }
+
+          // 3. Fetch latest marks sheets from Firestore
+          const cloudMarks = await window.mdhssCloud.fetchMarksSheets();
+          if (cloudMarks && cloudMarks.length > 0) {
+            const localMarks = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+            const map = new Map();
+            localMarks.forEach(item => { if (item.id) map.set(item.id, item); });
+            cloudMarks.forEach(item => { if (item.id) map.set(item.id, item); });
+            localStorage.setItem('mdhss_marks_sheets', JSON.stringify(Array.from(map.values())));
+          }
+
+          // 4. Initial local data migration to Firestore
+          await window.mdhssCloud.migrateAllLocalDataToCloud();
+        }
+        renderAdminTables();
+        if (badge) {
+          badge.textContent = '✅ क्लाउड सिंक सफल (सभी डिवाइसेज का डेटा लाइव अपडेटेड)';
+          badge.style.display = 'inline-block';
+          setTimeout(() => { badge.style.display = 'none'; }, 4000);
+        }
+      } catch (e) {
+        console.error('Manual sync notice:', e);
+        if (badge) {
+          badge.textContent = 'ℹ️ स्थानीय डेटा सुरक्षित है';
+          badge.style.display = 'inline-block';
+          setTimeout(() => { badge.style.display = 'none'; }, 3000);
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '🔄 क्लाउड डेटा रीफ्रेश (Sync Now)';
+        }
       }
     }
 
@@ -6804,6 +6904,17 @@ function doPost(e) {
             stored.splice(index, 1);
           }
           localStorage.setItem('mdhss_feedbacks', JSON.stringify(stored));
+        }
+
+        // Delete from Firebase Cloud as well
+        if (window.mdhssCloud && targetId) {
+          if (type === 'admissions' && typeof window.mdhssCloud.deleteAdmission === 'function') {
+            window.mdhssCloud.deleteAdmission(targetId);
+          } else if (type === 'marks' && typeof window.mdhssCloud.deleteMarksSheet === 'function') {
+            window.mdhssCloud.deleteMarksSheet(targetId);
+          } else if (type === 'feedbacks' && typeof window.mdhssCloud.deleteFeedback === 'function') {
+            window.mdhssCloud.deleteFeedback(targetId);
+          }
         }
       } catch (err) {
         console.error('Error deleting record:', err);
@@ -7517,6 +7628,11 @@ function doPost(e) {
 
       localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
 
+      // Save to Firebase Cloud so notice updates across all visitor phones/laptops
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('popup_notification', noticeData);
+      }
+
       // Update popup elements in DOM
       applyNoticeDataToPopup(noticeData);
 
@@ -7627,6 +7743,9 @@ function doPost(e) {
       });
 
       localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('gallery_images', stored);
+      }
       renderAutoGallery();
       renderAdminGalleryList();
       closeAddImageModal();
@@ -7706,6 +7825,9 @@ function doPost(e) {
       });
 
       localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('gallery_images', stored);
+      }
       renderAdminGalleryList();
       renderAutoGallery();
 
@@ -7724,6 +7846,9 @@ function doPost(e) {
         stored = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
         stored = stored.filter(img => img.id !== imgId);
         localStorage.setItem('mdhss_gallery_images', JSON.stringify(stored));
+        if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+          window.mdhssCloud.saveSetting('gallery_images', stored);
+        }
       } catch (err) {}
 
       renderAdminGalleryList();
@@ -7733,6 +7858,9 @@ function doPost(e) {
     function resetDefaultGalleryImages() {
       if (!confirm('क्या आप सभी कस्टम तस्वीरों को हटाकर मूल 8 डिफ़ॉल्ट तस्वीरें बहाल करना चाहते हैं?')) return;
       localStorage.removeItem('mdhss_gallery_images');
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('gallery_images', []);
+      }
       renderAdminGalleryList();
       renderAutoGallery();
       alert('गैलरी मूल डिफ़ॉल्ट में बहाल कर दी गई है!');
@@ -7793,6 +7921,9 @@ function doPost(e) {
       };
 
       localStorage.setItem('mdhss_result_link_config', JSON.stringify(config));
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('result_link_config', config);
+      }
       loadAdminResultLinkConfig();
 
       const badge = document.getElementById('resultLinkSaveBadge');

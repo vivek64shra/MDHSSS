@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Maa Durga HSS Firebase Firestore Blueprint",
+  "description": "Schema definitions for school admissions, feedbacks, marks, announcements, and portal settings",
+  "collections": {
+    "admissions": {
+      "description": "Student online admission applications submitted by parents/students",
+      "fields": {
+        "id": { "type": "string", "maxLength": 50 },
+        "formType": { "type": "string", "maxLength": 30 },
+        "date": { "type": "string", "maxLength": 50 },
+        "studentName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "fatherName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "motherName": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "minLength": 10, "maxLength": 15 },
+        "class": { "type": "string", "maxLength": 50 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 300 },
+        "remarks": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["studentName", "fatherName", "phone", "class", "address"]
+    },
+    "feedbacks": {
+      "description": "Feedback, suggestions and queries submitted by parents, students, and visitors",
+      "fields": {
+        "id": { "type": "string", "maxLength": 50 },
+        "formType": { "type": "string", "maxLength": 30 },
+        "date": { "type": "string", "maxLength": 50 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "class": { "type": "string", "maxLength": 50 },
+        "role": { "type": "string", "maxLength": 50 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "rating": { "type": "number", "minimum": 1, "maximum": 5 },
+        "message": { "type": "string", "minLength": 1, "maxLength": 2000 }
+      },
+      "required": ["name", "phone", "message"]
+    },
+    "settings": {
+      "description": "Portal wide configurations (result link, notice popups, gallery images, webhook)",
+      "fields": {
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "marks_sheets": {
+      "description": "Student examination marks submitted by teachers or admin",
+      "fields": {
+        "id": { "type": "string", "maxLength": 100 },
+        "class": { "type": "string", "maxLength": 50 },
+        "section": { "type": "string", "maxLength": 20 },
+        "examType": { "type": "string", "maxLength": 50 },
+        "month": { "type": "string", "maxLength": 30 },
+        "subject": { "type": "string", "maxLength": 50 },
+        "maxMarks": { "type": "number" },
+        "records": { "type": "array" }
+      }
+    }
+  }
+}
