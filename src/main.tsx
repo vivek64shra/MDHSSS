@@ -4,12 +4,22 @@ import App from './App.tsx';
 import './index.css';
 import mdhssCloud from './firebase.ts';
 
-// Initialize real-time cloud data synchronization across all devices
-try {
-  mdhssCloud.setupRealtimeSync();
-  console.log('🚀 Maa Durga School Cloud Database connected (Project:', mdhssCloud.projectId, ')');
-} catch (e) {
-  console.warn('Cloud sync initialization notice:', e);
+// Initialize real-time cloud data synchronization smoothly after page hydration
+if (typeof window !== 'undefined') {
+  const initSync = () => {
+    try {
+      mdhssCloud.setupRealtimeSync();
+      console.log('🚀 Maa Durga School Cloud Database connected (Project:', mdhssCloud.projectId, ')');
+    } catch (e) {
+      console.info('Cloud sync deferred notice:', e);
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    setTimeout(initSync, 1000);
+  } else {
+    window.addEventListener('load', () => setTimeout(initSync, 1000));
+  }
 }
 
 // Mount to #student-analytics-root if present, otherwise #root

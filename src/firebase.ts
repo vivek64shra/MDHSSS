@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
+  initializeFirestore,
   getFirestore,
   collection,
   doc,
@@ -35,8 +36,11 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operation: OperationType, path: string | null) {
+  const errMsg = error instanceof Error ? error.message : String(error);
+  const isOfflineNotice = errMsg.includes('Could not reach Cloud Firestore') || errMsg.includes('offline mode') || errMsg.includes('unavailable') || errMsg.includes('Backend didn\'t respond');
+  
   const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
+    error: errMsg,
     operation,
     path,
     authInfo: {
@@ -46,15 +50,34 @@ export function handleFirestoreError(error: unknown, operation: OperationType, p
       isAnonymous: null,
     },
   };
-  console.warn('Firestore Operation Notification:', JSON.stringify(errInfo));
+  
+  if (isOfflineNotice) {
+    console.info('ℹ️ Firestore operating in resilient offline/cached mode until backend responds.');
+  } else {
+    console.warn('Firestore Operation Notification:', JSON.stringify(errInfo));
+  }
   return errInfo;
 }
 
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Explicitly bind the configured Firestore Database ID
-export const db: Firestore = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// Explicitly bind the configured Firestore Database ID with force long-polling for iframe/sandbox compatibility
+function createFirestoreInstance(): Firestore {
+  try {
+    return initializeFirestore(
+      app,
+      {
+        experimentalForceLongPolling: true,
+      },
+      firebaseConfig.firestoreDatabaseId
+    );
+  } catch {
+    return getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  }
+}
+
+export const db: Firestore = createFirestoreInstance();
 
 // ==========================================
 // 1. ADMISSION INQUIRIES
@@ -89,6 +112,7 @@ export async function fetchAdmissionsFromCloud(): Promise<any[]> {
 
 export async function deleteAdmissionFromCloud(id: string): Promise<boolean> {
   try {
+    addDeletedIdTrack(id);
     await deleteDoc(doc(db, 'admissions', id));
     console.log('🗑️ Admission deleted from Firebase Cloud:', id);
     return true;
@@ -131,6 +155,7 @@ export async function fetchFeedbacksFromCloud(): Promise<any[]> {
 
 export async function deleteFeedbackFromCloud(id: string): Promise<boolean> {
   try {
+    addDeletedIdTrack(id);
     await deleteDoc(doc(db, 'feedbacks', id));
     console.log('🗑️ Feedback deleted from Firebase Cloud:', id);
     return true;
@@ -202,6 +227,8 @@ export async function fetchMarksSheetsFromCloud(): Promise<any[]> {
 
 export async function deleteMarksSheetFromCloud(id: string): Promise<boolean> {
   try {
+    // Record in deleted IDs to prevent any race condition or ghost revival
+    addDeletedIdTrack(id);
     await deleteDoc(doc(db, 'marks_sheets', id));
     console.log('🗑️ Marks sheet deleted from Firebase Cloud:', id);
     return true;
@@ -211,33 +238,73 @@ export async function deleteMarksSheetFromCloud(id: string): Promise<boolean> {
   }
 }
 
+// Clear all records from a cloud collection
+export async function clearCollectionFromCloud(collectionName: 'admissions' | 'feedbacks' | 'marks_sheets'): Promise<boolean> {
+  try {
+    const colRef = collection(db, collectionName);
+    const snap = await getDocs(colRef);
+    const deletePromises = snap.docs.map(d => {
+      addDeletedIdTrack(d.id);
+      return deleteDoc(doc(db, collectionName, d.id));
+    });
+    await Promise.all(deletePromises);
+    console.log(`🗑️ All records cleared from Firebase Cloud collection: ${collectionName}`);
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, collectionName);
+    return false;
+  }
+}
+
+function getDeletedIdSet(): Set<string> {
+  try {
+    const arr = JSON.parse(localStorage.getItem('mdhss_deleted_ids') || '[]');
+    return new Set(arr);
+  } catch {
+    return new Set();
+  }
+}
+
+function addDeletedIdTrack(id: string) {
+  try {
+    const set = getDeletedIdSet();
+    set.add(id);
+    localStorage.setItem('mdhss_deleted_ids', JSON.stringify(Array.from(set).slice(-500)));
+  } catch (e) {
+    console.warn('Track deleted id error:', e);
+  }
+}
+
 // ==========================================
 // 5. REALTIME LISTENERS & TWO-WAY SYNC
 // ==========================================
+let realtimeSyncStarted = false;
+
 export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: number; feedbacks: number }) => void) {
+  if (realtimeSyncStarted) return;
+  realtimeSyncStarted = true;
+
+  const deletedIds = getDeletedIdSet();
+
   // Realtime Admissions Listener
   try {
     onSnapshot(
       collection(db, 'admissions'),
       (snap) => {
+        const deletedSet = getDeletedIdSet();
         const cloudAdmissions: any[] = [];
-        snap.forEach((d) => cloudAdmissions.push(d.data()));
-        if (cloudAdmissions.length > 0) {
-          // Merge with localStorage
-          const localAdmissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
-          const mergedMap = new Map();
-          // Local first, cloud overwrites with authoritative latest
-          localAdmissions.forEach((item: any) => { if (item.id) mergedMap.set(item.id, item); });
-          cloudAdmissions.forEach((item: any) => { if (item.id) mergedMap.set(item.id, item); });
-          const merged = Array.from(mergedMap.values()).sort((a: any, b: any) => {
-            return (b.id || '').localeCompare(a.id || '');
-          });
-          localStorage.setItem('mdhss_admissions', JSON.stringify(merged));
-
-          // Trigger UI table re-render if function exists
-          if (typeof (window as any).renderAdminTables === 'function') {
-            (window as any).renderAdminTables();
+        snap.forEach((d) => {
+          const data = d.data();
+          if (data && data.id && !deletedSet.has(data.id)) {
+            cloudAdmissions.push(data);
           }
+        });
+        cloudAdmissions.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
+        localStorage.setItem('mdhss_admissions', JSON.stringify(cloudAdmissions));
+
+        // Trigger UI table re-render if function exists
+        if (typeof (window as any).renderAdminTables === 'function') {
+          (window as any).renderAdminTables();
         }
       },
       (error) => {
@@ -253,21 +320,19 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     onSnapshot(
       collection(db, 'feedbacks'),
       (snap) => {
+        const deletedSet = getDeletedIdSet();
         const cloudFeedbacks: any[] = [];
-        snap.forEach((d) => cloudFeedbacks.push(d.data()));
-        if (cloudFeedbacks.length > 0) {
-          const localFeedbacks = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
-          const mergedMap = new Map();
-          localFeedbacks.forEach((item: any) => { if (item.id) mergedMap.set(item.id, item); });
-          cloudFeedbacks.forEach((item: any) => { if (item.id) mergedMap.set(item.id, item); });
-          const merged = Array.from(mergedMap.values()).sort((a: any, b: any) => {
-            return (b.id || '').localeCompare(a.id || '');
-          });
-          localStorage.setItem('mdhss_feedbacks', JSON.stringify(merged));
-
-          if (typeof (window as any).renderAdminTables === 'function') {
-            (window as any).renderAdminTables();
+        snap.forEach((d) => {
+          const data = d.data();
+          if (data && data.id && !deletedSet.has(data.id)) {
+            cloudFeedbacks.push(data);
           }
+        });
+        cloudFeedbacks.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
+        localStorage.setItem('mdhss_feedbacks', JSON.stringify(cloudFeedbacks));
+
+        if (typeof (window as any).renderAdminTables === 'function') {
+          (window as any).renderAdminTables();
         }
       },
       (error) => {
@@ -349,19 +414,19 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     onSnapshot(
       collection(db, 'marks_sheets'),
       (snap) => {
+        const deletedSet = getDeletedIdSet();
         const cloudSheets: any[] = [];
-        snap.forEach((d) => cloudSheets.push(d.data()));
-        if (cloudSheets.length > 0) {
-          const localSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
-          const mergedMap = new Map();
-          localSheets.forEach((s: any) => { if (s.id) mergedMap.set(s.id, s); });
-          cloudSheets.forEach((s: any) => { if (s.id) mergedMap.set(s.id, s); });
-          const merged = Array.from(mergedMap.values());
-          localStorage.setItem('mdhss_marks_sheets', JSON.stringify(merged));
-
-          if (typeof (window as any).renderAdminTables === 'function') {
-            (window as any).renderAdminTables();
+        snap.forEach((d) => {
+          const data = d.data();
+          if (data && data.id && !deletedSet.has(data.id)) {
+            cloudSheets.push(data);
           }
+        });
+        cloudSheets.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
+        localStorage.setItem('mdhss_marks_sheets', JSON.stringify(cloudSheets));
+
+        if (typeof (window as any).renderAdminTables === 'function') {
+          (window as any).renderAdminTables();
         }
       },
       (error) => {
@@ -389,6 +454,7 @@ const mdhssCloud = {
   saveMarksSheet: saveMarksSheetToCloud,
   fetchMarksSheets: fetchMarksSheetsFromCloud,
   deleteMarksSheet: deleteMarksSheetFromCloud,
+  clearCollection: clearCollectionFromCloud,
   setupRealtimeSync: setupRealtimeCloudSync,
   // Helper to push all local data to cloud (Initial migration)
   migrateAllLocalDataToCloud: async () => {
