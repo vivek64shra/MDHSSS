@@ -138,54 +138,10 @@
     }
 
     /* ==========================================================================
-       2. PRELOADER (1 Second Animated Loader)
+       2. PRELOADER (REMOVED FOR INSTANT DIRECT ACCESS)
        ========================================================================== */
     #preloader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(240, 249, 255, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 99999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    .loader-ring {
-      width: 68px;
-      height: 68px;
-      border: 5px solid rgba(2, 132, 199, 0.15);
-      border-top: 5px solid var(--primary-blue);
-      border-right: 5px solid var(--accent-cyan);
-      border-radius: 50%;
-      animation: spinLoader 0.85s linear infinite;
-    }
-
-    .loader-title {
-      margin-top: 1.25rem;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--navy-blue);
-      font-family: var(--font-heading);
-      letter-spacing: -0.5px;
-    }
-
-    .loader-sub {
-      font-size: 0.9rem;
-      color: var(--primary-dark-blue);
-      font-weight: 600;
-      margin-top: 0.35rem;
-    }
-
-    @keyframes spinLoader {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      display: none !important;
     }
 
     /* ==========================================================================
@@ -2346,56 +2302,104 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.25rem;
-      animation: fadeIn 0.3s ease;
+      padding: 1rem;
+      animation: fadeIn 0.25s ease;
     }
     .first-time-modal-card {
       width: 100%;
-      max-width: 620px;
+      max-width: 540px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
       background: #ffffff;
-      border-radius: 20px;
+      border-radius: 18px;
       border: 3px solid #38bdf8;
       box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
       overflow: hidden;
-      animation: scaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
     .notice-modal-header {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: #ffffff;
-      padding: 1.25rem 1.5rem;
+      padding: 0.9rem 1.15rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .btn-notice-close-top {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .btn-notice-close-top:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      transform: scale(1.08);
     }
     .notice-badge-chip {
       background: rgba(255, 255, 255, 0.25);
       color: #ffffff;
-      padding: 0.25rem 0.85rem;
+      padding: 0.2rem 0.75rem;
       border-radius: 9999px;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 800;
       display: inline-block;
     }
     .notice-modal-body {
-      padding: 1.5rem;
+      padding: 1.15rem 1.25rem;
       color: #334155;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
+    }
+    .notice-modal-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .notice-modal-body::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .notice-modal-body::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .notice-modal-body::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
     .notice-modal-footer {
-      padding: 1rem 1.5rem 1.25rem;
+      padding: 0.75rem 1.25rem 0.85rem;
       background: #f8fafc;
       border-top: 1px solid #e2e8f0;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.5rem;
+      flex-shrink: 0;
     }
     .btn-close-notice-bottom {
       background: #fee2e2;
       color: #dc2626;
-      border: 2px solid #fca5a5;
+      border: 1.5px solid #fca5a5;
       font-weight: 800;
-      font-size: 1rem;
-      padding: 0.85rem 1.25rem;
-      border-radius: 12px;
+      font-size: 0.9rem;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
       cursor: pointer;
       width: 100%;
       text-align: center;
@@ -2408,7 +2412,39 @@
     .btn-close-notice-bottom:hover {
       background: #fecaca;
       border-color: #f87171;
-      transform: translateY(-2px);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile Notification Popup Optimization */
+    @media (max-width: 640px) {
+      .first-time-modal-overlay {
+        padding: 0.75rem;
+      }
+      .first-time-modal-card {
+        max-width: 92vw;
+        max-height: 78vh;
+        border-radius: 14px;
+        border-width: 2px;
+      }
+      .notice-modal-header {
+        padding: 0.75rem 0.9rem;
+      }
+      .btn-notice-close-top {
+        width: 32px;
+        height: 32px;
+        font-size: 1.05rem;
+      }
+      .notice-modal-body {
+        padding: 0.85rem 1rem;
+        max-height: calc(78vh - 105px);
+      }
+      .notice-modal-footer {
+        padding: 0.6rem 0.9rem 0.7rem;
+      }
+      .btn-close-notice-bottom {
+        font-size: 0.84rem;
+        padding: 0.55rem 0.85rem;
+      }
     }
 
     /* ==========================================================================
@@ -2567,14 +2603,7 @@
   <div class="ambient-sphere sphere-2"></div>
   <div class="ambient-sphere sphere-3"></div>
 
-  <!-- 1. PRELOADER (1 Second Spinning Circle) -->
-  <div id="preloader">
-    <div class="loader-ring"></div>
-    <div class="loader-title">Maa Durga Higher Secondary School</div>
-    <div class="loader-sub">Semariya, District Rewa (M.P.) • सत्र 2026-27</div>
-  </div>
-
-  <!-- 2. UNIFIED PRIMARY NAVIGATION BAR (POSITIONED AT THE VERY TOP - PERSISTENT ACROSS ALL PAGES) -->
+  <!-- 1. UNIFIED PRIMARY NAVIGATION BAR (POSITIONED AT THE VERY TOP - PERSISTENT ACROSS ALL PAGES) -->
   <nav class="top-primary-navbar" id="mainTopNavbar">
     <div class="container">
       <div class="top-nav-inner">
@@ -4622,8 +4651,8 @@ function doPost(e) {
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
                   
                   <div class="form-group-custom">
-                    <label class="form-label-custom">पॉपअप बैज / चिप टेक्स्ट (Notice Badge Chip) *</label>
-                    <input type="text" id="cfgNoticeBadge" class="form-input-custom" required value="🔔 आवश्यक सूचना • सत्र 2026-27" placeholder="उदा. 🔔 आवश्यक सूचना • सत्र 2026-27" />
+                    <label class="form-label-custom">पॉपअप बैज / चिप टेक्स्ट (Notice Badge Chip)</label>
+                    <input type="text" id="cfgNoticeBadge" class="form-input-custom" value="" placeholder="उदा. 🔔 आवश्यक सूचना • सत्र 2026-27" />
                   </div>
 
                   <div class="form-group-custom">
@@ -4636,31 +4665,31 @@ function doPost(e) {
 
                   <div class="form-group-custom" style="grid-column: 1 / -1;">
                     <label class="form-label-custom">मुख्य शीर्षक (Notice Title / Heading) *</label>
-                    <input type="text" id="cfgNoticeTitle" class="form-input-custom" required value="माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!" placeholder="उदा. माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!" />
+                    <input type="text" id="cfgNoticeTitle" class="form-input-custom" required value="" placeholder="उदा. नवीन शैक्षणिक सत्र में प्रवेश प्रारंभ!" />
                   </div>
 
                   <div class="form-group-custom" style="grid-column: 1 / -1;">
-                    <label class="form-label-custom">सूचना विवरण (Notice Body Text / Message) *</label>
-                    <textarea id="cfgNoticeBody" class="form-textarea-custom" rows="3" required placeholder="विस्तृत सूचना लिखें...">नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।</textarea>
+                    <label class="form-label-custom">सूचना विवरण (Notice Body Text / Message)</label>
+                    <textarea id="cfgNoticeBody" class="form-textarea-custom" rows="3" placeholder="विस्तृत सूचना विवरण लिखें..."></textarea>
                   </div>
 
                   <div class="form-group-custom" style="grid-column: 1 / -1;">
                     <label class="form-label-custom">प्रमुख विशेषताएं हाइलाइट्स (Key Highlights Ribbon)</label>
-                    <input type="text" id="cfgNoticeHighlights" class="form-input-custom" value="✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा" placeholder="उदा. ✅ डिजिटल स्मार्ट क्लासरूम..." />
+                    <input type="text" id="cfgNoticeHighlights" class="form-input-custom" value="" placeholder="उदा. ✅ डिजिटल स्मार्ट क्लासरूम • आधुनिक कंप्यूटर व साइंस लैब" />
                   </div>
 
                   <div class="form-group-custom">
                     <label class="form-label-custom">हेल्पलाइन व UDISE विवरण (Helpline / Contact)</label>
-                    <input type="text" id="cfgNoticeHelpline" class="form-input-custom" value="📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055" placeholder="हेल्पलाइन व स्कूल कोड" />
+                    <input type="text" id="cfgNoticeHelpline" class="form-input-custom" value="" placeholder="उदा. 📞 हेल्पलाइन: 9200178385 | UDISE: 23140402055" />
                   </div>
 
                   <div class="form-group-custom">
-                    <label class="form-label-custom">बटन का नाम (Action Button Label) *</label>
-                    <input type="text" id="cfgNoticeBtnText" class="form-input-custom" required value="✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें" placeholder="बटन टेक्स्ट" />
+                    <label class="form-label-custom">बटन का नाम (Action Button Label)</label>
+                    <input type="text" id="cfgNoticeBtnText" class="form-input-custom" value="" placeholder="उदा. ✍️ ऑनलाइन प्रवेश फॉर्म भरें" />
                   </div>
 
                   <div class="form-group-custom">
-                    <label class="form-label-custom">बटन क्लिक करने पर क्या खुले? (Action Target) *</label>
+                    <label class="form-label-custom">बटन क्लिक करने पर क्या खुले? (Action Target)</label>
                     <select id="cfgNoticeBtnAction" class="form-select-custom" onchange="toggleNoticeCustomUrlInput()">
                       <option value="admission">📝 ऑनलाइन प्रवेश फॉर्म (Admission Form)</option>
                       <option value="student">🎓 परीक्षा परिणाम पोर्टल (Student Results)</option>
@@ -4672,7 +4701,7 @@ function doPost(e) {
 
                   <div class="form-group-custom" id="cfgNoticeCustomUrlGroup" style="display:none;">
                     <label class="form-label-custom">कस्टम वेबसाइट URL (Custom Web URL)</label>
-                    <input type="url" id="cfgNoticeCustomUrl" class="form-input-custom" placeholder="https://example.com" value="https://online.edumentsolution.com/" />
+                    <input type="url" id="cfgNoticeCustomUrl" class="form-input-custom" placeholder="https://example.com" value="" />
                   </div>
 
                 </div>
@@ -5283,15 +5312,8 @@ function doPost(e) {
     }
     window.toggleDropdown = toggleDropdown;
 
-    // 1. Preloader dismissal after 1 second & Initial Seeding
+    // 1. Initial Seeding and Page Setup (Preloader removed for instant direct access)
     window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const preloader = document.getElementById('preloader');
-        if (preloader) {
-          preloader.style.opacity = '0';
-          preloader.style.visibility = 'hidden';
-        }
-      }, 1000);
 
       // Always ensure Webhook URL is set to active Google Apps Script endpoint
       if (!localStorage.getItem('mdhss_google_sheets_webhook') || localStorage.getItem('mdhss_google_sheets_webhook') === '') {
@@ -5378,10 +5400,8 @@ function doPost(e) {
       // Render Home Auto-Scrolling Image Gallery
       renderAutoGallery();
 
-      // First-time visit Notification Popup Check
-      setTimeout(() => {
-        checkAndShowFirstTimeNotice();
-      }, 1200);
+      // Notification Popup Check (Opened directly without delay)
+      checkAndShowFirstTimeNotice();
     });
 
     // 2. Mobile Menu, 3-Dot Drawer & Navigation Functions
@@ -8142,37 +8162,50 @@ function doPost(e) {
     }
 
     // ==========================================================================
-    // 9. NOTIFICATION POPUP LOGIC (ADMIN CONTROLLED & SESSION CONTROLLED)
+    // 9. NOTIFICATION POPUP LOGIC (UPDATE-ONLY & ADMIN CONTROLLED)
     // ==========================================================================
-    function checkAndShowFirstTimeNotice() {
+    function isRealUpdatedNotice(noticeData) {
+      if (!noticeData) return false;
+      if (noticeData.enabled === 'false') return false;
+      if (!noticeData.title || !noticeData.title.trim()) return false;
+      // Valid if explicitly updated by administrator
+      if (noticeData.isUpdated === true) return true;
+      if (noticeData.updatedAt) return true;
+      // Do not display the old hardcoded dummy placeholder
+      if (noticeData.title.trim() === 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!' && !noticeData.isUpdated) {
+        return false;
+      }
+      return true;
+    }
+
+    async function checkAndShowFirstTimeNotice() {
       // Check if dismissed in this session
       const dismissed = sessionStorage.getItem('mdhss_notice_popup_dismissed');
       if (dismissed === 'true') {
         return;
       }
 
-      // Load admin notification configuration or default
-      let noticeData = {
-        badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
-        enabled: 'true',
-        title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
-        body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
-        highlights: '✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
-        helpline: '📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
-        btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
-        btnAction: 'admission',
-        customUrl: ''
-      };
-
+      let noticeData = null;
       try {
         const saved = localStorage.getItem('mdhss_popup_notification');
         if (saved) {
-          const parsed = JSON.parse(saved);
-          noticeData = { ...noticeData, ...parsed };
+          noticeData = JSON.parse(saved);
         }
       } catch (e) {}
 
-      if (noticeData.enabled === 'false') {
+      // If not in localStorage, fetch from Cloud sync if available
+      if (!noticeData && window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        try {
+          const cloudData = await window.mdhssCloud.fetchSetting('popup_notification');
+          if (cloudData) {
+            noticeData = cloudData;
+            localStorage.setItem('mdhss_popup_notification', JSON.stringify(cloudData));
+          }
+        } catch (e) {}
+      }
+
+      // If no real update exists, do not open popup (keep blank)
+      if (!isRealUpdatedNotice(noticeData)) {
         return;
       }
 
@@ -8185,6 +8218,7 @@ function doPost(e) {
     }
 
     function applyNoticeDataToPopup(noticeData) {
+      if (!noticeData) return;
       const badgeEl = document.getElementById('firstNoticeBadge');
       const titleEl = document.getElementById('firstNoticeTitle');
       const bodyEl = document.getElementById('firstNoticeBodyText');
@@ -8192,29 +8226,53 @@ function doPost(e) {
       const helplineEl = document.getElementById('firstNoticeHelpline');
       const btnEl = document.getElementById('firstNoticeActionBtn');
 
-      if (badgeEl) badgeEl.textContent = noticeData.badge || '🔔 आवश्यक सूचना';
-      if (titleEl) titleEl.textContent = noticeData.title || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया';
-      if (bodyEl) bodyEl.textContent = noticeData.body || '';
+      if (badgeEl) {
+        badgeEl.textContent = (noticeData.badge && noticeData.badge.trim()) ? noticeData.badge.trim() : '🔔 आवश्यक सूचना';
+      }
+
+      if (titleEl) {
+        titleEl.textContent = (noticeData.title && noticeData.title.trim()) ? noticeData.title.trim() : '';
+      }
+      
+      if (bodyEl) {
+        if (noticeData.body && noticeData.body.trim()) {
+          bodyEl.textContent = noticeData.body.trim();
+          bodyEl.style.display = 'block';
+        } else {
+          bodyEl.textContent = '';
+          bodyEl.style.display = 'none';
+        }
+      }
       
       if (highlightsEl) {
         if (noticeData.highlights && noticeData.highlights.trim()) {
-          highlightsEl.textContent = noticeData.highlights;
+          highlightsEl.textContent = noticeData.highlights.trim();
           highlightsEl.style.display = 'block';
         } else {
+          highlightsEl.textContent = '';
           highlightsEl.style.display = 'none';
         }
       }
 
       if (helplineEl) {
         if (noticeData.helpline && noticeData.helpline.trim()) {
-          helplineEl.textContent = noticeData.helpline;
-          helplineEl.style.display = 'block';
+          helplineEl.textContent = noticeData.helpline.trim();
+          helplineEl.style.display = 'flex';
         } else {
+          helplineEl.textContent = '';
           helplineEl.style.display = 'none';
         }
       }
 
-      if (btnEl) btnEl.textContent = noticeData.btnText || 'देखें ↗';
+      if (btnEl) {
+        if (noticeData.btnText && noticeData.btnText.trim()) {
+          btnEl.textContent = noticeData.btnText.trim();
+          btnEl.style.display = 'inline-flex';
+        } else {
+          btnEl.textContent = '';
+          btnEl.style.display = 'none';
+        }
+      }
     }
 
     function closeFirstTimeNotice() {
@@ -8222,29 +8280,23 @@ function doPost(e) {
       if (modalEl) {
         modalEl.style.display = 'none';
       }
-      // Record dismissal in sessionStorage so it only opens on first visit of session
+      // Record dismissal in sessionStorage so it doesn't pop up again in this session
       sessionStorage.setItem('mdhss_notice_popup_dismissed', 'true');
     }
 
     function openFirstTimeNoticeManually() {
-      let noticeData = {
-        badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
-        enabled: 'true',
-        title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
-        body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
-        highlights: '✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
-        helpline: '📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
-        btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
-        btnAction: 'admission',
-        customUrl: ''
-      };
-
+      let noticeData = null;
       try {
         const saved = localStorage.getItem('mdhss_popup_notification');
         if (saved) {
-          noticeData = { ...noticeData, ...JSON.parse(saved) };
+          noticeData = JSON.parse(saved);
         }
       } catch (e) {}
+
+      if (!isRealUpdatedNotice(noticeData)) {
+        alert('वर्तमान में कोई सक्रिय सूचना अपडेट उपलब्ध नहीं है।');
+        return;
+      }
 
       applyNoticeDataToPopup(noticeData);
 
@@ -8272,34 +8324,36 @@ function doPost(e) {
     }
 
     function loadAdminNoticeSettings() {
-      let noticeData = {
-        badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
-        enabled: 'true',
-        title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!',
-        body: 'नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।',
-        highlights: '✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
-        helpline: '📞 हेल्पलाइन: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
-        btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
-        btnAction: 'admission',
-        customUrl: 'https://online.edumentsolution.com/'
-      };
-
+      let noticeData = null;
       try {
         const saved = localStorage.getItem('mdhss_popup_notification');
         if (saved) {
-          noticeData = { ...noticeData, ...JSON.parse(saved) };
+          noticeData = JSON.parse(saved);
         }
       } catch (e) {}
 
-      if (document.getElementById('cfgNoticeBadge')) document.getElementById('cfgNoticeBadge').value = noticeData.badge;
-      if (document.getElementById('cfgNoticeEnabled')) document.getElementById('cfgNoticeEnabled').value = noticeData.enabled || 'true';
-      if (document.getElementById('cfgNoticeTitle')) document.getElementById('cfgNoticeTitle').value = noticeData.title;
-      if (document.getElementById('cfgNoticeBody')) document.getElementById('cfgNoticeBody').value = noticeData.body;
-      if (document.getElementById('cfgNoticeHighlights')) document.getElementById('cfgNoticeHighlights').value = noticeData.highlights || '';
-      if (document.getElementById('cfgNoticeHelpline')) document.getElementById('cfgNoticeHelpline').value = noticeData.helpline || '';
-      if (document.getElementById('cfgNoticeBtnText')) document.getElementById('cfgNoticeBtnText').value = noticeData.btnText;
-      if (document.getElementById('cfgNoticeBtnAction')) document.getElementById('cfgNoticeBtnAction').value = noticeData.btnAction || 'admission';
-      if (document.getElementById('cfgNoticeCustomUrl')) document.getElementById('cfgNoticeCustomUrl').value = noticeData.customUrl || '';
+      const isUpdated = isRealUpdatedNotice(noticeData);
+      const data = isUpdated ? noticeData : {
+        badge: '',
+        enabled: 'true',
+        title: '',
+        body: '',
+        highlights: '',
+        helpline: '',
+        btnText: '',
+        btnAction: 'admission',
+        customUrl: ''
+      };
+
+      if (document.getElementById('cfgNoticeBadge')) document.getElementById('cfgNoticeBadge').value = data.badge || '';
+      if (document.getElementById('cfgNoticeEnabled')) document.getElementById('cfgNoticeEnabled').value = data.enabled || 'true';
+      if (document.getElementById('cfgNoticeTitle')) document.getElementById('cfgNoticeTitle').value = data.title || '';
+      if (document.getElementById('cfgNoticeBody')) document.getElementById('cfgNoticeBody').value = data.body || '';
+      if (document.getElementById('cfgNoticeHighlights')) document.getElementById('cfgNoticeHighlights').value = data.highlights || '';
+      if (document.getElementById('cfgNoticeHelpline')) document.getElementById('cfgNoticeHelpline').value = data.helpline || '';
+      if (document.getElementById('cfgNoticeBtnText')) document.getElementById('cfgNoticeBtnText').value = data.btnText || '';
+      if (document.getElementById('cfgNoticeBtnAction')) document.getElementById('cfgNoticeBtnAction').value = data.btnAction || 'admission';
+      if (document.getElementById('cfgNoticeCustomUrl')) document.getElementById('cfgNoticeCustomUrl').value = data.customUrl || '';
 
       toggleNoticeCustomUrlInput();
     }
@@ -8315,21 +8369,31 @@ function doPost(e) {
     function saveAdminNoticeSettings(event) {
       if (event && event.preventDefault) event.preventDefault();
 
+      const titleVal = document.getElementById('cfgNoticeTitle')?.value.trim() || '';
+      if (!titleVal) {
+        alert('कृपया मुख्य शीर्षक (Notice Title) अवश्य दर्ज करें।');
+        return;
+      }
+
       const noticeData = {
         badge: document.getElementById('cfgNoticeBadge')?.value.trim() || '🔔 आवश्यक सूचना',
         enabled: document.getElementById('cfgNoticeEnabled')?.value || 'true',
-        title: document.getElementById('cfgNoticeTitle')?.value.trim() || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया',
+        title: titleVal,
         body: document.getElementById('cfgNoticeBody')?.value.trim() || '',
         highlights: document.getElementById('cfgNoticeHighlights')?.value.trim() || '',
         helpline: document.getElementById('cfgNoticeHelpline')?.value.trim() || '',
-        btnText: document.getElementById('cfgNoticeBtnText')?.value.trim() || 'खोलें',
+        btnText: document.getElementById('cfgNoticeBtnText')?.value.trim() || '',
         btnAction: document.getElementById('cfgNoticeBtnAction')?.value || 'admission',
-        customUrl: document.getElementById('cfgNoticeCustomUrl')?.value.trim() || ''
+        customUrl: document.getElementById('cfgNoticeCustomUrl')?.value.trim() || '',
+        isUpdated: true,
+        updatedAt: new Date().toISOString()
       };
 
       localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
+      // Reset session dismissal so latest update is visible
+      sessionStorage.removeItem('mdhss_notice_popup_dismissed');
 
-      // Save to Firebase Cloud so notice updates across all visitor phones/laptops
+      // Save to Firebase Cloud so notice updates across all visitor devices
       if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
         window.mdhssCloud.saveSetting('popup_notification', noticeData);
       }
@@ -8345,16 +8409,19 @@ function doPost(e) {
     }
 
     function testLiveNoticeModal() {
+      const titleVal = document.getElementById('cfgNoticeTitle')?.value.trim() || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया';
       const noticeData = {
         badge: document.getElementById('cfgNoticeBadge')?.value.trim() || '🔔 आवश्यक सूचना',
         enabled: 'true',
-        title: document.getElementById('cfgNoticeTitle')?.value.trim() || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया',
+        title: titleVal,
         body: document.getElementById('cfgNoticeBody')?.value.trim() || '',
         highlights: document.getElementById('cfgNoticeHighlights')?.value.trim() || '',
         helpline: document.getElementById('cfgNoticeHelpline')?.value.trim() || '',
-        btnText: document.getElementById('cfgNoticeBtnText')?.value.trim() || 'खोलें',
+        btnText: document.getElementById('cfgNoticeBtnText')?.value.trim() || '',
         btnAction: document.getElementById('cfgNoticeBtnAction')?.value || 'admission',
-        customUrl: document.getElementById('cfgNoticeCustomUrl')?.value.trim() || ''
+        customUrl: document.getElementById('cfgNoticeCustomUrl')?.value.trim() || '',
+        isUpdated: true,
+        updatedAt: new Date().toISOString()
       };
 
       applyNoticeDataToPopup(noticeData);
@@ -8363,11 +8430,26 @@ function doPost(e) {
     }
 
     function resetDefaultNoticeSettings() {
-      if (!confirm('क्या आप सूचना पॉपअप सेटिंग्स को डिफ़ॉल्ट रूप में रीसेट करना चाहते हैं?')) return;
+      if (!confirm('क्या आप सूचना पॉपअप सेटिंग्स को हटाना/रीसेट करना चाहते हैं?')) return;
       localStorage.removeItem('mdhss_popup_notification');
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('popup_notification', null);
+      }
       loadAdminNoticeSettings();
+      const modalEl = document.getElementById('firstTimeNoticeModal');
+      if (modalEl) modalEl.style.display = 'none';
       alert('सूचना पॉपअप सेटिंग्स रीसेट कर दी गई हैं!');
     }
+
+    // Keyboard accessibility: Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('firstTimeNoticeModal');
+        if (modal && modal.style.display !== 'none') {
+          closeFirstTimeNotice();
+        }
+      }
+    });
 
     // ==========================================================================
     // 10. AUTO-SCROLLING VISUAL IMAGE GALLERY (HOMEPAGE & ADMIN CONTROLLER)
@@ -8686,44 +8768,37 @@ function doPost(e) {
   <!-- ==========================================================================
        FIRST-TIME VISIT NOTIFICATION MODAL DIALOG
        ========================================================================== -->
-  <div id="firstTimeNoticeModal" class="first-time-modal-overlay" style="display:none;">
-    <div class="first-time-modal-card">
+  <div id="firstTimeNoticeModal" class="first-time-modal-overlay" style="display:none;" onclick="if(event.target === this) closeFirstTimeNotice()">
+    <div class="first-time-modal-card" role="dialog" aria-modal="true" aria-labelledby="firstNoticeTitle">
       <div class="notice-modal-header">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" style="width:48px; height:48px; border-radius:50%; border:2px solid #fff;" alt="Logo">
-          <div>
-            <span id="firstNoticeBadge" class="notice-badge-chip">🔔 आवश्यक सूचना • सत्र 2026-27</span>
-            <div style="font-size:0.82rem; color:#e0f2fe; margin-top:2px;">Maa Durga Higher Secondary School Semariya</div>
+        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+          <img src="https://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" style="width:38px; height:38px; border-radius:50%; border:2px solid #fff; flex-shrink:0;" alt="Logo">
+          <div style="min-width:0;">
+            <span id="firstNoticeBadge" class="notice-badge-chip">🔔 आवश्यक सूचना</span>
+            <div style="font-size:0.75rem; color:#e0f2fe; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Maa Durga Higher Secondary School Semariya</div>
           </div>
         </div>
+        <button type="button" class="btn-notice-close-top" onclick="closeFirstTimeNotice()" aria-label="Close Notice" title="सूचना बंद करें (Close)">
+          ✕
+        </button>
       </div>
       
       <div class="notice-modal-body">
-        <h3 id="firstNoticeTitle" style="font-size:1.25rem; color:#0284c7; font-weight:800; margin-bottom:0.75rem; line-height:1.35;">
-          माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!
-        </h3>
-        <div id="firstNoticeBodyText" style="font-size:0.92rem; color:#334155; line-height:1.65; margin-bottom:1rem;">
-          नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।
-        </div>
+        <h3 id="firstNoticeTitle" style="font-size:1.15rem; color:#0284c7; font-weight:800; margin-bottom:0.6rem; line-height:1.35;"></h3>
+        <div id="firstNoticeBodyText" style="display:none; font-size:0.9rem; color:#334155; line-height:1.6; margin-bottom:0.85rem; white-space:pre-line;"></div>
         
-        <div id="firstNoticeHighlights" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 14px; font-size:0.85rem; color:#166534; margin-bottom:1rem;">
-          ✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा
-        </div>
+        <div id="firstNoticeHighlights" style="display:none; background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; padding:8px 12px; font-size:0.82rem; color:#166534; margin-bottom:0.85rem;"></div>
         
-        <div id="firstNoticeHelpline" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:0.82rem; color:#64748b; margin-bottom:1.25rem;">
-          <span>📞 हेल्पलाइन: <strong>9200178385, 7024036526</strong></span>
-          <span>🏫 UDISE: <strong>23140402055</strong></span>
-        </div>
+        <div id="firstNoticeHelpline" style="display:none; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; font-size:0.8rem; color:#64748b; margin-bottom:0.9rem;"></div>
         
-        <button type="button" id="firstNoticeActionBtn" class="btn-hero-pri" style="width:100%; justify-content:center; border:none; cursor:pointer;" onclick="onFirstNoticeActionClick()">
-          ✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें
+        <button type="button" id="firstNoticeActionBtn" class="btn-hero-pri" style="display:none; width:100%; justify-content:center; border:none; cursor:pointer; font-size:0.92rem; padding:0.65rem 1rem;" onclick="onFirstNoticeActionClick()">
         </button>
       </div>
 
       <div class="notice-modal-footer">
-        <!-- Close notification button at the very bottom as requested -->
+        <!-- Close notification button -->
         <button type="button" class="btn-close-notice-bottom" onclick="closeFirstTimeNotice()">
-          ❌ सूचना बंद करें एवं मुख्य पोर्टल देखें (Close Notification)
+          ✕ सूचना बंद करें (Close Notification)
         </button>
       </div>
     </div>

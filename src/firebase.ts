@@ -348,11 +348,15 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     onSnapshot(
       doc(db, 'settings', 'popup_notification'),
       (snap) => {
-        if (snap.exists() && snap.data()?.data) {
-          const noticeData = snap.data().data;
-          localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
-          if (typeof (window as any).applyNoticeDataToPopup === 'function') {
-            (window as any).applyNoticeDataToPopup(noticeData);
+        if (snap.exists()) {
+          const noticeData = snap.data()?.data;
+          if (noticeData) {
+            localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
+            if (typeof (window as any).applyNoticeDataToPopup === 'function') {
+              (window as any).applyNoticeDataToPopup(noticeData);
+            }
+          } else {
+            localStorage.removeItem('mdhss_popup_notification');
           }
         }
       },
