@@ -596,6 +596,10 @@
       #navHomeBtn {
         display: none !important;
       }
+      .nav-bell-icon-btn {
+        padding: 0.32rem 0.55rem;
+        font-size: 0.95rem;
+      }
       .nav-3dot-btn {
         padding: 0.32rem 0.7rem;
         font-size: 0.88rem;
@@ -603,13 +607,98 @@
       .nav-3dot-btn .three-dots-icon {
         font-size: 1.15rem;
       }
+      .marquee-bar {
+        padding: 0.42rem 0;
+        font-size: 0.82rem;
+      }
+      .marquee-tag {
+        padding: 0.22rem 0.65rem;
+        font-size: 0.75rem;
+        letter-spacing: 0;
+      }
+      .floating-notice-btn {
+        bottom: 76px;
+        right: 14px;
+        padding: 0.45rem 0.85rem;
+        font-size: 0.8rem;
+      }
+
+      /* Home Screen Mobile Enhancements */
+      .hero-container {
+        margin-bottom: 1.25rem !important;
+      }
+      .hero-glass-panel {
+        padding: 1.25rem 1rem !important;
+        border-radius: var(--radius-md) !important;
+      }
+      .hero-main-title {
+        font-size: 1.55rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+      }
+      .hero-sub-description {
+        font-size: 0.86rem !important;
+        line-height: 1.55 !important;
+        margin-bottom: 1.1rem !important;
+      }
+      .hero-action-buttons {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.55rem !important;
+      }
+      .hero-action-buttons .btn-hero-pri,
+      .hero-action-buttons .btn-hero-sec,
+      .hero-action-buttons .btn-hero-photos {
+        padding: 0.65rem 0.6rem !important;
+        font-size: 0.82rem !important;
+        text-align: center !important;
+        justify-content: center !important;
+        white-space: normal !important;
+        line-height: 1.25 !important;
+        min-height: 44px !important;
+        border-radius: 8px !important;
+      }
+      .hero-stats-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.6rem !important;
+        margin-top: 1.1rem !important;
+        padding-top: 0.95rem !important;
+      }
+      .stat-box {
+        padding: 0.75rem 0.6rem !important;
+        background: #ffffff !important;
+        border-radius: 10px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03) !important;
+      }
+      .stat-number {
+        font-size: 1.18rem !important;
+        margin-bottom: 0.2rem !important;
+      }
+      .stat-label {
+        font-size: 0.74rem !important;
+        line-height: 1.3 !important;
+      }
+      .quick-hub-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+      }
+      .quick-hub-card {
+        padding: 1rem 1.15rem !important;
+        border-radius: 12px !important;
+      }
+      .gallery-item-card {
+        flex: 0 0 230px !important;
+        height: 180px !important;
+      }
     }
 
-    /* Red Alert Marquee */
+    /* Red Alert Marquee & Realtime Dynamic Ticker */
     .marquee-bar {
       background: linear-gradient(90deg, #991b1b, #dc2626, #991b1b);
       color: #ffffff;
-      padding: 0.55rem 0;
+      padding: 0.52rem 0;
       font-size: 0.92rem;
       font-weight: 700;
       box-shadow: 0 3px 12px rgba(220, 38, 38, 0.25);
@@ -618,6 +707,8 @@
       display: flex;
       align-items: center;
       z-index: 40;
+      user-select: none;
+      transition: background 0.3s ease;
     }
 
     .marquee-tag {
@@ -634,6 +725,7 @@
       flex-shrink: 0;
       z-index: 2;
       box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
+      transition: background 0.3s ease;
     }
 
     .marquee-track {
@@ -645,16 +737,126 @@
     .marquee-text {
       display: inline-block;
       white-space: nowrap;
-      animation: marqueeAnimation 55s linear infinite;
+      animation: marqueeAnimation 52s linear infinite;
     }
 
-    .marquee-bar:hover .marquee-text {
+    .marquee-bar:hover .marquee-text,
+    .marquee-bar:active .marquee-text {
       animation-play-state: paused;
     }
 
     @keyframes marqueeAnimation {
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
+    }
+
+    /* Top Navbar Notice Bell Button */
+    .nav-bell-icon-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      color: #0284c7;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 9999px;
+      padding: 0.36rem 0.68rem;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.15);
+      line-height: 1;
+    }
+    .nav-bell-icon-btn:hover {
+      background: #0284c7;
+      color: #ffffff;
+      transform: scale(1.06);
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+    .nav-bell-pulse {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px #ffffff;
+      animation: bellPulse 1.8s infinite;
+    }
+
+    /* Hero Notice Pill Button */
+    .hero-notice-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+      color: #0369a1;
+      border: 1.5px solid #7dd3fc;
+      border-radius: 9999px;
+      padding: 0.32rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12);
+    }
+    .hero-notice-pill-btn:hover {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+    .hero-pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: bellPulse 1.8s infinite;
+    }
+
+    /* Mobile Floating Notice Button */
+    .floating-notice-btn {
+      position: fixed;
+      bottom: 84px;
+      right: 18px;
+      z-index: 1040;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      border-radius: 9999px;
+      padding: 0.52rem 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+    }
+    .floating-notice-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.6);
+      background: linear-gradient(135deg, #0369a1, #075985);
+    }
+    .floating-bell-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 10px;
+      height: 10px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      animation: bellPulse 1.8s infinite;
+    }
+    @keyframes bellPulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
     /* ==========================================================================
@@ -2643,6 +2845,14 @@
             </a>
           </li>
 
+          <!-- Notification Bell Trigger (One-Tap Access on Mobile & Desktop) -->
+          <li>
+            <button type="button" class="nav-bell-icon-btn" id="navTopNoticeBell" onclick="openFirstTimeNoticeManually()" title="विद्यालय आवश्यक सूचनाएं (Notice & Announcements)" aria-label="School Announcements">
+              <span class="nav-bell-emoji">🔔</span>
+              <span class="nav-bell-pulse" id="navBellPulseDot"></span>
+            </button>
+          </li>
+
           <!-- 4. Class WhatsApp Groups -->
           <li>
             <a href="#whatsapp" class="nav-link-btn nav-wa-pill" onclick="navigateToPage('whatsapp'); return false;">
@@ -2747,6 +2957,17 @@
           </div>
           <span class="threedot-item-tag" style="background:#be123c; color:#ffffff;">New Tab ↗</span>
         </button>
+
+        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openFirstTimeNoticeManually();" style="border-color:#bae6fd; background:#f0f9ff;">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="background:#e0f2fe; color:#0284c7;">🔔</span>
+            <div>
+              <div style="color:#0369a1; font-weight:800;">विद्यालय आवश्यक सूचनाएं (Notice Board)</div>
+              <div style="font-size:0.75rem; color:#0284c7;">सत्र 2026-27 प्रवेश, समय एवं मुख्य घोषणाएं</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#0284c7; color:#ffffff;">Notice 🔔</span>
+        </button>
       </div>
 
       <!-- Group 2: विद्यार्थी व शैक्षणिक सेवाएं (Student Services) -->
@@ -2850,13 +3071,13 @@
     </div>
   </aside>
 
-  <!-- 4. RED ALERT BAR MARQUEE -->
-  <div class="marquee-bar">
-    <div class="marquee-tag">
-      <span>🔔 प्रवेश सूचना</span>
+  <!-- 4. REAL-TIME DYNAMIC RED ALERT BAR MARQUEE -->
+  <div class="marquee-bar" id="portalMarqueeBar" onclick="handleTickerBarClick()" style="cursor:pointer;" title="क्लिक कर संबंधित जानकारी देखें">
+    <div class="marquee-tag" id="portalMarqueeTag">
+      <span id="portalMarqueeTagText">🔔 प्रवेश सूचना</span>
     </div>
-    <div class="marquee-track">
-      <div class="marquee-text">
+    <div class="marquee-track" id="portalMarqueeTrack">
+      <div class="marquee-text" id="portalMarqueeText">
         प्रवेश प्रारंभ! शैक्षणिक सत्र 2026-27 के लिए प्रवेश खुले हैं | स्कूल समय: प्रातः 09:30 से सायं 04:00 बजे (9:30 AM - 4:00 PM) | Nursery to Class 12th (गणित, विज्ञान, वाणिज्य संकाय) | म.प्र. बोर्ड ई-बुक्स एवं कक्षावार व्हाट्सएप ग्रुप लिंक उपलब्ध | 100% CCTV सुरक्षित कैंपस, स्मार्ट क्लास, कंप्यूटर एवं विज्ञान लैब | संपर्क: 9200178385, 9201431631, 7024036526 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ★ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; प्रवेश प्रारंभ! सत्र 2026-27 | स्कूल समय: 9:30 AM - 4:00 PM | विद्या ददाति विनयं |
       </div>
     </div>
@@ -4279,6 +4500,9 @@
             <button type="button" class="btn-hero-sec" id="adminTabBtnNotice" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #0284c7; border: 1px solid #bae6fd;" onclick="switchAdminTab('notice')">
               📢 सूचना पॉपअप नियंत्रण
             </button>
+            <button type="button" class="btn-hero-sec" id="adminTabBtnTicker" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #dc2626; border: 1px solid #fecaca;" onclick="switchAdminTab('ticker')">
+              🚩 प्रवेश सूचना पट्टी (Ticker)
+            </button>
             <button type="button" class="btn-hero-sec" id="adminTabBtnGallery" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #7c3aed; border: 1px solid #ddd6fe;" onclick="switchAdminTab('gallery')">
               📸 ऑटो-स्क्रॉलिंग गैलरी
             </button>
@@ -4718,6 +4942,105 @@ function doPost(e) {
             </div>
           </div>
 
+          <!-- TAB 4B: PRAVESH SOOCHNA MARQUEE TICKER CONTROLLER -->
+          <div id="adminTabContentTicker" style="display: none;">
+            <div class="glass-card" style="padding: 1.75rem; background: #ffffff; border: 1.5px solid #fecaca; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #ffffff;">
+                    🚩
+                  </div>
+                  <div>
+                    <h3 style="color: #991b1b; margin: 0; font-size: 1.25rem;">होम स्क्रीन प्रवेश सूचना पट्टी (Scrolling Ticker Marquee) नियंत्रण</h3>
+                    <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.88rem;">यहाँ से होम स्क्रीन पर लगातार चलने वाली लाल प्रवेश सूचना पट्टी का पूरा टेक्स्ट, स्पीड, रंग व लिंक बदलें।</p>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn-hero-sec" style="background:#fff1f2; color:#be123c; border:1px solid #fecdd3; font-size:0.85rem; padding:0.5rem 1rem; cursor:pointer;" onclick="resetDefaultTickerSettings()">
+                    🔄 मूल सूचना पट्टी बहाल करें
+                  </button>
+                </div>
+              </div>
+
+              <!-- Real-time Live Preview Box -->
+              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 1.5rem;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                  👁️ लाइव पूर्वावलोकन (Live Preview):
+                </div>
+                <div id="adminTickerLivePreviewBar" style="background: linear-gradient(90deg, #991b1b, #dc2626, #991b1b); color: #fff; padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                  <span id="adminTickerLivePreviewTag" style="background: #7f1d1d; color: #fff; padding: 3px 10px; border-radius: 4px; font-size: 0.78rem; white-space: nowrap; font-weight: 800;">🔔 प्रवेश सूचना</span>
+                  <span id="adminTickerLivePreviewText" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">प्रवेश प्रारंभ! शैक्षणिक सत्र 2026-27 के लिए प्रवेश खुले हैं...</span>
+                </div>
+              </div>
+
+              <form onsubmit="saveAdminTickerSettings(event)">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                  
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">पट्टी स्थिति (Marquee Status)</label>
+                    <select id="cfgTickerEnabled" class="form-input-custom" onchange="updateTickerLivePreview()">
+                      <option value="true">🟢 सक्रिय - होमपेज पर दिखाएं (Visible)</option>
+                      <option value="false">🔴 निष्क्रिय - छुपाएं (Hidden)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">लेफ्ट टैग / हेडिंग (Badge Label)</label>
+                    <input type="text" id="cfgTickerTag" class="form-input-custom" placeholder="🔔 प्रवेश सूचना" oninput="updateTickerLivePreview()" />
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">स्क्रॉलिंग गति (Scrolling Speed)</label>
+                    <select id="cfgTickerSpeed" class="form-input-custom">
+                      <option value="normal">सामान्य गति (Normal - 52s)</option>
+                      <option value="slow">धीमी गति (Slow - 80s, आसान पढ़ने हेतु)</option>
+                      <option value="fast">तेज गति (Fast - 32s)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">कलर थीम (Color Theme)</label>
+                    <select id="cfgTickerTheme" class="form-input-custom" onchange="updateTickerLivePreview()">
+                      <option value="red">🔴 लाल - रेड अलर्ट (Red Official - Default)</option>
+                      <option value="blue">🔵 नीला - स्कूल थीम (Royal Blue)</option>
+                      <option value="green">🟢 हरा - शैक्षणिक (Emerald Green)</option>
+                      <option value="orange">🟠 नारंगी - आवश्यक घोषणा (Amber Orange)</option>
+                      <option value="dark">⚫ डार्क - क्लासिक (Midnight Slate)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">पट्टी पर क्लिक करने पर क्या खुले? (Click Action)</label>
+                    <select id="cfgTickerAction" class="form-input-custom">
+                      <option value="admission">📝 ऑनलाइन प्रवेश फॉर्म (Admission Form)</option>
+                      <option value="notice">🔔 आवश्यक सूचना पॉपअप (Notice Board Modal)</option>
+                      <option value="whatsapp">💬 क्लास व्हाट्सएप ग्रुप्स (WhatsApp Groups)</option>
+                      <option value="student">🏆 छात्र परीक्षा परिणाम पोर्टल (Student Results)</option>
+                    </select>
+                  </div>
+
+                </div>
+
+                <div class="form-group-custom" style="margin-bottom: 1.25rem;">
+                  <label class="form-label-custom">स्क्रॉलिंग सूचना का पूरा विवरण (Scrolling Message Text) *</label>
+                  <textarea id="cfgTickerText" class="form-input-custom" rows="4" placeholder="सत्र 2026-27 प्रवेश प्रारंभ... समय 9:30 AM - 4:00 PM..." oninput="updateTickerLivePreview()" required style="line-height: 1.5; font-size: 0.95rem;"></textarea>
+                  <small style="color: #64748b; font-size: 0.8rem; margin-top: 4px; display: block;">
+                    💡 युक्ति: मुख्य बिंदुओं के बीच " | " या " ★ " का प्रयोग करें जिससे स्क्रॉल होते समय पढ़ने में स्पष्ट लगे।
+                  </small>
+                </div>
+
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                  <button type="submit" class="btn-hero-pri" style="background:#dc2626; border: none; cursor: pointer; padding: 0.8rem 1.6rem; font-size: 1rem;">
+                    💾 प्रवेश सूचना पट्टी सेव करें (Save Ticker Settings)
+                  </button>
+                  <span id="tickerSaveStatusBadge" style="display:none; color:#16a34a; font-weight:700; font-size:0.9rem; background:#dcfce7; border:1px solid #86efac; padding:6px 14px; border-radius:9999px;">
+                    ✅ प्रवेश सूचना पट्टी सेटिंग्स सुरक्षित हो गईं व लाइव अपडेट हो गईं!
+                  </span>
+                </div>
+              </form>
+            </div>
+          </div>
+
           <!-- TAB 5: AUTO-SCROLLING GALLERY MANAGER -->
           <div id="adminTabContentGallery" style="display: none;">
             <div class="glass-card" style="padding: 1.75rem; background: #ffffff; border: 1.5px solid #ddd6fe; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
@@ -4912,9 +5235,15 @@ function doPost(e) {
             <div class="hero-badge-tag" style="margin-bottom:0;">
               ✨ विद्या ददाति विनयं • ज्ञान, संस्कार व सफलता
             </div>
-            <span class="page-badge-pill" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
-              🕒 स्कूल समय: 9:30 AM - 4:00 PM
-            </span>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="hero-notice-pill-btn" onclick="openFirstTimeNoticeManually()" title="विद्यालय नवीन सूचनाएं देखें">
+                <span>🔔 नवीन सूचनाएं (Notice)</span>
+                <span class="hero-pulse-dot"></span>
+              </button>
+              <span class="page-badge-pill" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
+                🕒 स्कूल समय: 9:30 AM - 4:00 PM
+              </span>
+            </div>
           </div>
 
           <h2 class="hero-main-title" style="font-size:2.35rem; margin-bottom:0.6rem;">
@@ -4927,6 +5256,9 @@ function doPost(e) {
           <div class="hero-action-buttons">
             <button class="btn-hero-pri" onclick="navigateToPage('admission')">
               ✍️ ऑनलाइन प्रवेश 2026-27
+            </button>
+            <button type="button" class="btn-hero-sec" style="background:#f0f9ff; color:#0284c7; border-color:#bae6fd; font-weight:800;" onclick="openFirstTimeNoticeManually()">
+              🔔 आवश्यक सूचना (Notice)
             </button>
             <button class="btn-hero-sec" style="background:#dcfce7; color:#15803d; border-color:#86efac;" onclick="navigateToPage('whatsapp')">
               💬 WhatsApp ग्रुप्स
@@ -5218,6 +5550,19 @@ function doPost(e) {
   </footer>
 
   <!-- 9. FLOATING ACTION BUTTONS -->
+  <!-- Floating Quick Notice Bell Button (One-Tap Access on Mobile) -->
+  <button 
+    class="floating-notice-btn" 
+    id="floatingNoticeBtn"
+    onclick="openFirstTimeNoticeManually()" 
+    title="विद्यालय आवश्यक सूचना (School Announcements)" 
+    aria-label="View School Announcements"
+  >
+    <span style="font-size:1.15rem; line-height:1;">🔔</span>
+    <span>सूचना</span>
+    <span class="floating-bell-badge" id="floatingNoticeBadgeDot"></span>
+  </button>
+
   <!-- WhatsApp Direct Button -->
   <a 
     href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20inquire%20about%20admission%20and%20courses." 
@@ -5399,6 +5744,9 @@ function doPost(e) {
 
       // Render Home Auto-Scrolling Image Gallery
       renderAutoGallery();
+
+      // Initialize Scrolling Ticker Marquee from localStorage / Cloud
+      initTickerMarquee();
 
       // Notification Popup Check (Opened directly without delay)
       checkAndShowFirstTimeNotice();
@@ -6927,6 +7275,7 @@ function doPost(e) {
       const marksContent = document.getElementById('adminTabContentMarks');
       const fbContent = document.getElementById('adminTabContentFeedbacks');
       const noticeContent = document.getElementById('adminTabContentNotice');
+      const tickerContent = document.getElementById('adminTabContentTicker');
       const galleryContent = document.getElementById('adminTabContentGallery');
       const resultLinkContent = document.getElementById('adminTabContentResultLink');
       const sheetsContent = document.getElementById('adminTabContentSheets');
@@ -6935,12 +7284,13 @@ function doPost(e) {
       const btnMarks = document.getElementById('adminTabBtnMarks');
       const btnFb = document.getElementById('adminTabBtnFb');
       const btnNotice = document.getElementById('adminTabBtnNotice');
+      const btnTicker = document.getElementById('adminTabBtnTicker');
       const btnGallery = document.getElementById('adminTabBtnGallery');
       const btnResultLink = document.getElementById('adminTabBtnResultLink');
       const btnSheets = document.getElementById('adminTabBtnSheets');
 
-      [admContent, marksContent, fbContent, noticeContent, galleryContent, resultLinkContent, sheetsContent].forEach(c => { if (c) c.style.display = 'none'; });
-      [btnAdm, btnMarks, btnFb, btnNotice, btnGallery, btnResultLink, btnSheets].forEach(b => { 
+      [admContent, marksContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent, sheetsContent].forEach(c => { if (c) c.style.display = 'none'; });
+      [btnAdm, btnMarks, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink, btnSheets].forEach(b => { 
         if (b) {
           b.style.background = '#f8fafc';
           b.style.color = '#334155';
@@ -6974,6 +7324,13 @@ function doPost(e) {
         btnNotice.style.border = '1px solid #0284c7';
         btnNotice.style.boxShadow = '0 2px 8px rgba(2,132,199,0.25)';
         loadAdminNoticeSettings();
+      } else if (tab === 'ticker' && tickerContent && btnTicker) {
+        tickerContent.style.display = 'block';
+        btnTicker.style.background = '#dc2626';
+        btnTicker.style.color = '#ffffff';
+        btnTicker.style.border = '1px solid #dc2626';
+        btnTicker.style.boxShadow = '0 2px 8px rgba(220,38,38,0.25)';
+        loadAdminTickerSettings();
       } else if (tab === 'gallery' && galleryContent && btnGallery) {
         galleryContent.style.display = 'block';
         btnGallery.style.background = '#7c3aed';
@@ -8294,8 +8651,17 @@ function doPost(e) {
       } catch (e) {}
 
       if (!isRealUpdatedNotice(noticeData)) {
-        alert('वर्तमान में कोई सक्रिय सूचना अपडेट उपलब्ध नहीं है।');
-        return;
+        noticeData = {
+          badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
+          enabled: 'true',
+          title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय, सेमरिया',
+          body: 'नवीन शैक्षणिक सत्र 2026-27 हेतु नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रारंभ हो चुके हैं। नियमित विद्यालय समय: प्रातः 09:30 AM से सायं 04:00 PM तक।',
+          highlights: '✅ 100% CCTV सुरक्षित कैंपस • स्मार्ट क्लासरूम • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
+          helpline: '📞 प्रवेश एवं सहायता: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
+          btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
+          btnAction: 'admission',
+          customUrl: ''
+        };
       }
 
       applyNoticeDataToPopup(noticeData);
@@ -8450,6 +8816,223 @@ function doPost(e) {
         }
       }
     });
+
+    // ==========================================================================
+    // 9B. SCROLLING TICKER MARQUEE (PRAVESH SOOCHNA ADMIN CONTROLLER & RUNTIME)
+    // ==========================================================================
+    const DEFAULT_TICKER_DATA = {
+      enabled: 'true',
+      tag: '🔔 प्रवेश सूचना',
+      text: 'प्रवेश प्रारंभ! शैक्षणिक सत्र 2026-27 के लिए प्रवेश खुले हैं | स्कूल समय: प्रातः 09:30 से सायं 04:00 बजे (9:30 AM - 4:00 PM) | Nursery to Class 12th (गणित, विज्ञान, वाणिज्य संकाय) | म.प्र. बोर्ड ई-बुक्स एवं कक्षावार व्हाट्सएप ग्रुप लिंक उपलब्ध | 100% CCTV सुरक्षित कैंपस, स्मार्ट क्लास, कंप्यूटर एवं विज्ञान लैब | संपर्क: 9200178385, 9201431631, 7024036526 ★ प्रवेश प्रारंभ! सत्र 2026-27 | स्कूल समय: 9:30 AM - 4:00 PM | विद्या ददाति विनयं |',
+      speed: 'normal',
+      theme: 'red',
+      clickAction: 'admission',
+      updatedAt: ''
+    };
+
+    const TICKER_THEMES = {
+      red: {
+        bar: 'linear-gradient(90deg, #991b1b, #dc2626, #991b1b)',
+        tag: '#7f1d1d'
+      },
+      blue: {
+        bar: 'linear-gradient(90deg, #1e3a8a, #0284c7, #1e3a8a)',
+        tag: '#0369a1'
+      },
+      green: {
+        bar: 'linear-gradient(90deg, #065f46, #059669, #065f46)',
+        tag: '#047857'
+      },
+      orange: {
+        bar: 'linear-gradient(90deg, #9a3412, #ea580c, #9a3412)',
+        tag: '#c2410c'
+      },
+      dark: {
+        bar: 'linear-gradient(90deg, #0f172a, #334155, #0f172a)',
+        tag: '#020617'
+      }
+    };
+
+    async function initTickerMarquee() {
+      let tickerData = null;
+      try {
+        const saved = localStorage.getItem('mdhss_ticker_marquee');
+        if (saved) {
+          tickerData = JSON.parse(saved);
+        }
+      } catch (e) {}
+
+      if (!tickerData && window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        try {
+          const cloudData = await window.mdhssCloud.fetchSetting('ticker_marquee');
+          if (cloudData) {
+            tickerData = cloudData;
+            localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(cloudData));
+          }
+        } catch (e) {}
+      }
+
+      applyTickerSettingsToUI(tickerData || DEFAULT_TICKER_DATA);
+    }
+    window.initTickerMarquee = initTickerMarquee;
+
+    function applyTickerSettingsToUI(data) {
+      const ticker = { ...DEFAULT_TICKER_DATA, ...(data || {}) };
+      const bar = document.getElementById('portalMarqueeBar');
+      const tagEl = document.getElementById('portalMarqueeTag');
+      const tagTextEl = document.getElementById('portalMarqueeTagText');
+      const textEl = document.getElementById('portalMarqueeText');
+
+      if (!bar) return;
+
+      if (ticker.enabled === 'false') {
+        bar.style.display = 'none';
+        return;
+      }
+      bar.style.display = 'flex';
+
+      if (tagTextEl) {
+        tagTextEl.textContent = (ticker.tag && ticker.tag.trim()) ? ticker.tag.trim() : '🔔 प्रवेश सूचना';
+      }
+
+      if (textEl) {
+        textEl.textContent = ticker.text || '';
+        let duration = '52s';
+        if (ticker.speed === 'slow') duration = '80s';
+        else if (ticker.speed === 'fast') duration = '32s';
+        textEl.style.animationDuration = duration;
+      }
+
+      const currentTheme = TICKER_THEMES[ticker.theme] || TICKER_THEMES.red;
+      bar.style.background = currentTheme.bar;
+      if (tagEl) {
+        tagEl.style.background = currentTheme.tag;
+      }
+
+      bar.dataset.clickAction = ticker.clickAction || 'admission';
+    }
+    window.applyTickerSettingsToUI = applyTickerSettingsToUI;
+
+    function handleTickerBarClick() {
+      const bar = document.getElementById('portalMarqueeBar');
+      const action = bar ? (bar.dataset.clickAction || 'admission') : 'admission';
+      if (action === 'admission') {
+        navigateToPage('admission');
+      } else if (action === 'notice') {
+        openFirstTimeNoticeManually();
+      } else if (action === 'whatsapp') {
+        navigateToPage('whatsapp');
+      } else if (action === 'student') {
+        openStudentResultDirect();
+      }
+    }
+    window.handleTickerBarClick = handleTickerBarClick;
+
+    function loadAdminTickerSettings() {
+      let tickerData = null;
+      try {
+        const saved = localStorage.getItem('mdhss_ticker_marquee');
+        if (saved) {
+          tickerData = JSON.parse(saved);
+        }
+      } catch (e) {}
+
+      const data = { ...DEFAULT_TICKER_DATA, ...(tickerData || {}) };
+
+      const selEnabled = document.getElementById('cfgTickerEnabled');
+      const inputTag = document.getElementById('cfgTickerTag');
+      const textTicker = document.getElementById('cfgTickerText');
+      const selSpeed = document.getElementById('cfgTickerSpeed');
+      const selTheme = document.getElementById('cfgTickerTheme');
+      const selAction = document.getElementById('cfgTickerAction');
+
+      if (selEnabled) selEnabled.value = data.enabled || 'true';
+      if (inputTag) inputTag.value = data.tag || '🔔 प्रवेश सूचना';
+      if (textTicker) textTicker.value = data.text || '';
+      if (selSpeed) selSpeed.value = data.speed || 'normal';
+      if (selTheme) selTheme.value = data.theme || 'red';
+      if (selAction) selAction.value = data.clickAction || 'admission';
+
+      updateTickerLivePreview();
+    }
+    window.loadAdminTickerSettings = loadAdminTickerSettings;
+
+    function updateTickerLivePreview() {
+      const previewBar = document.getElementById('adminTickerLivePreviewBar');
+      const previewTag = document.getElementById('adminTickerLivePreviewTag');
+      const previewText = document.getElementById('adminTickerLivePreviewText');
+      if (!previewBar || !previewTag || !previewText) return;
+
+      const enabled = document.getElementById('cfgTickerEnabled')?.value || 'true';
+      const tag = document.getElementById('cfgTickerTag')?.value || '🔔 प्रवेश सूचना';
+      const text = document.getElementById('cfgTickerText')?.value || '';
+      const themeKey = document.getElementById('cfgTickerTheme')?.value || 'red';
+
+      if (enabled === 'false') {
+        previewBar.style.opacity = '0.4';
+        previewTag.textContent = '🔴 बंद (Disabled)';
+      } else {
+        previewBar.style.opacity = '1';
+        previewTag.textContent = tag.trim() || '🔔 प्रवेश सूचना';
+      }
+
+      previewText.textContent = text.trim() || 'यहाँ स्क्रॉलिंग सूचना दिखाई देगी...';
+
+      const theme = TICKER_THEMES[themeKey] || TICKER_THEMES.red;
+      previewBar.style.background = theme.bar;
+      previewTag.style.background = theme.tag;
+    }
+    window.updateTickerLivePreview = updateTickerLivePreview;
+
+    async function saveAdminTickerSettings(e) {
+      if (e) e.preventDefault();
+
+      const text = document.getElementById('cfgTickerText')?.value.trim();
+      if (!text) {
+        alert('कृपया प्रवेश सूचना पट्टी का स्क्रॉलिंग टेक्स्ट दर्ज करें!');
+        return;
+      }
+
+      const tickerData = {
+        enabled: document.getElementById('cfgTickerEnabled')?.value || 'true',
+        tag: document.getElementById('cfgTickerTag')?.value.trim() || '🔔 प्रवेश सूचना',
+        text: text,
+        speed: document.getElementById('cfgTickerSpeed')?.value || 'normal',
+        theme: document.getElementById('cfgTickerTheme')?.value || 'red',
+        clickAction: document.getElementById('cfgTickerAction')?.value || 'admission',
+        updatedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(tickerData));
+      applyTickerSettingsToUI(tickerData);
+
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        try {
+          await window.mdhssCloud.saveSetting('ticker_marquee', tickerData);
+        } catch (err) {
+          console.warn('Cloud sync ticker error:', err);
+        }
+      }
+
+      const badge = document.getElementById('tickerSaveStatusBadge');
+      if (badge) {
+        badge.style.display = 'inline-block';
+        setTimeout(() => { badge.style.display = 'none'; }, 4000);
+      }
+    }
+    window.saveAdminTickerSettings = saveAdminTickerSettings;
+
+    function resetDefaultTickerSettings() {
+      if (!confirm('क्या आप प्रवेश सूचना पट्टी को मूल डिफ़ॉल्ट पर रीसेट करना चाहते हैं?')) return;
+      localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(DEFAULT_TICKER_DATA));
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('ticker_marquee', DEFAULT_TICKER_DATA);
+      }
+      loadAdminTickerSettings();
+      applyTickerSettingsToUI(DEFAULT_TICKER_DATA);
+      alert('प्रवेश सूचना पट्टी मूल सेटिंग्स पर रीसेट हो गई है!');
+    }
+    window.resetDefaultTickerSettings = resetDefaultTickerSettings;
 
     // ==========================================================================
     // 10. AUTO-SCROLLING VISUAL IMAGE GALLERY (HOMEPAGE & ADMIN CONTROLLER)

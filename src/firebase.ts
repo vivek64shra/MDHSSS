@@ -413,6 +413,27 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     console.warn('Realtime gallery listener warning:', err);
   }
 
+  // Realtime Scrolling Ticker Marquee Listener
+  try {
+    onSnapshot(
+      doc(db, 'settings', 'ticker_marquee'),
+      (snap) => {
+        if (snap.exists() && snap.data()?.data) {
+          const tickerData = snap.data().data;
+          localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(tickerData));
+          if (typeof (window as any).applyTickerSettingsToUI === 'function') {
+            (window as any).applyTickerSettingsToUI(tickerData);
+          }
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, 'settings/ticker_marquee');
+      }
+    );
+  } catch (err) {
+    console.warn('Realtime ticker marquee listener warning:', err);
+  }
+
   // Realtime Marks Sheets Listener
   try {
     onSnapshot(
@@ -489,6 +510,9 @@ const mdhssCloud = {
 
       const gallery = JSON.parse(localStorage.getItem('mdhss_gallery_images') || 'null');
       if (gallery) await saveSettingToCloud('gallery_images', gallery);
+
+      const ticker = JSON.parse(localStorage.getItem('mdhss_ticker_marquee') || 'null');
+      if (ticker) await saveSettingToCloud('ticker_marquee', ticker);
 
       return { success: true, admissions: admCount, feedbacks: fbCount, marks: msCount };
     } catch (e) {
