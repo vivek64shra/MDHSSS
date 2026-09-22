@@ -63,8 +63,10 @@
             <p style="font-size: 0.85rem; color: #64748b;">सेमरिया, रीवा (म.प्र.) • अधिकृत शिक्षक पोर्टल (Teacher Panel)</p>
           </div>
         </div>
-        <div style="display: flex; gap: 8px;">
-          <a href="../index.html" class="btn btn-secondary">🏠 मुख्य वेबसाइट (Home)</a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="../index.html" class="btn btn-secondary">🏠 मुख्य पृष्ठ (Home)</a>
+          <a href="admission-portal.html" class="btn btn-secondary" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">📝 New Admission 2026-27</a>
+          <a href="feedback-portal.html" class="btn btn-secondary" style="background:#fdf2f8; color:#be185d; border-color:#fbcfe8;">💬 प्रतिक्रिया व सुझाव (Feedback)</a>
           <button id="logoutBtn" class="btn btn-danger" style="display:none;" onclick="logoutTeacher()">🚪 लॉगआउट</button>
         </div>
       </div>
@@ -100,9 +102,10 @@
             <h3 id="activeTeacherName" style="font-size: 1.1rem; color: #0369a1;">-</h3>
             <p id="activeTeacherPhone" style="font-size: 0.82rem; color: #475569;">-</p>
           </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-primary" onclick="setTab('marks')">📊 परीक्षा अंक प्रविष्टि (Marks Entry)</button>
-            <button class="btn btn-secondary" onclick="setTab('attendance')">📋 दैनिक उपस्थिति (Attendance)</button>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="tabBtnMarks" class="btn btn-primary" onclick="setTab('marks')">📊 परीक्षा अंक प्रविष्टि (Marks Entry)</button>
+            <button id="tabBtnAtt" class="btn btn-secondary" onclick="setTab('attendance')">📋 दैनिक उपस्थिति (Attendance)</button>
+            <button id="tabBtnFees" class="btn btn-secondary" onclick="setTab('fees')">💰 छात्र शुल्क विवरण (Student Fees)</button>
           </div>
         </div>
 
@@ -250,6 +253,31 @@
           </div>
         </div>
 
+        <!-- TAB C: STUDENT FEES LOOKUP (LAZY-LOADED ON SUBMIT) -->
+        <div id="feesTab" style="display: none;">
+          <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+            <h3 style="color: #0369a1; font-size: 1.15rem; margin-bottom: 0.35rem;">💰 छात्र शुल्क विवरण जांच (Student Fees Lookup)</h3>
+            <p style="font-size: 0.85rem; color: #475569; margin: 0;">
+              ⚡ <strong>लैग-फ्री ऑन-डिमांड लोडिंग:</strong> गूगल स्प्रेडशीट केवल स्कॉलर नंबर सबमिट करने पर लोड होती है।
+            </p>
+          </div>
+
+          <form onsubmit="handleFeeSearch(event)" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem; max-width: 600px;">
+            <input type="text" id="feeScholarInput" class="form-control" style="flex: 1; min-width: 220px;" placeholder="छात्र स्कॉलर नंबर दर्ज करें (उदा. 2070, 1540...)" required>
+            <button type="submit" id="feeSearchBtn" class="btn btn-primary" style="white-space: nowrap;">
+              🔍 शुल्क विवरण देखें
+            </button>
+          </form>
+
+          <div id="feeLoading" style="display: none; padding: 1.5rem; text-align: center; color: #0284c7; font-weight: 700; background: #f0f9ff; border-radius: 8px;">
+            ⏳ गूगल स्प्रेडशीट से छात्र शुल्क रिकॉर्ड सुरक्षित रूप से लाया जा रहा है...
+          </div>
+
+          <div id="feeError" style="display: none; padding: 1rem; background: #fee2e2; color: #b91c1c; border-radius: 8px; font-weight: 600; margin-bottom: 1rem;"></div>
+
+          <div id="feeResultCard" style="display: none;"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -360,6 +388,156 @@
     function setTab(tab) {
       document.getElementById('marksTab').style.display = (tab === 'marks' ? 'block' : 'none');
       document.getElementById('attendanceTab').style.display = (tab === 'attendance' ? 'block' : 'none');
+      document.getElementById('feesTab').style.display = (tab === 'fees' ? 'block' : 'none');
+
+      const btnMarks = document.getElementById('tabBtnMarks');
+      const btnAtt = document.getElementById('tabBtnAtt');
+      const btnFees = document.getElementById('tabBtnFees');
+
+      if (btnMarks) {
+        btnMarks.className = tab === 'marks' ? 'btn btn-primary' : 'btn btn-secondary';
+      }
+      if (btnAtt) {
+        btnAtt.className = tab === 'attendance' ? 'btn btn-primary' : 'btn btn-secondary';
+      }
+      if (btnFees) {
+        btnFees.className = tab === 'fees' ? 'btn btn-primary' : 'btn btn-secondary';
+      }
+    }
+
+    // Lazy Loaded Student Fees from Google Sheets CSV
+    const FEES_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv0gTbGo5P8wkB4CYuVIWzvXDOu1INb_L8beoaLYrXIyw9noqOIIln5PxxlP2S9apBakQfq48_YLZ8/pub?output=csv";
+    let _cachedStudentFees = null;
+
+    function parseCSVRow(text) {
+      const p = [];
+      let cur = '';
+      let inQ = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === '"') {
+          if (inQ && text[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQ = !inQ;
+          }
+        } else if (ch === ',' && !inQ) {
+          p.push(cur.trim());
+          cur = '';
+        } else {
+          cur += ch;
+        }
+      }
+      p.push(cur.trim());
+      return p;
+    }
+
+    async function handleFeeSearch(e) {
+      e.preventDefault();
+      const input = document.getElementById('feeScholarInput');
+      const query = (input?.value || '').trim();
+      const loading = document.getElementById('feeLoading');
+      const errBox = document.getElementById('feeError');
+      const resultCard = document.getElementById('feeResultCard');
+
+      if (!query) return;
+
+      errBox.style.display = 'none';
+      resultCard.style.display = 'none';
+      loading.style.display = 'block';
+
+      try {
+        if (!_cachedStudentFees) {
+          const res = await fetch(FEES_SHEET_CSV_URL);
+          if (!res.ok) throw new Error('स्प्रेडशीट लोड करने में त्रुटि आई: ' + res.status);
+          const txt = await res.text();
+          const lines = txt.split(/\r?\n/).filter(l => l.trim().length > 0);
+          
+          let dataStart = 0;
+          for (let i = 0; i < Math.min(10, lines.length); i++) {
+            const cols = parseCSVRow(lines[i]);
+            if (cols.some(c => c.toLowerCase().includes('scholar') || c.includes('Scholar No'))) {
+              dataStart = i + 1;
+              break;
+            }
+          }
+          if (dataStart === 0 && lines.length > 3) dataStart = 3;
+
+          const list = [];
+          for (let i = dataStart; i < lines.length; i++) {
+            const cols = parseCSVRow(lines[i]);
+            if (cols.length < 5) continue;
+            const sch = (cols[1] || '').trim();
+            const name = (cols[2] || '').trim();
+            if (!sch && !name) continue;
+            list.push({
+              scholarNo: sch,
+              name: name,
+              father: cols[3] || '-',
+              className: cols[4] || '-',
+              prevDue: cols[5] || '0',
+              admFee: cols[6] || '0',
+              tution1: cols[9] || '0',
+              tution2: cols[10] || '0',
+              tution3: cols[13] || '0',
+              tution4: cols[14] || '0',
+              tution5: cols[17] || '0',
+              conveyance: cols[11] || '0',
+              totalDue: cols[28] || cols[cols.length - 1] || '0'
+            });
+          }
+          _cachedStudentFees = list;
+        }
+
+        const match = _cachedStudentFees.find(s => s.scholarNo.toLowerCase() === query.toLowerCase());
+        loading.style.display = 'none';
+
+        if (!match) {
+          errBox.textContent = `❌ स्कॉलर नंबर "${query}" का कोई रिकॉर्ड नहीं मिला। कृपया स्कॉलर नंबर जांचें।`;
+          errBox.style.display = 'block';
+          return;
+        }
+
+        resultCard.innerHTML = `
+          <div style="border: 2px solid #0284c7; border-radius: 8px; background: #ffffff; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0f2fe; padding-bottom: 12px; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h4 style="font-size: 1.25rem; color: #0369a1; font-weight: 800; margin: 0;">${match.name}</h4>
+                <p style="font-size: 0.88rem; color: #64748b; margin: 2px 0 0 0;">पिता: <strong>${match.father}</strong> • कक्षा: <strong>${match.className}</strong></p>
+              </div>
+              <div style="background: #e0f2fe; color: #0369a1; padding: 6px 14px; border-radius: 9999px; font-weight: 800;">
+                स्कॉलर नं: ${match.scholarNo}
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 1rem;">
+              <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                <div style="font-size:0.78rem; color:#64748b;">पूर्व वर्ष का शेष (Old Due)</div>
+                <div style="font-size:1.05rem; font-weight:700; color:#0f172a;">₹${match.prevDue}</div>
+              </div>
+              <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                <div style="font-size:0.78rem; color:#64748b;">प्रवेश शुल्क (Admission Fee)</div>
+                <div style="font-size:1.05rem; font-weight:700; color:#0f172a;">₹${match.admFee}</div>
+              </div>
+              <div style="background:#f0fdf4; padding:10px; border-radius:6px; border:1.5px solid #86efac;">
+                <div style="font-size:0.78rem; color:#166534; font-weight:700;">कुल देय शुल्क (Total Due)</div>
+                <div style="font-size:1.25rem; font-weight:800; color:#15803d;">₹${match.totalDue}</div>
+              </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 1rem;">
+              <button type="button" class="btn btn-secondary" onclick="window.print()">🖨️ शुल्क रसीद प्रिंट करें</button>
+            </div>
+          </div>
+        `;
+        resultCard.style.display = 'block';
+
+      } catch (err) {
+        loading.style.display = 'none';
+        errBox.textContent = 'त्रुटि: ' + (err.message || 'डेटा लोड करने में समस्या हुई।');
+        errBox.style.display = 'block';
+      }
     }
 
     function renderGrid() {

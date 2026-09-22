@@ -41,8 +41,10 @@
             <p style="font-size: 0.82rem; color: #64748b;">सेमरिया, रीवा • प्रवेश, अंकपत्र, फीडबैक एवं फर्स्ट-टाइम नोटिफिकेशन प्रबंधन</p>
           </div>
         </div>
-        <div style="display: flex; gap: 8px;">
-          <a href="../index.html" class="btn btn-sec">🏠 मुख्य वेबसाइट (Home)</a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="../index.html" class="btn btn-sec">🏠 मुख्य पृष्ठ (Home)</a>
+          <a href="admission-portal.html" class="btn btn-sec" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">📝 New Admission 2026-27</a>
+          <a href="feedback-portal.html" class="btn btn-sec" style="background:#fdf2f8; color:#be185d; border-color:#fbcfe8;">💬 प्रतिक्रिया व सुझाव (Feedback)</a>
           <button id="adminLogoutBtn" class="btn btn-danger" style="display:none;" onclick="logoutAdmin()">🚪 लॉगआउट</button>
         </div>
       </div>
@@ -52,10 +54,10 @@
         <div style="font-size: 3rem;">🔐</div>
         <h2 style="margin-bottom: 1rem; font-size: 1.25rem;">सुरक्षित एडमिनिस्ट्रेटर लॉगिन</h2>
         <form onsubmit="handleAdminLogin(event)">
-          <input type="password" id="adminPin" class="form-control" placeholder="6 अंकों का एडमिन पिन दर्ज करें..." style="text-align: center; letter-spacing: 4px; font-size: 1.2rem; margin-bottom: 1rem;" required>
-          <button type="submit" class="btn btn-pri" style="width: 100%; justify-content: center;">लॉगिन करें (Verify PIN)</button>
+          <input type="password" id="adminPin" class="form-control" placeholder="एडमिन पासवर्ड / पिन दर्ज करें..." style="text-align: center; font-size: 1.1rem; margin-bottom: 1rem;" required>
+          <button type="submit" class="btn btn-pri" style="width: 100%; justify-content: center;">लॉगिन करें (Verify Admin)</button>
         </form>
-        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">डिफ़ॉल्ट सिक्योरिटी पिन: 920017 / 123456</p>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">अधिकृत एडमिन पासवर्ड: Vivek64@ (अथवा पिन: 920017)</p>
       </div>
 
       <!-- Admin Dashboard Content -->
@@ -152,11 +154,11 @@
     function handleAdminLogin(e) {
       e.preventDefault();
       const pin = document.getElementById('adminPin').value.trim();
-      if (pin === '920017' || pin === '123456' || pin === '322517') {
+      if (pin === 'Vivek64@' || pin === '920017' || pin === '123456' || pin === '322517') {
         sessionStorage.setItem('mdhss_admin_logged_in', 'true');
         showDashboard();
       } else {
-        alert('गलत पिन! कृपया सही पिन दर्ज करें।');
+        alert('गलत एडमिन पासवर्ड या पिन! कृपया सही क्रेडेंशियल्स दर्ज करें।');
       }
     }
 

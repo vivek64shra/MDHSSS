@@ -37,7 +37,7 @@
       "required": ["name", "phone", "message"]
     },
     "settings": {
-      "description": "Portal wide configurations (result link, notice popups, gallery images, webhook)",
+      "description": "Portal wide configurations (result link, notice popups, gallery images, whatsapp groups, ticker marquee, webhook)",
       "fields": {
         "updatedAt": { "type": "string" }
       }

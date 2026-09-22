@@ -434,6 +434,33 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     console.warn('Realtime ticker marquee listener warning:', err);
   }
 
+  // Realtime WhatsApp Groups Listener
+  try {
+    onSnapshot(
+      doc(db, 'settings', 'whatsapp_groups'),
+      (snap) => {
+        if (snap.exists() && snap.data()?.data && Array.isArray(snap.data().data)) {
+          const waGroups = snap.data().data;
+          localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(waGroups));
+          if (typeof (window as any).renderPublicWhatsAppGroups === 'function') {
+            (window as any).renderPublicWhatsAppGroups();
+          }
+          if (typeof (window as any).renderAdminWhatsAppGroups === 'function') {
+            (window as any).renderAdminWhatsAppGroups();
+          }
+          if (typeof (window as any).renderAdminTables === 'function') {
+            (window as any).renderAdminTables();
+          }
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, 'settings/whatsapp_groups');
+      }
+    );
+  } catch (err) {
+    console.warn('Realtime whatsapp groups listener warning:', err);
+  }
+
   // Realtime Marks Sheets Listener
   try {
     onSnapshot(
@@ -513,6 +540,9 @@ const mdhssCloud = {
 
       const ticker = JSON.parse(localStorage.getItem('mdhss_ticker_marquee') || 'null');
       if (ticker) await saveSettingToCloud('ticker_marquee', ticker);
+
+      const waGroups = JSON.parse(localStorage.getItem('mdhss_whatsapp_groups') || 'null');
+      if (waGroups && Array.isArray(waGroups)) await saveSettingToCloud('whatsapp_groups', waGroups);
 
       return { success: true, admissions: admCount, feedbacks: fbCount, marks: msCount };
     } catch (e) {

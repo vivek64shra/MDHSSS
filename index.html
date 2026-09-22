@@ -616,13 +616,6 @@
         font-size: 0.75rem;
         letter-spacing: 0;
       }
-      .floating-notice-btn {
-        bottom: 76px;
-        right: 14px;
-        padding: 0.45rem 0.85rem;
-        font-size: 0.8rem;
-      }
-
       /* Home Screen Mobile Enhancements */
       .hero-container {
         margin-bottom: 1.25rem !important;
@@ -681,12 +674,43 @@
         line-height: 1.3 !important;
       }
       .quick-hub-grid {
-        grid-template-columns: 1fr !important;
-        gap: 0.85rem !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.65rem !important;
       }
       .quick-hub-card {
-        padding: 1rem 1.15rem !important;
+        padding: 0.85rem 0.75rem !important;
         border-radius: 12px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        min-height: 110px !important;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04) !important;
+      }
+      .quick-hub-card:active {
+        transform: scale(0.97) !important;
+      }
+      .quick-hub-card .hub-icon-circle {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 1.2rem !important;
+        margin-bottom: 0.35rem !important;
+      }
+      .quick-hub-card .hub-content h4 {
+        font-size: 0.88rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.2rem !important;
+        font-weight: 800 !important;
+      }
+      .quick-hub-card .hub-content p {
+        display: none !important;
+      }
+      .quick-hub-card .hub-link-tag {
+        font-size: 0.72rem !important;
+        padding: 2px 7px !important;
+        margin-top: 0.3rem !important;
+        border-radius: 6px !important;
       }
       .gallery-item-card {
         flex: 0 0 230px !important;
@@ -816,41 +840,54 @@
       animation: bellPulse 1.8s infinite;
     }
 
-    /* Mobile Floating Notice Button */
-    .floating-notice-btn {
-      position: fixed;
-      bottom: 84px;
-      right: 18px;
-      z-index: 1040;
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      color: #ffffff;
-      border: 2px solid #ffffff;
-      border-radius: 9999px;
-      padding: 0.52rem 0.95rem;
+    /* Home Screen Compact Notification Bell Icon Button */
+    .home-mini-bell-btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-weight: 800;
-      font-size: 0.85rem;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);
-      transition: all 0.25s ease;
-      backdrop-filter: blur(8px);
-    }
-    .floating-notice-btn:hover {
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.6);
-      background: linear-gradient(135deg, #0369a1, #075985);
-    }
-    .floating-bell-badge {
-      position: absolute;
-      top: -3px;
-      right: -3px;
-      width: 10px;
-      height: 10px;
-      background: #ef4444;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      border: 2px solid #ffffff;
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      border: 1.5px solid #7dd3fc;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .home-mini-bell-btn:hover {
+      transform: translateY(-1px) scale(1.08);
+      background: #0284c7;
+      border-color: #0284c7;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+    .home-mini-bell-btn:hover .mini-bell-icon {
+      filter: drop-shadow(0 0 2px rgba(255,255,255,0.8));
+    }
+    .home-mini-bell-btn .mini-bell-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+      animation: bellTilt 3s ease-in-out infinite;
+      display: inline-block;
+      transform-origin: top center;
+    }
+    @keyframes bellTilt {
+      0%, 80%, 100% { transform: rotate(0deg); }
+      85% { transform: rotate(14deg); }
+      90% { transform: rotate(-12deg); }
+      95% { transform: rotate(8deg); }
+    }
+    .home-mini-bell-btn .mini-bell-dot {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      width: 9px;
+      height: 9px;
+      background: #ef4444;
+      border: 1.5px solid #ffffff;
+      border-radius: 50%;
       animation: bellPulse 1.8s infinite;
     }
     @keyframes bellPulse {
@@ -2831,14 +2868,21 @@
             </button>
           </li>
 
-          <!-- 2. Admission Form -->
+          <!-- 2. New Admission -->
           <li>
             <a href="#admission" class="nav-link-btn" onclick="navigateToPage('admission'); return false;">
-              📝 प्रवेश 2026-27
+              📝 New Admission
             </a>
           </li>
 
-          <!-- 3. Student Result (DIRECT ONE-CLICK JUMP TO RESULT LINK) -->
+          <!-- 3. Feedback (Placed right next to New Admission) -->
+          <li>
+            <a href="#feedback" class="nav-link-btn" onclick="navigateToPage('feedback'); return false;" style="background:#f0fdf4; color:#15803d; border:1px solid #86efac;" title="विद्यालय के लिए सुझाव (Under Principal Review)">
+              💬 विद्यालय सुझाव (Principal Review)
+            </a>
+          </li>
+
+          <!-- 4. Student Result (DIRECT ONE-CLICK JUMP TO RESULT LINK) -->
           <li>
             <a href="https://online.edumentsolution.com/" target="_blank" rel="noopener noreferrer" class="nav-link-btn nav-result-pill" id="navResultLinkDirect" onclick="openStudentResultDirect(event)" title="अधिकृत परीक्षा परिणाम वेबसाइट">
               🏆 Student Result ↗
@@ -2853,21 +2897,21 @@
             </button>
           </li>
 
-          <!-- 4. Class WhatsApp Groups -->
+          <!-- 5. Class WhatsApp Groups -->
           <li>
             <a href="#whatsapp" class="nav-link-btn nav-wa-pill" onclick="navigateToPage('whatsapp'); return false;">
               <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor; vertical-align:middle;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg> WhatsApp
             </a>
           </li>
 
-          <!-- 5. Login Portal (Teacher & Admin) -->
+          <!-- 6. Login Portal (Teacher & Admin) -->
           <li>
             <a href="#login" class="nav-link-btn nav-login-pill" onclick="navigateToPage('teacher'); return false;">
               🔐 लॉगिन
             </a>
           </li>
 
-          <!-- 6. 3-DOT (KEBAB) MENU BUTTON TRIGGER -->
+          <!-- 7. 3-DOT (KEBAB) MENU BUTTON TRIGGER -->
           <li>
             <button type="button" class="nav-3dot-btn" id="threeDotMenuBtn" onclick="openThreeDotMenu()" title="सभी मेन्यू, सेवाएं एवं सूचनाएं (All Pages & Services)">
               <span class="three-dots-icon">⋮</span>
@@ -2940,11 +2984,22 @@
           <div class="threedot-item-left">
             <span class="threedot-item-icon">📝</span>
             <div>
-              <div>ऑनलाइन प्रवेश फॉर्म (Admission 2026-27)</div>
+              <div>New Admission (नया प्रवेश 2026-27)</div>
               <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">Nursery से 12वीं तक नया प्रवेश आवेदन</div>
             </div>
           </div>
           <span class="threedot-item-tag" style="background:#fef3c7; color:#b45309; font-weight:800;">सत्र 2026-27</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('feedback')" style="background:#f0fdf4; border-color:#86efac;">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="color:#15803d;">💬</span>
+            <div>
+              <div style="color:#166534; font-weight:700;">विद्यालय सुझाव (Principal Review)</div>
+              <div style="font-size:0.75rem; color:#166534; font-weight:normal;">केवल प्राचार्य के अधीन • पूर्ण गोपनीयता का पूरा ध्यान</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#dcfce7; color:#15803d; font-weight:700;">गोपनीय 🔒</span>
         </button>
 
         <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openStudentResultDirect(event);" style="border-color:#fecdd3; background:#fff1f2;">
@@ -3006,17 +3061,6 @@
           </div>
           <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">सुविधाएं →</span>
         </button>
-
-        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openFirstTimeNoticeManually();">
-          <div class="threedot-item-left">
-            <span class="threedot-item-icon" style="color:#eab308;">📢</span>
-            <div>
-              <div>विद्यालय मुख्य सूचना (Notice)</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">नवीनतम घोषणाएं, अवकाश एवं परीक्षा सूचना</div>
-            </div>
-          </div>
-          <span class="threedot-item-tag" style="background:#fef08a; color:#854d0e;">Notice 🔔</span>
-        </button>
       </div>
 
       <!-- Group 3: संपर्क, फीडबैक एवं लॉगिन पोर्टल (Portals & Contact) -->
@@ -3034,18 +3078,7 @@
           <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">डायरेक्टरी →</span>
         </button>
 
-        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('feedback')">
-          <div class="threedot-item-left">
-            <span class="threedot-item-icon">⭐</span>
-            <div>
-              <div>अभिभावक व छात्र फीडबैक</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">सुझाव व शिकायत दर्ज करें (Google Sheets Sync)</div>
-            </div>
-          </div>
-          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">फीडबैक →</span>
-        </button>
-
-        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('teacher')" style="background:#f0fdfa; border-color:#99f6e4;">
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('teacher')" style="background:#f0fdf4; border-color:#99f6e4;">
           <div class="threedot-item-left">
             <span class="threedot-item-icon" style="color:#0d9488;">🔐</span>
             <div>
@@ -3165,18 +3198,10 @@
     <!-- ==================== PAGE 2: ADMISSION FORM (प्रवेश फॉर्म 2026-27) ==================== -->
     <div class="subpage-view" id="view-admission" style="display: none;">
       <div class="glass-card page-card-body">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
-          <div>
-            <span class="section-chip" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0;">📝 सत्र 2026-27 प्रवेश प्रारंभ</span>
-            <h2 class="page-title-main" style="margin-top:0.3rem;">ऑनलाइन प्रवेश आवेदन पत्र (Admission Inquiry Form)</h2>
-            <p class="page-subtitle-text">Nursery से 12वीं तक सभी संकाय | विद्यालय समय: 9:30 AM - 4:00 PM</p>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
-            <span class="drive-sync-badge">🟢 Google Drive / Sheets Sync: Active</span>
-            <button type="button" class="btn-excel-export" style="background:#107c41; font-size:0.85rem;" onclick="exportDataToExcel('admission')">
-              📥 Download All Admissions (.csv)
-            </button>
-          </div>
+        <div style="margin-bottom:1.5rem;">
+          <span class="section-chip" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0;">📝 सत्र 2026-27 प्रवेश प्रारंभ</span>
+          <h2 class="page-title-main" style="margin-top:0.3rem;">ऑनलाइन प्रवेश आवेदन पत्र (Admission Inquiry Form)</h2>
+          <p class="page-subtitle-text">Nursery से 12वीं तक सभी संकाय | विद्यालय समय: 9:30 AM - 4:00 PM</p>
         </div>
 
         <form id="fullAdmissionForm" onsubmit="handleNativeAdmissionSubmit(event)">
@@ -3243,7 +3268,7 @@
 
           <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
             <button type="submit" class="btn-hero-pri" style="border:none; cursor:pointer;">
-              ✓ ऑनलाइन प्रवेश आवेदन जमा करें (Save to Drive & Excel)
+              ✓ ऑनलाइन प्रवेश आवेदन जमा करें
             </button>
             <a href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20know%20about%20admission." target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="display:inline-flex; align-items:center; color:#15803d; border-color:#86efac;">
               <svg class="wa-svg-inline" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
@@ -3253,7 +3278,7 @@
         </form>
 
         <div id="natAdmSuccessBox" style="display:none; margin-top:1.5rem; padding:1.25rem; background:#f0fdf4; border:1px solid #86efac; border-radius:var(--radius-md); color:#166534; font-weight:700;">
-          ✅ बधाई! प्रवेश आवेदन सफलतापूर्वक दर्ज कर लिया गया है एवं Google Drive / Excel Sheet में सुरक्षित हो गया है। विद्यालय प्रबंधन आपसे शीघ्र संपर्क करेगा।
+          ✅ बधाई! प्रवेश आवेदन सफलतापूर्वक दर्ज कर लिया गया है। विद्यालय प्रबंधन आपसे शीघ्र संपर्क करेगा।
         </div>
       </div>
     </div>
@@ -3272,7 +3297,7 @@
           </p>
         </div>
 
-        <div class="wa-cards-grid" style="margin-top:1.5rem;">
+        <div class="wa-cards-grid" id="publicWhatsAppCardsGrid" style="margin-top:1.5rem;">
           <!-- Class 4th -->
           <div class="wa-class-card">
             <div class="wa-icon-bubble">4th</div>
@@ -3421,28 +3446,51 @@
     <!-- ==================== PAGE 5: FEEDBACK & SUGGESTIONS (फीडबैक एवं सुझाव) ==================== -->
     <div class="subpage-view" id="view-feedback" style="display: none;">
       <div class="glass-card page-card-body">
+        
+        <!-- CLEAR DISTINCTION BANNER: FEEDBACK VS ADMISSION -->
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1.5px solid #93c5fd; border-radius: var(--radius-md); padding: 1.15rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 8px rgba(30, 58, 138, 0.06);">
+          <div style="display: flex; align-items: flex-start; gap: 12px; flex: 1; min-width: 260px;">
+            <span style="font-size: 1.5rem; line-height: 1;">📢</span>
+            <div>
+              <div style="font-weight: 800; color: #1e3a8a; font-size: 1.02rem;">
+                यह विद्यालय सुधार हेतु 'प्रतिक्रिया व सुझाव (Feedback)' फॉर्म है — प्रवेश फॉर्म नहीं है!
+              </div>
+              <div style="font-size: 0.88rem; color: #1d4ed8; margin-top: 3px; line-height: 1.45;">
+                यदि आप अपने बच्चे का <strong>नया स्कूल प्रवेश (New Admission 2026-27)</strong> कराना चाहते हैं, तो कृपया 'प्रवेश फॉर्म' भरें। यह फॉर्म केवल स्कूल व्यवस्था, शिक्षण, बस या सुविधाओं पर अपनी राय व सुझाव देने के लिए है।
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-hero-pri" style="padding: 0.65rem 1.25rem; font-size: 0.9rem; background: #16a34a; border: none; cursor: pointer; white-space: nowrap; box-shadow: 0 3px 10px rgba(22,163,74,0.25);" onclick="navigateToPage('admission')">
+            ✍️ ऑनलाइन प्रवेश फॉर्म खोलें →
+          </button>
+        </div>
+
         <div class="feedback-grid-split">
           <div class="feedback-intro">
-            <span class="section-chip">💬 आपकी राय महत्वपूर्ण है</span>
-            <h3>अभिभावक एवं छात्र फीडबैक फॉर्म</h3>
-            <p>
-              माँ दुर्गा हायर सेकेंडरी स्कूल निरंतर शिक्षण गुणवत्ता, अनुशासन और सुविधाओं को बेहतर बनाने के लिए प्रतिबद्ध है। सभी फीडबैक सीधे स्कूल के Google Drive / Excel Sheet में सुरक्षित किए जाते हैं।
+            <span class="section-chip" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 700;">
+              🛡️ केवल प्राचार्य महोदय के अधीन (Under Principal Review)
+            </span>
+            <h3 style="margin-top:0.4rem; font-size:1.4rem; color: #064e3b; font-weight: 800;">
+              विद्यालय के लिए सुझाव (Under Principal Review)
+            </h3>
+            <p style="color: #374151; font-size: 0.95rem; line-height: 1.6;">
+              यह सुझाव सीधे <strong>प्राचार्य महोदय के व्यक्तिगत संज्ञान व अधीन</strong> रहते हैं। आपकी पहचान एवं सुझाव की <strong>पूर्ण गोपनीयता का पूरा ध्यान</strong> रखा जाता है। विद्यालयीन व्यवस्था, शिक्षण एवं सुविधाओं को बेहतर बनाने हेतु अपने विचार साझा करें।
             </p>
             
             <div class="feedback-highlight-list" style="margin-top:1.25rem;">
-              <div class="fb-hl-item"><span>⭐</span> 5-स्टार रेटिंग एवं शिक्षण पद्धति पर सुझाव</div>
-              <div class="fb-hl-item"><span>🚌</span> बस, कंप्यूटर लैब एवं खेल सुविधाओं पर राय</div>
-              <div class="fb-hl-item"><span>📊</span> डेटा Google Drive / Sheets में ऑटो-सिंक</div>
-              <div class="fb-hl-item"><span>🕒</span> स्कूल समय: 09:30 AM से 04:00 PM</div>
+              <div class="fb-hl-item"><span>🔒</span> <strong>पूर्ण गोपनीयता का ध्यान:</strong> किसी सार्वजनिक मंच पर नहीं दिखाया जाता</div>
+              <div class="fb-hl-item"><span>👨‍💼</span> <strong>केवल प्राचार्य के अधीन:</strong> सीधा प्रधानाचार्य समीक्षा में प्रस्तुत</div>
+              <div class="fb-hl-item"><span>⭐</span> शिक्षण पद्धति, अनुशासन एवं पठन-पाठन पर निष्पक्ष राय</div>
+              <div class="fb-hl-item"><span>🚌</span> बस सुविधा, कंप्यूटर लैब, खेलकूद व छात्र सुरक्षा पर सुझाव</div>
             </div>
 
-            <!-- Google Sheets Private Cloud Sync Notice -->
-            <div style="margin-top:1.5rem; padding:1.25rem; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:var(--radius-md);">
-              <div class="drive-sync-badge">
-                <span>🟢 Google Sheets Private Sync: Active</span>
+            <!-- Privacy Guarantee Box -->
+            <div style="margin-top:1.5rem; padding:1.15rem; background:#f0fdf4; border:1.5px solid #86efac; border-radius:var(--radius-md);">
+              <div style="font-weight:800; color:#166534; font-size:0.95rem; display:flex; align-items:center; gap:6px;">
+                <span>🔒</span> <strong>पूर्ण गोपनीयता की गारंटी (Strictly Confidential):</strong>
               </div>
-              <p style="font-size:0.88rem; color:#166534; margin-top:0.5rem; line-height:1.5;">
-                🔒 <strong>गोपनीयता सुरक्षा:</strong> सबमिट किया गया फीडबैक सीधे विद्यालय की निजी Google Sheet (Feedbacks टैब) में दर्ज होता है और सार्वजनिक रूप से प्रदर्शित नहीं होता है।
+              <p style="font-size:0.88rem; color:#14532d; margin-top:0.4rem; line-height:1.5; margin-bottom:0;">
+                यह सुझाव सीधे प्राचार्य महोदय के अधीन रहता है। आपकी पहचान एवं विवरण की पूर्ण गोपनीयता का पूरा ध्यान रखा जाता है।
               </p>
             </div>
           </div>
@@ -3521,13 +3569,13 @@
                 <textarea class="form-textarea-custom" id="fbMessage" rows="3" placeholder="विद्यालय की शिक्षण व्यवस्था, स्टाफ या सुविधाओं के संबंध में अपने विचार विस्तार से लिखें..." required></textarea>
               </div>
 
-              <button type="submit" class="btn-submit-feedback" id="fbSubmitBtn">
-                ✉️ फीडबैक जमा करें (Save to Google Sheets)
+              <button type="submit" class="btn-submit-feedback" id="fbSubmitBtn" style="background: linear-gradient(135deg, #15803d, #166534); box-shadow: 0 4px 14px rgba(22, 101, 52, 0.25);">
+                ✉️ प्राचार्य महोदय को सुझाव भेजें (Under Principal Review) 🔒
               </button>
             </form>
 
             <div id="feedback-success-msg">
-              ✅ धन्यवाद! आपका फीडबैक सफलतापूर्वक प्राप्त हुआ एवं Google Drive / Excel Sheet में दर्ज हो गया है।
+              ✅ धन्यवाद! आपकी प्रतिक्रिया व सुझाव सफलतापूर्वक प्राप्त हो गए हैं।
             </div>
           </div>
         </div>
@@ -3870,20 +3918,118 @@
             </div>
           </div>
 
-          <!-- Teacher Sub-Section Switcher Tabs (Only 1 Section Open at a Time) -->
-          <div style="margin-top: 1.5rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: var(--radius-md); padding: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button type="button" id="tabTeacherMarksBtn" onclick="switchTeacherSectionTab('marks')" style="flex: 1; min-width: 240px; padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); border: 2px solid #0284c7; font-weight: 800; font-size: 0.98rem; cursor: pointer; background: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(2,132,199,0.25); transition: all 0.2s ease;">
-                <span>📊</span> <span>1. परीक्षा प्राप्तांक शीट (1-99 Roll Marks Grid)</span>
+          <!-- TEACHER 3 PRIMARY OPTIONS HUB (Displayed first on Teacher Login) -->
+          <div id="teacherHubMainView" style="margin-top: 1.5rem;">
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #7dd3fc; border-radius: var(--radius-lg); padding: 1.5rem 1.75rem; margin-bottom: 1.5rem; text-align: center;">
+              <span class="section-chip" style="background: #ffffff; color: #0284c7; border: 1px solid #bae6fd; font-size: 0.85rem; font-weight: 800;">
+                🎯 शिक्षक कार्यक्षेत्र • 3 मुख्य विकल्प
+              </span>
+              <h3 style="margin: 0.6rem 0 0.25rem 0; color: #0c4a6e; font-size: 1.5rem; font-weight: 800;">
+                कृपया वांछित कार्य का चयन करें
+              </h3>
+              <p style="margin: 0; color: #0369a1; font-size: 0.95rem; font-weight: 600;">
+                नीचे दिए गए 3 विकल्पों में से जिस विकल्प को आप चुनेंगे, केवल वही विकल्प खुलेगा:
+              </p>
+            </div>
+
+            <!-- The 3 Options Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+              
+              <!-- Option 1: Result / Marks Entry -->
+              <div class="glass-card" style="background: #ffffff; border: 2px solid #7dd3fc; border-radius: var(--radius-lg); padding: 1.6rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(2,132,199,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #0284c7, #0369a1); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #ffffff; box-shadow: 0 4px 12px rgba(2,132,199,0.3);">
+                      📊
+                    </div>
+                    <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 800;">
+                      विकल्प 1
+                    </span>
+                  </div>
+                  <h4 style="margin: 0 0 0.5rem 0; color: #0369a1; font-size: 1.25rem; font-weight: 800;">
+                    1. रिजल्ट / परीक्षा प्राप्तांक चढ़ाएं
+                  </h4>
+                  <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.9rem; line-height: 1.5;">
+                    कक्षा, सेक्शन व विषय चुनें। रोल नंबर 1 से 99 के लिए त्रैमासिक, अर्द्धवार्षिक व मुख्य परीक्षा अंक सीधे डिजिटल ग्रिड में भरें।
+                  </p>
+                </div>
+                <button type="button" class="btn-hero-pri" onclick="openTeacherOption('marks')" style="background: #0284c7; border: none; cursor: pointer; padding: 0.85rem 1.25rem; font-size: 0.98rem; font-weight: 800; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(2,132,199,0.25);">
+                  <span>👉 प्राप्तांक प्रविष्टि खोलें</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              <!-- Option 2: Absent Student SMS -->
+              <div class="glass-card" style="background: #ffffff; border: 2px solid #86efac; border-radius: var(--radius-lg); padding: 1.6rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(22,163,74,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #ffffff; box-shadow: 0 4px 12px rgba(22,163,74,0.3);">
+                      📢
+                    </div>
+                    <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 800;">
+                      विकल्प 2
+                    </span>
+                  </div>
+                  <h4 style="margin: 0 0 0.5rem 0; color: #15803d; font-size: 1.25rem; font-weight: 800;">
+                    2. अनुपस्थित बच्चों को SMS भेजें
+                  </h4>
+                  <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.9rem; line-height: 1.5;">
+                    आज अनुपस्थित विद्यार्थियों का ब्यौरा देखें एवं उनके अभिभावकों को SMS अथवा WhatsApp पर त्वरित आधिकारिक अनुपस्थिति सूचना भेजें।
+                  </p>
+                </div>
+                <button type="button" class="btn-hero-pri" onclick="openTeacherOption('absent')" style="background: #16a34a; border: none; cursor: pointer; padding: 0.85rem 1.25rem; font-size: 0.98rem; font-weight: 800; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(22,163,74,0.25);">
+                  <span>👉 अनुपस्थित SMS मॉड्यूल खोलें</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              <!-- Option 3: Student Fees Status & Lookup -->
+              <div class="glass-card" style="background: #ffffff; border: 2px solid #5eead4; border-radius: var(--radius-lg); padding: 1.6rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(13,148,136,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #0d9488, #0f766e); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #ffffff; box-shadow: 0 4px 12px rgba(13,148,136,0.3);">
+                      💰
+                    </div>
+                    <span style="background: #ccfbf1; color: #0f766e; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 800;">
+                      विकल्प 3
+                    </span>
+                  </div>
+                  <h4 style="margin: 0 0 0.5rem 0; color: #0f766e; font-size: 1.25rem; font-weight: 800;">
+                    3. छात्र शुल्क विवरण एवं खोज
+                  </h4>
+                  <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.9rem; line-height: 1.5;">
+                    स्कॉलर नंबर, नाम या कक्षा चुनकर छात्र की कुल बकाया फीस, 5 किस्तें ट्यूशन फीस व 10 माह का बस किराया सम्पूर्ण ब्यौरे सहित देखें।
+                  </p>
+                </div>
+                <button type="button" class="btn-hero-pri" onclick="openTeacherOption('fees')" style="background: #0d9488; border: none; cursor: pointer; padding: 0.85rem 1.25rem; font-size: 0.98rem; font-weight: 800; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(13,148,136,0.25);">
+                  <span>👉 छात्र शुल्क विवरण खोलें</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TEACHER ACTIVE NAV BAR (Visible when one of the 3 options is open) -->
+          <div id="teacherActiveNavBar" style="display: none; margin-top: 1.5rem; margin-bottom: 1.25rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: var(--radius-md); padding: 10px 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <button type="button" onclick="backToTeacherHub()" class="btn-hero-sec" style="background: #f1f5f9; color: #0f172a; border: 1.5px solid #cbd5e1; font-weight: 800; padding: 0.6rem 1.2rem; font-size: 0.92rem; cursor: pointer; display: flex; align-items: center; gap: 8px; border-radius: var(--radius-sm);">
+              <span>⬅️</span> <span>शिक्षक मुख्य मेनू (3 मुख्य विकल्प)</span>
+            </button>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+              <button type="button" id="tabTeacherMarksBtn" onclick="openTeacherOption('marks')" style="padding: 0.55rem 0.95rem; border-radius: var(--radius-sm); border: 1.5px solid #cbd5e1; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: #f8fafc; color: #475569; display: flex; align-items: center; gap: 6px;">
+                <span>📊</span> <span>1. प्राप्तांक</span>
               </button>
-              <button type="button" id="tabTeacherAbsentBtn" onclick="switchTeacherSectionTab('absent')" style="flex: 1; min-width: 240px; padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); border: 2px solid #cbd5e1; font-weight: 700; font-size: 0.98rem; cursor: pointer; background: #f8fafc; color: #475569; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;">
-                <span>📢</span> <span>2. अनुपस्थित छात्र SMS संदेश प्रणाली (Absent SMS)</span>
+              <button type="button" id="tabTeacherAbsentBtn" onclick="openTeacherOption('absent')" style="padding: 0.55rem 0.95rem; border-radius: var(--radius-sm); border: 1.5px solid #cbd5e1; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: #f8fafc; color: #475569; display: flex; align-items: center; gap: 6px;">
+                <span>📢</span> <span>2. अनुपस्थित SMS</span>
+              </button>
+              <button type="button" id="tabTeacherFeesBtn" onclick="openTeacherOption('fees')" style="padding: 0.55rem 0.95rem; border-radius: var(--radius-sm); border: 1.5px solid #cbd5e1; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: #f8fafc; color: #475569; display: flex; align-items: center; gap: 6px;">
+                <span>💰</span> <span>3. शुल्क विवरण</span>
               </button>
             </div>
           </div>
 
           <!-- Teacher Action Cards Container -->
-          <div style="margin-top: 1.25rem;">
+          <div style="margin-top: 0.5rem;">
             
             <!-- SECTION 1: TOTAL ABSENT STUDENT MESSAGE PORTAL (Initially Hidden, Opened on Tab Switch) -->
             <div id="teacherSectionAbsent" class="glass-card" style="display: none; padding:1.75rem; background:linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border:2px solid #86efac; box-shadow:0 8px 25px rgba(22,163,74,0.12); border-radius:var(--radius-lg);">
@@ -3931,8 +4077,8 @@
               </div>
             </div>
 
-            <!-- SECTION 2: FULL INTERACTIVE 1-99 ROLL NUMBER MARKS UPLOAD MODULE (Active by default) -->
-            <div id="teacherSectionMarks" class="glass-card" style="display: block; padding: 1.75rem; background: #ffffff; border: 2px solid #bae6fd; border-radius: var(--radius-lg); box-shadow: 0 6px 20px rgba(2,132,199,0.08);">
+            <!-- SECTION 2: FULL INTERACTIVE 1-99 ROLL NUMBER MARKS UPLOAD MODULE (Initially Hidden until Option 1 clicked) -->
+            <div id="teacherSectionMarks" class="glass-card" style="display: none; padding: 1.75rem; background: #ffffff; border: 2px solid #bae6fd; border-radius: var(--radius-lg); box-shadow: 0 6px 20px rgba(2,132,199,0.08);">
               
               <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem;">
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -4192,63 +4338,147 @@
               </div>
 
             </div>
-          </div>
 
-          <!-- All Teacher Module Features & Quick Services -->
-          <div style="margin-top:2rem; background:#ffffff; border:1.5px solid #e2e8f0; border-radius:var(--radius-md); padding:1.75rem; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-            <h4 style="color:#0f172a; margin-bottom:1.25rem; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
-              <span>🗂️</span> समस्त शिक्षक सुविधाएं एवं पोर्टल्स (All Teacher Services):
-            </h4>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
+            <!-- SECTION 3: STUDENT FEE STATUS LOOKUP (Lazy-loaded on Demand, Dual Search & Class Roster) -->
+            <div id="teacherSectionFees" class="glass-card" style="display: none; padding: 1.75rem; background: #ffffff; border: 2px solid #5eead4; border-radius: var(--radius-lg); box-shadow: 0 6px 20px rgba(13,148,136,0.08);">
               
-              <a href="https://mdhsss.tiiny.site/" target="_blank" rel="noopener noreferrer" class="dropdown-item-link" style="background:#f0fdf4; border:1.5px solid #86efac; padding:1rem;">
-                <span class="icon-prefix" style="font-size:1.3rem;">📢</span>
-                <div>
-                  <div style="font-weight:700; color:#166534;">Total Absent Student Message ↗</div>
-                  <div style="font-size:0.8rem; color:#4b5563;">mdhsss.tiiny.site अनुपस्थित SMS</div>
+              <!-- Header -->
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 48px; height: 48px; border-radius: 16px; background: linear-gradient(135deg, #0d9488, #0f766e); display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 1.4rem; box-shadow: 0 4px 12px rgba(13,148,136,0.3);">
+                    💰
+                  </div>
+                  <div>
+                    <h3 style="color: #0f766e; margin: 0; font-size: 1.35rem; font-weight: 800;">
+                      छात्र शुल्क विवरण एवं खोज (Student Fee Status Lookup)
+                    </h3>
+                    <p style="margin: 3px 0 0 0; color: #64748b; font-size: 0.9rem;">
+                      स्कॉलर नंबर, छात्र के नाम अथवा कक्षा चयन द्वारा विस्तृत फीस ब्यौरा, ट्यूशन किस्तें व वाहन किराया देखें।
+                    </p>
+                  </div>
                 </div>
-              </a>
-
-              <a href="https://www.online.edumentsolution.com/" target="_blank" rel="noopener noreferrer" class="dropdown-item-link" style="background:#f8fafc; border:1px solid #cbd5e1; padding:1rem;">
-                <span class="icon-prefix" style="font-size:1.3rem;">🔐</span>
-                <div>
-                  <div style="font-weight:700; color:#0f172a;">Edument Staff ERP Portal ↗</div>
-                  <div style="font-size:0.8rem; color:#64748b;">ऑफिशियल स्टाफ लॉगिन</div>
-                </div>
-              </a>
-
-              <a href="https://mpboardbooks.com/" target="_blank" rel="noopener noreferrer" class="dropdown-item-link" style="background:#fffbeb; border:1px solid #fde68a; padding:1rem;">
-                <span class="icon-prefix" style="font-size:1.3rem;">📚</span>
-                <div>
-                  <div style="font-weight:700; color:#b45309;">MP Board Books & Syllabus ↗</div>
-                  <div style="font-size:0.8rem; color:#64748b;">कक्षा 1 से 12वीं पाठ्यपुस्तकें</div>
-                </div>
-              </a>
-
-              <div class="dropdown-item-link" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:1rem; cursor:pointer;" onclick="navigateToPage('whatsapp')">
-                <span class="icon-prefix" style="font-size:1.3rem;">💬</span>
-                <div>
-                  <div style="font-weight:700; color:#15803d;">Class WhatsApp Groups ↗</div>
-                  <div style="font-size:0.8rem; color:#64748b;">4थी, 5वीं, 8वीं से 12वीं ग्रुप्स</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                  <span class="page-badge-pill" style="background: #f0fdfa; color: #0d9488; border: 1.5px solid #99f6e4; font-size: 0.82rem; font-weight: 800;">
+                    📊 सत्र 2026-27 लाइव शीट
+                  </span>
+                  <span class="page-badge-pill" style="background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; font-size: 0.82rem; font-weight: 700;">
+                    ⚡ 1140+ छात्र रिकॉर्ड्स
+                  </span>
                 </div>
               </div>
 
-              <div class="dropdown-item-link" style="background:#f5f3ff; border:1px solid #ddd6fe; padding:1rem; cursor:pointer;" onclick="navigateToPage('staff')">
-                <span class="icon-prefix" style="font-size:1.3rem;">👥</span>
-                <div>
-                  <div style="font-weight:700; color:#7c3aed;">Staff Contact Directory ↗</div>
-                  <div style="font-size:0.8rem; color:#64748b;">20+ शिक्षक संपर्क नंबर</div>
+              <!-- Dual Search Panel: Method 1 (Scholar No / Name) & Method 2 (Class Roster) -->
+              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; align-items: end;">
+                  
+                  <!-- Method 1: Search by Scholar Number or Name -->
+                  <div>
+                    <form id="teacherFeeSearchForm" onsubmit="handleStudentFeeSearchSubmit(event)">
+                      <label class="form-label-custom" style="margin-bottom: 6px; display: block; font-weight: 700; color: #1e293b;">
+                        <span>🔍 विधि 1: स्कॉलर नंबर अथवा नाम दर्ज करें</span>
+                      </label>
+                      <div style="display: flex; gap: 8px;">
+                        <div style="position: relative; flex: 1;">
+                          <input type="text" class="form-input-custom" id="teacherFeeScholarInput" placeholder="Enter Scholar Number" autocomplete="off" style="padding-left: 2.3rem; font-size: 0.95rem; font-weight: 600;" required />
+                          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #64748b;">🔢</span>
+                        </div>
+                        <button type="submit" class="btn-hero-pri" id="btnTeacherFeeSearch" style="background: #0d9488; border: none; cursor: pointer; padding: 0.7rem 1.15rem; font-size: 0.92rem; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 10px rgba(13,148,136,0.25);">
+                          खोजें 🔍
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <!-- Method 2: Select Class Roster -->
+                  <div>
+                    <label class="form-label-custom" style="margin-bottom: 6px; display: block; font-weight: 700; color: #1e293b;">
+                      <span>🏫 विधि 2: कक्षा अनुसार पूरी छात्र सूची देखें</span>
+                    </label>
+                    <div style="display: flex; gap: 8px;">
+                      <select id="teacherFeeClassFilter" onchange="handleClassFeeFilterChange(this.value)" class="form-select-custom" style="flex: 1; padding: 0.7rem; font-size: 0.92rem; font-weight: 700; border: 1.5px solid #0d9488; background: #ffffff; color: #0f766e; border-radius: var(--radius-sm); cursor: pointer;">
+                        <option value="">-- कक्षा चुनें (Select Class) --</option>
+                        <option value="LKG">LKG</option>
+                        <option value="UKG A">UKG A</option>
+                        <option value="1ST A">1ST A</option>
+                        <option value="1ST B">1ST B</option>
+                        <option value="2ND A">2ND A</option>
+                        <option value="3RD A">3RD A</option>
+                        <option value="3RD B">3RD B</option>
+                        <option value="4TH A">4TH A</option>
+                        <option value="4TH B">4TH B</option>
+                        <option value="5TH A">5TH A</option>
+                        <option value="5TH B">5TH B</option>
+                        <option value="6TH">6TH</option>
+                        <option value="7TH">7TH</option>
+                        <option value="8TH A">8TH A</option>
+                        <option value="8TH B">8TH B</option>
+                        <option value="9TH (A)">9TH (A)</option>
+                        <option value="9TH (B)">9TH (B)</option>
+                        <option value="10TH (A)">10TH (A)</option>
+                        <option value="10TH (B)">10TH (B)</option>
+                        <option value="10TH (C)">10TH (C)</option>
+                        <option value="11TH MATH">11TH MATH</option>
+                        <option value="11TH BIO">11TH BIO</option>
+                        <option value="11TH COM">11TH COM</option>
+                        <option value="12TH MATH">12TH MATH</option>
+                        <option value="12TH BIO">12TH BIO</option>
+                        <option value="12TH COM">12TH COM</option>
+                      </select>
+                      <button type="button" class="btn-hero-sec" onclick="clearTeacherFeeSearch()" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; cursor: pointer; padding: 0.7rem 0.9rem; font-size: 0.9rem; font-weight: 700; white-space: nowrap;" title="सर्च रीसेट करें">
+                        🔄 रीसेट
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 0.82rem; color: #64748b;">
+                  <span>💡</span> <span>Enter Scholar Number अथवा कक्षा चुनकर किसी भी छात्र के 'विवरण देखें' पर क्लिक करें। शून्य लैग के साथ त्वरित विवरण लोड होगा।</span>
                 </div>
               </div>
 
-              <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="dropdown-item-link" style="background:#eff6ff; border:1px solid #bfdbfe; padding:1rem;">
-                <span class="icon-prefix" style="font-size:1.3rem;">📸</span>
-                <div>
-                  <div style="font-weight:700; color:#0284c7;">School Activity Photos ↗</div>
-                  <div style="font-size:0.8rem; color:#64748b;">गूगल फोटो ड्राइव एलबम</div>
-                </div>
-              </a>
+              <!-- Loading Indicator -->
+              <div id="teacherFeeLoading" style="display: none; padding: 2.25rem 1.5rem; text-align: center; background: #f0fdfa; border: 2px dashed #5eead4; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                <div style="font-size: 2.2rem; margin-bottom: 10px; animation: spin 1s linear infinite; display: inline-block;">🔄</div>
+                <div style="font-weight: 800; color: #0f766e; font-size: 1.15rem;">गूगल शीट से फीस डेटा प्राप्त हो रहा है...</div>
+                <div style="font-size: 0.88rem; color: #64748b; margin-top: 4px;">कृपया प्रतीक्षा करें (शून्य लैग सुरक्षित डेटा फेच)</div>
+              </div>
 
+              <!-- Multi-Match Students List (When search query matches multiple students) -->
+              <div id="teacherFeeMultiMatchContainer" style="display: none; margin-bottom: 1.5rem;">
+                <!-- Populated dynamically via JS -->
+              </div>
+
+              <!-- Class Roster Table Container (When a Class is chosen from dropdown) -->
+              <div id="teacherFeeClassRosterContainer" style="display: none; margin-bottom: 1.5rem;">
+                <!-- Populated dynamically via JS -->
+              </div>
+
+              <!-- Initial Empty State -->
+              <div id="teacherFeeEmptyState" style="padding: 2.75rem 1.5rem; text-align: center; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                <div style="width: 68px; height: 68px; margin: 0 auto 1.25rem; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
+                  💳
+                </div>
+                <h4 style="margin: 0; color: #0f172a; font-size: 1.25rem; font-weight: 800;">Enter Scholar Number अथवा कक्षा का चयन करें</h4>
+                <p style="margin: 8px auto 0; color: #64748b; font-size: 0.92rem; max-width: 520px; line-height: 1.5;">
+                  ऊपर दिए गए बॉक्स में <strong>Enter Scholar Number</strong> अथवा <strong>कक्षा ड्रॉपडाउन</strong> से कक्षा चुनकर किसी भी विद्यार्थी का संपूर्ण फीस ब्यौरा एक क्लिक में देखें।
+                </p>
+              </div>
+
+              <!-- Error / Not Found Alert -->
+              <div id="teacherFeeError" style="display: none; padding: 1.25rem; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: var(--radius-md); color: #991b1b; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem;">
+                  <span>❌</span> <span id="teacherFeeErrorTitle">रिकॉर्ड नहीं मिला!</span>
+                </div>
+                <div id="teacherFeeErrorDesc" style="margin-top: 5px; font-size: 0.9rem; line-height: 1.5;">
+                  दर्ज किए गए स्कॉलर नंबर का कोई शुल्क विवरण प्राप्त नहीं हुआ। कृपया स्कॉलर नंबर की जांच करके पुनः प्रयास करें।
+                </div>
+              </div>
+
+              <!-- Result Container (Detailed Student Fee Slip) -->
+              <div id="teacherFeeResultContainer" style="display: none;">
+                <!-- Populated dynamically via JS -->
+              </div>
             </div>
           </div>
         </div>
@@ -4422,9 +4652,6 @@
               <button type="button" class="btn-hero-sec" style="background:#ffffff; color:#312e81; border:none; padding:0.6rem 1rem; font-size:0.85rem; font-weight:700; cursor:pointer;" onclick="navigateToPage('home')">
                 🏠 मुख्य पृष्ठ (Home)
               </button>
-              <a href="https://drive.google.com/" target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="background:rgba(255,255,255,0.15); color:#ffffff; border:1px solid rgba(255,255,255,0.3); padding:0.6rem 1rem; font-size:0.85rem; font-weight:700;">
-                📂 Google Drive ↗
-              </a>
               <button type="button" class="btn-hero-sec" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:0.6rem 1rem; font-size:0.85rem; font-weight:700; cursor:pointer;" onclick="handleAdminLogout()">
                 🚪 एडमिन लॉगआउट
               </button>
@@ -4436,12 +4663,12 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.3rem;">☁️</span>
               <div>
-                <strong>Firebase क्लाउड डेटाबेस लाइव सक्रिय (All-Device Sync):</strong>
-                <span style="display:block; font-size:0.8rem; color:#15803d; margin-top:2px;">कोई भी छात्र या अभिभावक किसी भी मोबाइल या कंप्यूटर से प्रवेश या फीडबैक फॉर्म भरेगा, तो वह तुरंत आपके एडमिन पैनल में दिखेगा। Netlify/GitHub पर पब्लिश करने के बाद भी यह 100% लाइव रहेगा।</span>
+                <strong>क्लाउड डेटाबेस सक्रिय (Live Device Sync):</strong>
+                <span style="display:block; font-size:0.8rem; color:#15803d; margin-top:2px;">छात्र या अभिभावक किसी भी मोबाइल या कंप्यूटर से प्रवेश या प्रतिक्रिया फॉर्म भरेंगे, तो वह तुरंत आपके एडमिन डैशबोर्ड में यहाँ प्रदर्शित होगा।</span>
               </div>
             </div>
             <div id="adminCloudSyncBadge" style="display:none; background:#15803d; color:#ffffff; font-weight:700; font-size:0.78rem; padding:4px 12px; border-radius:9999px;">
-              ✅ क्लाउड सिंक सफल
+              ✅ सिंक सफल
             </div>
           </div>
 
@@ -4459,7 +4686,7 @@
 
             <div class="glass-card" style="padding: 1.25rem; background: #ffffff; border: 1.5px solid #bbf7d0; border-radius: var(--radius-md);">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.88rem; color: #15803d; font-weight: 700;">कुल प्राप्त फीडबैक</span>
+                <span style="font-size: 0.88rem; color: #15803d; font-weight: 700;">कुल प्राप्त प्रतिक्रियाएं</span>
                 <span style="font-size: 1.5rem;">⭐</span>
               </div>
               <div style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-top: 6px;" id="statFeedbacksCount">0</div>
@@ -4475,27 +4702,64 @@
               <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">कक्षावार 1-99 रोल नंबर शीट्स</div>
             </div>
 
-            <div class="glass-card" style="padding: 1.25rem; background: #ffffff; border: 1.5px solid #ddd6fe; border-radius: var(--radius-md);">
+            <div class="glass-card" style="padding: 1.25rem; background: #ffffff; border: 1.5px solid #86efac; border-radius: var(--radius-md);">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.88rem; color: #7c3aed; font-weight: 700;">Google Sheets सिंक</span>
-                <span style="font-size: 1.5rem;">🟢</span>
+                <span style="font-size: 0.88rem; color: #15803d; font-weight: 700;">व्हाट्सएप ग्रुप्स</span>
+                <span style="font-size: 1.5rem;">💬</span>
               </div>
-              <div style="font-size: 1.15rem; font-weight: 800; color: #16a34a; margin-top: 10px;">सक्रिय (Multi-Tab Sync)</div>
-              <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">Admissions, Marks & Feedbacks</div>
+              <div style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-top: 6px;" id="statWhatsAppCount">8</div>
+              <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">कक्षावार सक्रिय ग्रुप लिंक्स</div>
             </div>
 
           </div>
 
+          <!-- User-Friendly Quick-Action Toolbar -->
+          <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1.5px solid #cbd5e1; border-radius: var(--radius-md); padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.2rem;">⚡</span>
+              <span style="font-size: 0.88rem; font-weight: 800; color: #1e293b;">त्वरित नेविगेशन (Quick Jump):</span>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; cursor: pointer; font-weight: 800;" onclick="switchAdminTab('whatsapp')">
+                💬 व्हाट्सएप ग्रुप्स नियंत्रण
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #eff6ff; color: #0284c7; border: 1px solid #bae6fd; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('admissions')">
+                📝 प्रवेश आवेदन
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('marks')">
+                📊 परीक्षा अंक
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('feedbacks')">
+                ⭐ सुझाव / फीडबैक
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('notice')">
+                📢 सूचना पॉपअप
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('ticker')">
+                🚩 प्रवेश सूचना पट्टी
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('gallery')">
+                📸 गैलरी
+              </button>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; cursor: pointer; font-weight: 700;" onclick="switchAdminTab('resultlink')">
+                🏆 रिजल्ट लिंक
+              </button>
+            </div>
+          </div>
+
           <!-- Admin Navigation Tabs -->
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch;">
             <button type="button" class="btn-hero-sec active-admin-tab" id="adminTabBtnAdm" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm);" onclick="switchAdminTab('admissions')">
               📝 ऑनलाइन प्रवेश (<span id="tabAdmCountBadge">0</span>)
+            </button>
+            <button type="button" class="btn-hero-sec" id="adminTabBtnWhatsApp" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #15803d; border: 1.5px solid #86efac; background: #f0fdf4;" onclick="switchAdminTab('whatsapp')">
+              💬 व्हाट्सएप ग्रुप्स (<span id="tabWhatsAppCountBadge">8</span>)
             </button>
             <button type="button" class="btn-hero-sec" id="adminTabBtnMarks" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #c2410c; border: 1px solid #fed7aa;" onclick="switchAdminTab('marks')">
               📊 परीक्षा अंक (<span id="tabMarksCountBadge">0</span>)
             </button>
             <button type="button" class="btn-hero-sec" id="adminTabBtnFb" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm);" onclick="switchAdminTab('feedbacks')">
-              ⭐ फीडबैक (<span id="tabFbCountBadge">0</span>)
+              ⭐ प्रतिक्रिया व सुझाव (<span id="tabFbCountBadge">0</span>)
             </button>
             <button type="button" class="btn-hero-sec" id="adminTabBtnNotice" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #0284c7; border: 1px solid #bae6fd;" onclick="switchAdminTab('notice')">
               📢 सूचना पॉपअप नियंत्रण
@@ -4509,9 +4773,6 @@
             <button type="button" class="btn-hero-sec" id="adminTabBtnResultLink" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #be123c; border: 1px solid #fecdd3;" onclick="switchAdminTab('resultlink')">
               🏆 छात्र परिणाम लिंक
             </button>
-            <button type="button" class="btn-hero-sec" id="adminTabBtnSheets" style="cursor: pointer; padding: 0.75rem 1.15rem; font-weight: 700; border-radius: var(--radius-sm); color: #166534; border: 1px solid #bbf7d0;" onclick="switchAdminTab('sheets')">
-              📑 Sheets सिंक
-            </button>
           </div>
 
           <!-- TAB 1: ADMISSIONS DATA TABLE -->
@@ -4521,9 +4782,6 @@
                 <input type="text" id="admSearchInput" class="form-input-custom" placeholder="🔍 छात्र नाम, पिता का नाम, मोबाइल या कक्षा से खोजें..." oninput="filterAdmissionsTable()" style="max-width: 380px; padding: 0.6rem 1rem;" />
               </div>
               <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button type="button" class="btn-hero-pri" style="background: #059669; border: none; cursor: pointer; padding: 0.65rem 1.1rem; font-size: 0.9rem;" onclick="exportAdminDataToExcel('admissions')">
-                  📥 Admissions Excel (.csv) डाउनलोड
-                </button>
                 <button type="button" class="btn-hero-sec" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; cursor: pointer; padding: 0.65rem 1rem; font-size: 0.88rem; font-weight: 700;" onclick="clearAllAdminRecords('admissions')">
                   🗑️ पूरा डेटा क्लियर करें
                 </button>
@@ -5157,6 +5415,178 @@ function doPost(e) {
             </div>
           </div>
 
+          <!-- ==========================================================================
+               TAB: CLASS-WISE WHATSAPP GROUPS MANAGER (व्हाट्सएप ग्रुप नियंत्रण)
+               ========================================================================== -->
+          <div id="adminTabContentWhatsApp" style="display: none;">
+            
+            <!-- WhatsApp Management Header Banner -->
+            <div class="glass-card" style="padding: 1.5rem; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #86efac; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35); flex-shrink: 0;">
+                    💬
+                  </div>
+                  <div>
+                    <h3 style="font-size: 1.3rem; font-weight: 800; color: #14532d; margin: 0 0 4px 0;">
+                      कक्षावार व्हाट्सएप ग्रुप्स प्रबंधन एवं नियंत्रण (WhatsApp Groups Manager)
+                    </h3>
+                    <p style="font-size: 0.88rem; color: #166534; margin: 0; line-height: 1.45;">
+                      यहाँ से आप किसी भी कक्षा का व्हाट्सएप ग्रुप लिंक जोड़ सकते हैं, बदल सकते हैं या हटा सकते हैं। बदलाव तुरंत मुख्य वेबसाइट के 'WhatsApp Groups' पेज पर लाइव हो जाते हैं।
+                    </p>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" class="btn-hero-pri" style="background: #15803d; border: none; cursor: pointer; padding: 0.65rem 1.15rem; font-size: 0.88rem;" onclick="focusWhatsAppAddForm()">
+                    ➕ नया ग्रुप जोड़ें
+                  </button>
+                  <button type="button" class="btn-hero-sec" style="background: #ffffff; color: #15803d; border: 1px solid #86efac; cursor: pointer; padding: 0.65rem 1rem; font-size: 0.88rem; font-weight: 700;" onclick="resetDefaultWhatsAppGroups()">
+                    🔄 मूल 8 ग्रुप्स रीसेट करें
+                  </button>
+                  <button type="button" class="btn-hero-sec" style="background: #ffffff; color: #0369a1; border: 1px solid #bae6fd; cursor: pointer; padding: 0.65rem 1rem; font-size: 0.88rem; font-weight: 700;" onclick="navigateToPage('whatsapp')">
+                    👁️ लाइव पेज देखें ↗
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ADD / EDIT WHATSAPP GROUP FORM -->
+            <div id="adminWaFormContainer" class="glass-card" style="padding: 1.5rem; background: #ffffff; border: 1.5px solid #86efac; border-radius: var(--radius-md); margin-bottom: 1.75rem; box-shadow: 0 4px 15px rgba(21, 128, 61, 0.05);">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem; border-bottom: 1.5px solid #f0fdf4; padding-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 1.25rem;">✍️</span>
+                  <h4 id="waFormTitleText" style="font-size: 1.15rem; font-weight: 800; color: #14532d; margin: 0;">
+                    व्हाट्सएप ग्रुप जोड़ें / सम्पादित करें (Add / Edit WhatsApp Group)
+                  </h4>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span id="waFormModeBadge" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 800; padding: 3px 12px; border-radius: 9999px;">
+                    ➕ नया ग्रुप मोड
+                  </span>
+                  <button type="button" id="waCancelEditBtnTop" class="btn-hero-sec" style="display: none; font-size: 0.75rem; padding: 3px 10px; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; cursor: pointer;" onclick="cancelEditAdminWhatsAppGroup()">
+                    रद्द करें ✕
+                  </button>
+                </div>
+              </div>
+
+              <form id="adminWhatsAppForm" onsubmit="saveAdminWhatsAppGroup(event)">
+                <input type="hidden" id="waEditGroupId" value="" />
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+                  
+                  <!-- Class / Group Name -->
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">कक्षा या ग्रुप का शीर्षक (Class / Group Name) *</label>
+                    <input type="text" id="waInputClassName" list="waClassDatalist" class="form-input-custom" required placeholder="उदा. Class 6th Group या Class 10th Board" />
+                    <datalist id="waClassDatalist">
+                      <option value="Class Nursery Group"></option>
+                      <option value="Class LKG / UKG Group"></option>
+                      <option value="Class 1st Group"></option>
+                      <option value="Class 2nd Group"></option>
+                      <option value="Class 3rd Group"></option>
+                      <option value="Class 4th Group"></option>
+                      <option value="Class 5th Group"></option>
+                      <option value="Class 6th Group"></option>
+                      <option value="Class 7th Group"></option>
+                      <option value="Class 8th Group"></option>
+                      <option value="Class 9th Group"></option>
+                      <option value="Class 10th Board"></option>
+                      <option value="क्लास 11th (Science & Commerce)"></option>
+                      <option value="Class 12th Board"></option>
+                      <option value="School Admission Care"></option>
+                    </datalist>
+                    <span style="font-size: 0.75rem; color: #64748b; margin-top: 3px; display: block;">सुझाव में से चुनें या अपनी इच्छानुसार नया नाम टाइप करें।</span>
+                  </div>
+
+                  <!-- Badge Text / Short Tag -->
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">क्लास बैज / आइकन टेक्स्ट (Badge Text) *</label>
+                    <input type="text" id="waInputBadge" class="form-input-custom" required placeholder="उदा. 4th, 6th, 10th, 12th, MD, Care" maxlength="10" />
+                    <span style="font-size: 0.75rem; color: #64748b; margin-top: 3px; display: block;">कार्ड के गोल आइकन में दिखने वाला संक्षिप्त नाम (1-8 अक्षर)।</span>
+                  </div>
+
+                  <!-- WhatsApp Invite Link -->
+                  <div class="form-group-custom" style="grid-column: 1 / -1;">
+                    <label class="form-label-custom">व्हाट्सएप ग्रुप इनवाइट लिंक या नंबर (WhatsApp Invite Link / URL) *</label>
+                    <div style="display: flex; gap: 8px;">
+                      <input type="url" id="waInputUrl" class="form-input-custom" required placeholder="https://chat.whatsapp.com/... या https://wa.me/919200178385" style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #0369a1;" />
+                      <button type="button" class="btn-hero-sec" style="white-space: nowrap; font-size: 0.82rem; padding: 0 1rem; border: 1.5px solid #86efac; color: #15803d; font-weight: 700; cursor: pointer;" onclick="testCurrentWaLinkInput()">
+                        🔗 टेस्ट ↗
+                      </button>
+                    </div>
+                    <span style="font-size: 0.75rem; color: #64748b; margin-top: 3px; display: block;">व्हाट्सएप ग्रुप से कॉपी किया गया इनवाइट लिंक यहाँ पेस्ट करें (उदा. https://chat.whatsapp.com/...)</span>
+                  </div>
+
+                  <!-- Hindi Subtitle / Description -->
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">संक्षिप्त विवरण / उप-शीर्षक (Hindi Subtitle)</label>
+                    <input type="text" id="waInputSub" class="form-input-custom" placeholder="उदा. कक्षा 6वीं आधिकारिक ग्रुप - गृहकार्य व सूचनाएं" />
+                  </div>
+
+                  <!-- Button Text -->
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">बटन का नाम (Join Button Label)</label>
+                    <input type="text" id="waInputBtnText" class="form-input-custom" placeholder="उदा. Join Class 6th Group ↗ (रिक्त पर स्वतः बनेगा)" />
+                  </div>
+
+                  <!-- Visibility Status -->
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">प्रदर्शन स्थिति (Visibility Status)</label>
+                    <select id="waInputStatus" class="form-select-custom">
+                      <option value="active">🟢 सक्रिय (वेबसाइट पर दिखाई देगा)</option>
+                      <option value="inactive">🔴 निष्क्रिय (अस्थायी रूप से छुपा कर रखें)</option>
+                    </select>
+                  </div>
+
+                </div>
+
+                <!-- Form Buttons -->
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                  <button type="submit" id="waSubmitBtn" class="btn-hero-pri" style="background: #15803d; border: none; cursor: pointer; padding: 0.8rem 1.6rem; font-size: 0.98rem; font-weight: 800;">
+                    💾 <span id="waSubmitBtnText">ग्रुप सुरक्षित करें (Save Group)</span>
+                  </button>
+                  <button type="button" id="waCancelEditBtnBottom" class="btn-hero-sec" style="display: none; background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; padding: 0.8rem 1.25rem; font-weight: 700; cursor: pointer;" onclick="cancelEditAdminWhatsAppGroup()">
+                    ✕ एडिट रद्द करें
+                  </button>
+                  <span id="waSaveSuccessBadge" style="display:none; color:#15803d; font-weight:700; font-size:0.9rem; background:#dcfce7; border:1px solid #86efac; padding:6px 14px; border-radius:9999px;">
+                    ✅ ग्रुप सफलतापूर्वक सुरक्षित हो गया!
+                  </span>
+                </div>
+              </form>
+            </div>
+
+            <!-- CURRENT ACTIVE GROUPS LIST SECTION -->
+            <div class="glass-card" style="padding: 1.5rem; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md);">
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.2rem;">📋</span>
+                  <h4 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">
+                    वर्तमान में उपलब्ध व्हाट्सएप ग्रुप्स (<span id="admWaGroupCount">8</span>)
+                  </h4>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 340px; min-width: 220px;">
+                  <input type="text" id="waSearchFilter" class="form-input-custom" placeholder="🔍 कक्षा या नाम से खोजें..." oninput="filterAdminWhatsAppGroups()" style="padding: 0.5rem 0.9rem; font-size: 0.88rem;" />
+                </div>
+              </div>
+
+              <!-- Container where dynamically generated cards will be rendered -->
+              <div id="adminWhatsAppListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem;">
+                <!-- Dynamically populated by renderAdminWhatsAppGroups() -->
+              </div>
+
+              <!-- Helpful Note -->
+              <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: var(--radius-sm); font-size: 0.84rem; color: #475569; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.3rem;">💡</span>
+                <div>
+                  <strong>सरल सहायता निर्देश:</strong> किसी भी कक्षा का व्हाट्सएप लिंक बदलने के लिए, कार्ड में दिए गए <strong>'✏️ एडिट करें'</strong> बटन पर क्लिक करें। ऊपर दिए गए फॉर्म में आपका पुराना लिंक आ जाएगा, नया लिंक पेस्ट करें और <strong>'ग्रुप सुरक्षित करें'</strong> दबाएं।
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
@@ -5236,13 +5666,14 @@ function doPost(e) {
               ✨ विद्या ददाति विनयं • ज्ञान, संस्कार व सफलता
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="hero-notice-pill-btn" onclick="openFirstTimeNoticeManually()" title="विद्यालय नवीन सूचनाएं देखें">
-                <span>🔔 नवीन सूचनाएं (Notice)</span>
-                <span class="hero-pulse-dot"></span>
-              </button>
-              <span class="page-badge-pill" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
-                🕒 स्कूल समय: 9:30 AM - 4:00 PM
+              <span class="page-badge-pill" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:0.8rem; font-weight:700;">
+                🕒 9:30 AM - 4:00 PM
               </span>
+              <!-- Small Notification Bell Icon for Home Screen -->
+              <button type="button" class="home-mini-bell-btn" onclick="openFirstTimeNoticeManually()" title="विद्यालय नवीन सूचनाएं (Notice & Announcements)" aria-label="School Announcements">
+                <span class="mini-bell-icon">🔔</span>
+                <span class="mini-bell-dot"></span>
+              </button>
             </div>
           </div>
 
@@ -5255,10 +5686,10 @@ function doPost(e) {
           
           <div class="hero-action-buttons">
             <button class="btn-hero-pri" onclick="navigateToPage('admission')">
-              ✍️ ऑनलाइन प्रवेश 2026-27
+              ✍️ New Admission
             </button>
-            <button type="button" class="btn-hero-sec" style="background:#f0f9ff; color:#0284c7; border-color:#bae6fd; font-weight:800;" onclick="openFirstTimeNoticeManually()">
-              🔔 आवश्यक सूचना (Notice)
+            <button class="btn-hero-sec" style="background:#f0fdf4; color:#15803d; border-color:#86efac; font-weight:700;" onclick="navigateToPage('feedback')" title="विद्यालय के लिए सुझाव (Under Principal Review)">
+              💬 विद्यालय सुझाव (Principal Review)
             </button>
             <button class="btn-hero-sec" style="background:#dcfce7; color:#15803d; border-color:#86efac;" onclick="navigateToPage('whatsapp')">
               💬 WhatsApp ग्रुप्स
@@ -5277,19 +5708,19 @@ function doPost(e) {
           <!-- Quick Stats Ribbon (Compact) -->
           <div class="hero-stats-row" style="margin-top:1.5rem; padding-top:1.25rem;">
             <div class="stat-box" onclick="navigateToPage('about')" style="cursor:pointer;" title="कक्षा विवरण देखें">
-              <div class="stat-number" style="font-size:1.35rem;">Nursery-12th</div>
+              <div class="stat-number" style="font-size:1.35rem;">🎓 Nursery-12th</div>
               <div class="stat-label">गणित, बायो, कॉमर्स संकाय</div>
             </div>
             <div class="stat-box" onclick="navigateToPage('student')" style="cursor:pointer;" title="रिजल्ट देखें">
-              <div class="stat-number" style="font-size:1.35rem;">100%</div>
+              <div class="stat-number" style="font-size:1.35rem;">🏆 100%</div>
               <div class="stat-label">उत्कृष्ट बोर्ड परिणाम</div>
             </div>
             <div class="stat-box" onclick="navigateToPage('staff')" style="cursor:pointer;" title="स्टाफ देखें">
-              <div class="stat-number" style="font-size:1.35rem;">35+</div>
+              <div class="stat-number" style="font-size:1.35rem;">👨‍🏫 35+</div>
               <div class="stat-label">35+ अनुभवी शिक्षक</div>
             </div>
             <div class="stat-box" onclick="navigateToPage('facilities')" style="cursor:pointer;" title="सुविधाएं देखें">
-              <div class="stat-number" style="font-size:1.35rem;">100% CCTV</div>
+              <div class="stat-number" style="font-size:1.35rem;">🚌 100% CCTV</div>
               <div class="stat-label">सुरक्षित कैंपस व बस</div>
             </div>
           </div>
@@ -5304,17 +5735,27 @@ function doPost(e) {
         </div>
 
         <div class="quick-hub-grid">
-          <!-- Hub 1: Admission Page -->
+          <!-- Hub 1: New Admission -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('admission')" style="cursor:pointer;">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff;">📝</div>
             <div class="hub-content">
-              <h4>ऑनलाइन प्रवेश फॉर्म 2026-27</h4>
+              <h4>New Admission (नया प्रवेश 2026-27)</h4>
               <p>Nursery से 12वीं (गणित, जीव विज्ञान, वाणिज्य संकाय) नवीन प्रवेश आवेदन।</p>
               <span class="hub-link-tag">प्रवेश फॉर्म खोलें →</span>
             </div>
           </div>
 
-          <!-- Hub 2: Class WhatsApp Groups -->
+          <!-- Hub 2: Feedback & Suggestions (Under Principal Review) -->
+          <div class="quick-hub-card glass-card" onclick="navigateToPage('feedback')" style="cursor:pointer; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border: 1.5px solid #86efac;">
+            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #16a34a, #15803d); color:#fff;">💬</div>
+            <div class="hub-content">
+              <h4 style="color:#166534;">विद्यालय के लिए सुझाव (Principal Review)</h4>
+              <p>सीधे प्राचार्य महोदय के अधीन • पूर्ण गोपनीयता का पूरा ध्यान।</p>
+              <span class="hub-link-tag" style="background:#dcfce7; color:#15803d; border-color:#86efac; font-weight:700;">सुझाव भेजें (गोपनीय) 🔒</span>
+            </div>
+          </div>
+
+          <!-- Hub 3: Class WhatsApp Groups -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('whatsapp')" style="cursor:pointer;">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #22c55e, #16a34a); color:#fff; display:flex; align-items:center; justify-content:center;">
               <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:#ffffff;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
@@ -5326,7 +5767,7 @@ function doPost(e) {
             </div>
           </div>
 
-          <!-- Hub 3: MP Board Books Portal -->
+          <!-- Hub 4: MP Board Books Portal -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('books')" style="cursor:pointer;">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#fff;">📚</div>
             <div class="hub-content">
@@ -5336,7 +5777,17 @@ function doPost(e) {
             </div>
           </div>
 
-          <!-- Hub 4: About School -->
+          <!-- Hub 5: Student & Result Portal (DIRECT ONE-CLICK EXTERNAL GATEWAY) -->
+          <div class="quick-hub-card glass-card" onclick="openStudentResultDirect(event)" style="cursor:pointer; border:1.5px solid #fecdd3; background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);">
+            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #e11d48, #be123c); color:#fff;">🏆</div>
+            <div class="hub-content">
+              <h4 style="color:#9f1239;">Student Result Portal ↗</h4>
+              <p>अधिकृत परीक्षा परिणाम वेबसाइट (ऑनलाइन अंकपत्र) सीधे खोलें।</p>
+              <span class="hub-link-tag" style="background:#ffe4e6; color:#be123c; border-color:#fecdd3; font-weight:700;">वेबसाइट खोलें ↗</span>
+            </div>
+          </div>
+
+          <!-- Hub 6: About School -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('about')" style="cursor:pointer;">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #0284c7, #2563eb); color:#fff;">ℹ️</div>
             <div class="hub-content">
@@ -5346,43 +5797,23 @@ function doPost(e) {
             </div>
           </div>
 
-          <!-- Hub 5: Staff Phone Directory -->
+          <!-- Hub 7: Staff Phone Directory -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('staff')" style="cursor:pointer;">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #7c3aed, #6d28d9); color:#fff;">📞</div>
             <div class="hub-content">
               <h4>स्टाफ संपर्क डायरेक्टरी</h4>
-              <p>समस्त 10 विद्यालय प्रभारियों के फोन नंबर एवं 1-क्लिक कॉल सुविधा।</p>
+              <p>समस्त विद्यालय प्रभारियों के फोन नंबर एवं 1-क्लिक कॉल सुविधा।</p>
               <span class="hub-link-tag" style="background:#f3e8ff; color:#7e22ce; border-color:#d8b4fe;">स्टाफ सूची देखें →</span>
             </div>
           </div>
 
-          <!-- Hub 6: Feedback & Suggestions -->
-          <div class="quick-hub-card glass-card" onclick="navigateToPage('feedback')" style="cursor:pointer;">
-            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #059669, #047857); color:#fff;">⭐</div>
-            <div class="hub-content">
-              <h4>फीडबैक एवं सुझाव फॉर्म</h4>
-              <p>5-स्टार रेटिंग, सुझाव एवं Google Drive / Sheets ऑटो-सिंक।</p>
-              <span class="hub-link-tag" style="background:#d1fae5; color:#065f46; border-color:#a7f3d0;">फीडबैक दें →</span>
-            </div>
-          </div>
-
-          <!-- Hub 7: Teacher & Staff Portal -->
+          <!-- Hub 8: Teacher & Staff Portal -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('teacher')" style="cursor:pointer;">
             <div class="hub-icon-circle hub-teacher">👨‍🏫</div>
             <div class="hub-content">
               <h4>Teacher & Staff Module</h4>
-              <p>Edument पोर्टल लॉगिन, दैनिक अटेंडेंस एवं मार्क्स अपलोड।</p>
+              <p>शिक्षक उपस्थिति, परीक्षा अंक एवं छात्र शुल्क विवरण खोज।</p>
               <span class="hub-link-tag">शिक्षक पोर्टल खोलें →</span>
-            </div>
-          </div>
-
-          <!-- Hub 8: Student & Result Portal (DIRECT ONE-CLICK EXTERNAL GATEWAY) -->
-          <div class="quick-hub-card glass-card" onclick="openStudentResultDirect(event)" style="cursor:pointer; border:1.5px solid #fecdd3; background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);">
-            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #e11d48, #be123c); color:#fff;">🏆</div>
-            <div class="hub-content">
-              <h4 style="color:#9f1239;">Student Result Portal ↗</h4>
-              <p>अधिकृत परीक्षा परिणाम वेबसाइट (ऑनलाइन अंकपत्र) सीधे खोलें।</p>
-              <span class="hub-link-tag" style="background:#ffe4e6; color:#be123c; border-color:#fecdd3; font-weight:700;">वेबसाइट खोलें ↗</span>
             </div>
           </div>
 
@@ -5489,10 +5920,10 @@ function doPost(e) {
           <h4>महत्वपूर्ण लिंक्स</h4>
           <div class="footer-nav-links">
             <a href="#home-main-section" onclick="navigateToPage('home'); return false;">🏠 मुख्य पृष्ठ (Home)</a>
+            <a href="#admission" onclick="navigateToPage('admission'); return false;">📝 New Admission (सत्र 2026-27)</a>
+            <a href="#feedback-section" onclick="navigateToPage('feedback'); return false;">💬 विद्यालय सुझाव (Principal Review)</a>
             <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer">📸 स्कूल गैलरी (Google Photos) ↗</a>
             <a href="https://www.online.edumentsolution.com/" target="_blank" rel="noopener noreferrer">🔐 Teacher Login ↗</a>
-            <a href="#admission" onclick="navigateToPage('admission'); return false;">📝 ऑनलाइन प्रवेश 2026</a>
-            <a href="#feedback-section" onclick="navigateToPage('feedback'); return false;">💬 फीडबैक फॉर्म</a>
             <a href="https://mpboardbooks.com/" target="_blank" rel="noopener noreferrer">📚 MP Board Books ↗</a>
           </div>
         </div>
@@ -5550,19 +5981,6 @@ function doPost(e) {
   </footer>
 
   <!-- 9. FLOATING ACTION BUTTONS -->
-  <!-- Floating Quick Notice Bell Button (One-Tap Access on Mobile) -->
-  <button 
-    class="floating-notice-btn" 
-    id="floatingNoticeBtn"
-    onclick="openFirstTimeNoticeManually()" 
-    title="विद्यालय आवश्यक सूचना (School Announcements)" 
-    aria-label="View School Announcements"
-  >
-    <span style="font-size:1.15rem; line-height:1;">🔔</span>
-    <span>सूचना</span>
-    <span class="floating-bell-badge" id="floatingNoticeBadgeDot"></span>
-  </button>
-
   <!-- WhatsApp Direct Button -->
   <a 
     href="https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20inquire%20about%20admission%20and%20courses." 
@@ -5750,6 +6168,11 @@ function doPost(e) {
 
       // Notification Popup Check (Opened directly without delay)
       checkAndShowFirstTimeNotice();
+
+      // Render WhatsApp Public Groups
+      if (typeof renderPublicWhatsAppGroups === 'function') {
+        renderPublicWhatsAppGroups();
+      }
     });
 
     // 2. Mobile Menu, 3-Dot Drawer & Navigation Functions
@@ -5814,12 +6237,12 @@ function doPost(e) {
       'admission': { title: 'ऑनलाइन प्रवेश फॉर्म 2026-27 (Admission Form)', pill: '📝 सत्र 2026-27 प्रवेश प्रारंभ' },
       'whatsapp': { title: 'कक्षावार आधिकारिक व्हाट्सएप ग्रुप्स (WhatsApp Groups)', pill: '💬 Class 4th, 5th, 8th-12th' },
       'books': { title: 'म.प्र. बोर्ड ई-बुक्स एवं अध्ययन सामग्री (MP Board Books)', pill: '📚 All Books (mpboardbooks.com)' },
-      'feedback': { title: 'अभिभावक व छात्र फीडबैक (Feedback Portal)', pill: '🟢 Google Drive & Sheets Sync' },
+      'feedback': { title: 'विद्यालय सुधार हेतु प्रतिक्रिया व सुझाव (Feedback)', pill: '⭐ रेटिंग व बहुमूल्य सुझाव' },
       'staff': { title: 'शिक्षक एवं स्टाफ संपर्क डायरेक्टरी (Staff Directory)', pill: '📞 डायरेक्टरी व हेल्पलाइन' },
-      'teacher': { title: 'शिक्षक पोर्टल एवं उपस्थिति (Teacher Portal)', pill: '👨‍🏫 उपस्थिति, परीक्षा अंक एवं SMS' },
+      'teacher': { title: 'शिक्षक पोर्टल एवं उपस्थिति (Teacher Portal)', pill: '👨‍🏫 उपस्थिति, परीक्षा अंक एवं शुल्क' },
       'student': { title: 'विद्यार्थी पोर्टल एवं परीक्षा परिणाम (Student & Results)', pill: '🏆 ऑनलाइन रिजल्ट व मार्कशीट' },
       'facilities': { title: 'विद्यालय सुविधाएं (Transport, Labs, Library)', pill: '🚌 GPS बस | लैब | लाइब्रेरी' },
-      'admin': { title: 'प्रशासक नियंत्रण एवं Google Sheets डेटा (Admin Portal)', pill: '🔐 सुरक्षित क्लाउड डेटाबेस व Excel एक्सपोर्ट' }
+      'admin': { title: 'प्रशासक नियंत्रण पोर्टल (Admin Portal)', pill: '🔐 सुरक्षित क्लाउड डेटाबेस' }
     };
 
     function navigateToPage(pageId) {
@@ -5846,6 +6269,14 @@ function doPost(e) {
         if (marqueeBar) marqueeBar.style.setProperty('display', 'none', 'important');
       } else {
         if (marqueeBar) marqueeBar.style.removeProperty('display');
+      }
+
+      // Top navbar notice bell visible ONLY on home page
+      const navTopNoticeBell = document.getElementById('navTopNoticeBell');
+      if (!pageId || pageId === 'home') {
+        if (navTopNoticeBell) navTopNoticeBell.style.display = 'inline-flex';
+      } else {
+        if (navTopNoticeBell) navTopNoticeBell.style.display = 'none';
       }
 
       // 1. If returning to Home
@@ -5891,6 +6322,13 @@ function doPost(e) {
       // If admin module, update admin login vs dashboard view
       if (actualPageId === 'admin') {
         updateAdminView();
+      }
+
+      // If whatsapp page, re-render latest WhatsApp cards
+      if (actualPageId === 'whatsapp') {
+        if (typeof renderPublicWhatsAppGroups === 'function') {
+          renderPublicWhatsAppGroups();
+        }
       }
 
       // Update breadcrumb and header pill
@@ -5986,6 +6424,8 @@ function doPost(e) {
       return false;
     }
 
+    window._cachedTeacherDirectory = null;
+
     async function verifyTeacherCredentials(inputName, inputPhone) {
       const cleanPhone = inputPhone.replace(/\D/g, '').slice(-10);
       const cleanName = inputName.trim();
@@ -5999,58 +6439,85 @@ function doPost(e) {
 
       let verifiedTeacher = null;
 
-      // 1. Fetch live Google Sheet CSV
+      // SPEED STEP 1: Instant check against verified School Staff directory (0ms latency)
+      for (const staff of BACKUP_STAFF_DIRECTORY) {
+        const sPhone = staff.phone.replace(/\D/g, '').slice(-10);
+        if (sPhone === cleanPhone) {
+          if (isNameMatch(cleanName, staff.name) || isNameMatch(cleanName, staff.hindiName)) {
+            verifiedTeacher = {
+              name: staff.hindiName + ' (' + staff.name + ')',
+              phone: staff.phone,
+              post: staff.post,
+              source: 'Verified Staff Directory'
+            };
+            return { success: true, teacher: verifiedTeacher };
+          }
+        }
+      }
+
+      // SPEED STEP 2: Instant check against in-memory cached teacher sheet (if previously fetched)
+      if (window._cachedTeacherDirectory && window._cachedTeacherDirectory.length > 0) {
+        for (const t of window._cachedTeacherDirectory) {
+          if (t.phone === cleanPhone && (isNameMatch(cleanName, t.name) || isNameMatch(cleanName, t.col1) || isNameMatch(cleanName, t.col2))) {
+            return { success: true, teacher: t };
+          }
+        }
+      }
+
+      // SPEED STEP 3: High-speed timeout-guarded live Google Sheet CSV fetch
       try {
-        const res = await fetch(TEACHER_SHEET_CSV_URL + '&_nocache=' + Date.now(), { cache: 'no-store' });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 second max timeout
+
+        const res = await fetch(TEACHER_SHEET_CSV_URL, { signal: controller.signal, cache: 'default' });
+        clearTimeout(timeoutId);
+
         if (res.ok) {
           const csvData = await res.text();
           const lines = csvData.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+          const parsedTeachers = [];
           
           for (let i = 0; i < lines.length; i++) {
             const cols = parseCSVLine(lines[i]);
             if (cols.length < 1) continue;
 
-            // Column 1: Teacher Name (index 0)
-            // Column 2: Mobile Number (index 1)
             const col1 = (cols[0] || '').replace(/['"]/g, '').trim();
             const col2 = (cols[1] || '').replace(/['"]/g, '').trim();
 
             const phone1 = col2.replace(/\D/g, '').slice(-10);
             const phone2 = col1.replace(/\D/g, '').slice(-10);
 
+            const recPhone = phone1 || phone2;
+            const recName = col1 || col2;
+
+            if (recPhone) {
+              parsedTeachers.push({
+                name: recName,
+                col1,
+                col2,
+                phone: recPhone,
+                source: 'Google Sheet Live'
+              });
+            }
+
             const isPhoneValid = (phone1 === cleanPhone) || (phone2 === cleanPhone);
             const isNameValid = isNameMatch(cleanName, col1) || isNameMatch(cleanName, col2);
 
-            if (isPhoneValid && isNameValid) {
+            if (isPhoneValid && isNameValid && !verifiedTeacher) {
               verifiedTeacher = {
                 name: col1 || col2 || cleanName,
                 phone: cleanPhone,
                 source: 'Google Sheet Live'
               };
-              break;
             }
+          }
+
+          if (parsedTeachers.length > 0) {
+            window._cachedTeacherDirectory = parsedTeachers;
           }
         }
       } catch (err) {
-        console.warn('Live Google Sheet fetch notice:', err);
-      }
-
-      // 2. Fallback check against verified School Staff directory
-      if (!verifiedTeacher) {
-        for (const staff of BACKUP_STAFF_DIRECTORY) {
-          const sPhone = staff.phone.replace(/\D/g, '').slice(-10);
-          if (sPhone === cleanPhone) {
-            if (isNameMatch(cleanName, staff.name) || isNameMatch(cleanName, staff.hindiName)) {
-              verifiedTeacher = {
-                name: staff.hindiName + ' (' + staff.name + ')',
-                phone: staff.phone,
-                post: staff.post,
-                source: 'Staff Directory'
-              };
-              break;
-            }
-          }
-        }
+        console.warn('Teacher live sheet fast-path note:', err);
       }
 
       if (verifiedTeacher) {
@@ -6153,6 +6620,9 @@ function doPost(e) {
           if (attDateInput && !attDateInput.value) {
             attDateInput.value = new Date().toISOString().slice(0, 10);
           }
+
+          // Always present the 3 primary options first upon opening Teacher dashboard
+          backToTeacherHub();
         } catch (e) {
           if (loginScreen) loginScreen.style.display = 'block';
           if (dashboardScreen) dashboardScreen.style.display = 'none';
@@ -6167,6 +6637,32 @@ function doPost(e) {
         const errorBox = document.getElementById('teacherLoginError');
         if (errorBox) errorBox.style.display = 'none';
       }
+    }
+
+    // Return to the 3 Primary Teacher Options Hub
+    function backToTeacherHub() {
+      const hub = document.getElementById('teacherHubMainView');
+      const navBar = document.getElementById('teacherActiveNavBar');
+      const secMarks = document.getElementById('teacherSectionMarks');
+      const secAbsent = document.getElementById('teacherSectionAbsent');
+      const secFees = document.getElementById('teacherSectionFees');
+
+      if (hub) hub.style.display = 'block';
+      if (navBar) navBar.style.display = 'none';
+      if (secMarks) secMarks.style.display = 'none';
+      if (secAbsent) secAbsent.style.display = 'none';
+      if (secFees) secFees.style.display = 'none';
+    }
+
+    // Open one of the 3 chosen options directly
+    function openTeacherOption(tabName) {
+      const hub = document.getElementById('teacherHubMainView');
+      const navBar = document.getElementById('teacherActiveNavBar');
+
+      if (hub) hub.style.display = 'none';
+      if (navBar) navBar.style.display = 'flex';
+
+      switchTeacherSectionTab(tabName);
     }
 
     // Helper for Total Absent Message template
@@ -6184,16 +6680,22 @@ function doPost(e) {
       });
     }
 
-    // Switch between 2 Teacher Dashboard Sections (Only 1 open at a time)
+    // Switch between 3 Teacher Dashboard Sections (Only 1 open at a time)
     function switchTeacherSectionTab(tabName) {
       const secMarks = document.getElementById('teacherSectionMarks');
       const secAbsent = document.getElementById('teacherSectionAbsent');
+      const secFees = document.getElementById('teacherSectionFees');
       const btnMarks = document.getElementById('tabTeacherMarksBtn');
       const btnAbsent = document.getElementById('tabTeacherAbsentBtn');
+      const btnFees = document.getElementById('tabTeacherFeesBtn');
 
       if (tabName === 'marks') {
-        if (secMarks) secMarks.style.display = 'block';
+        if (secMarks) {
+          secMarks.style.display = 'block';
+          secMarks.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         if (secAbsent) secAbsent.style.display = 'none';
+        if (secFees) secFees.style.display = 'none';
 
         if (btnMarks) {
           btnMarks.style.background = '#0284c7';
@@ -6207,9 +6709,19 @@ function doPost(e) {
           btnAbsent.style.borderColor = '#cbd5e1';
           btnAbsent.style.boxShadow = 'none';
         }
+        if (btnFees) {
+          btnFees.style.background = '#f8fafc';
+          btnFees.style.color = '#475569';
+          btnFees.style.borderColor = '#cbd5e1';
+          btnFees.style.boxShadow = 'none';
+        }
       } else if (tabName === 'absent') {
         if (secMarks) secMarks.style.display = 'none';
-        if (secAbsent) secAbsent.style.display = 'block';
+        if (secAbsent) {
+          secAbsent.style.display = 'block';
+          secAbsent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (secFees) secFees.style.display = 'none';
 
         if (btnAbsent) {
           btnAbsent.style.background = '#16a34a';
@@ -6223,7 +6735,802 @@ function doPost(e) {
           btnMarks.style.borderColor = '#cbd5e1';
           btnMarks.style.boxShadow = 'none';
         }
+        if (btnFees) {
+          btnFees.style.background = '#f8fafc';
+          btnFees.style.color = '#475569';
+          btnFees.style.borderColor = '#cbd5e1';
+          btnFees.style.boxShadow = 'none';
+        }
+      } else if (tabName === 'fees') {
+        if (secMarks) secMarks.style.display = 'none';
+        if (secAbsent) secAbsent.style.display = 'none';
+        if (secFees) {
+          secFees.style.display = 'block';
+          secFees.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            const inp = document.getElementById('teacherFeeScholarInput');
+            if (inp) inp.focus();
+          }, 200);
+        }
+
+        if (btnFees) {
+          btnFees.style.background = '#0d9488';
+          btnFees.style.color = '#ffffff';
+          btnFees.style.borderColor = '#0d9488';
+          btnFees.style.boxShadow = '0 4px 12px rgba(13,148,136,0.25)';
+        }
+        if (btnMarks) {
+          btnMarks.style.background = '#f8fafc';
+          btnMarks.style.color = '#475569';
+          btnMarks.style.borderColor = '#cbd5e1';
+          btnMarks.style.boxShadow = 'none';
+        }
+        if (btnAbsent) {
+          btnAbsent.style.background = '#f8fafc';
+          btnAbsent.style.color = '#475569';
+          btnAbsent.style.borderColor = '#cbd5e1';
+          btnAbsent.style.boxShadow = 'none';
+        }
       }
+    }
+
+    // ==========================================
+    // 3. STUDENT FEE LOOKUP SYSTEM (Lazy-Loaded on Search)
+    // ==========================================
+    const FEES_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv0gTbGo5P8wkB4CYuVIWzvXDOu1INb_L8beoaLYrXIyw9noqOIIln5PxxlP2S9apBakQfq48_YLZ8/pub?output=csv";
+    window._cachedStudentFeesRecords = null;
+    window._currentFoundStudentFee = null;
+
+    async function fetchStudentFeesSheetIfNeeded() {
+      if (window._cachedStudentFeesRecords && window._cachedStudentFeesRecords.length > 0) {
+        return window._cachedStudentFeesRecords;
+      }
+
+      // 1. Primary zero-latency path: /fees-data.json (1226 pre-parsed records, 0ms delay)
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch('/fees-data.json', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 50) {
+            window._cachedStudentFeesRecords = data;
+            // Silent background refresh
+            setTimeout(refreshLiveFeesInBackground, 2000);
+            return data;
+          }
+        }
+      } catch (e) {
+        console.warn('Local json fees fetch notice:', e);
+      }
+
+      // 2. Secondary fast path: Local server proxy /api/fees-sheet-csv
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch('/api/fees-sheet-csv', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const csvText = await res.text();
+          if (csvText && csvText.length > 200 && !csvText.includes('<!DOCTYPE')) {
+            const records = parseStudentFeesCSV(csvText);
+            if (records && records.length > 0) {
+              window._cachedStudentFeesRecords = records;
+              return records;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Proxy fees fetch notice, trying direct URL:', e);
+      }
+
+      // 3. Fallback path: /public/fees-data.csv
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch('/fees-data.csv', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const csvText = await res.text();
+          if (csvText && csvText.length > 200 && !csvText.includes('<!DOCTYPE')) {
+            const records = parseStudentFeesCSV(csvText);
+            if (records && records.length > 0) {
+              window._cachedStudentFeesRecords = records;
+              return records;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Direct fees-data.csv notice:', e);
+      }
+
+      // 4. Secondary fallback path: Direct Google Sheets publish URL or CORS proxy
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+        const corsUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(FEES_SHEET_CSV_URL);
+        const response = await fetch(corsUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const csvText = await response.text();
+          if (csvText && csvText.length > 200) {
+            const records = parseStudentFeesCSV(csvText);
+            if (records && records.length > 0) {
+              window._cachedStudentFeesRecords = records;
+              return records;
+            }
+          }
+        }
+      } catch (err) {
+        console.error('All student fee fetch attempts exhausted:', err);
+      }
+
+      throw new Error('Student fee records could not be loaded');
+    }
+
+    async function refreshLiveFeesInBackground() {
+      try {
+        const res = await fetch('/api/fees-sheet-csv');
+        if (res.ok) {
+          const csvText = await res.text();
+          if (csvText && csvText.length > 200 && !csvText.includes('<!DOCTYPE')) {
+            const records = parseStudentFeesCSV(csvText);
+            if (records && records.length > 0) {
+              window._cachedStudentFeesRecords = records;
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    function parseStudentFeesCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      const records = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        if (cols.length < 5) continue;
+
+        const col0 = (cols[0] || '').trim();
+        const col1 = (cols[1] || '').trim();
+        const col2 = (cols[2] || '').trim();
+        const col3 = (cols[3] || '').trim();
+        const col4 = (cols[4] || '').trim();
+
+        // Skip headers
+        const l0 = col0.toLowerCase();
+        const l1 = col1.toLowerCase();
+        const l2 = col2.toLowerCase();
+        if (l0.includes('due fee report') || l0 === 's.no' || l1.includes('scholar') || l2.includes('student name')) {
+          continue;
+        }
+
+        if (!col1 || !col2) continue;
+
+        records.push({
+          sNo: col0 || (records.length + 1).toString(),
+          scholarNo: col1,
+          studentName: col2,
+          fatherName: col3,
+          className: col4,
+          prevYearDue: cols[5] || '0',
+          admissionFeeNew: cols[6] || '0',
+          renewableFee: cols[7] || '0',
+          boysFund: cols[8] || '0',
+          tution1: cols[9] || '0',
+          tution2: cols[10] || '0',
+          conveyanceJuly: cols[11] || '0',
+          conveyanceAugust: cols[12] || '0',
+          tution3: cols[13] || '0',
+          tution4: cols[14] || '0',
+          conveyanceSeptember: cols[15] || '0',
+          conveyanceOctober: cols[16] || '0',
+          tution5: cols[17] || '0',
+          conveyanceNovember: cols[18] || '0',
+          conveyanceDecember: cols[19] || '0',
+          decRegistrationFee: cols[20] || '0',
+          conveyanceJanuary: cols[21] || '0',
+          conveyanceFebruary: cols[22] || '0',
+          conveyanceMarch: cols[23] || '0',
+          conveyanceApril: cols[24] || '0',
+          aprilOldDue: cols[25] || '0',
+          lateFee: cols[26] || '0',
+          advanceAdjustable: cols[27] || '0',
+          total: cols[28] || '0'
+        });
+      }
+
+      return records;
+    }
+
+    // Convert Hindi / Devanagari numerals (०-९) to ASCII (0-9)
+    function toAsciiDigits(str) {
+      if (!str) return '';
+      return str.toString().replace(/[०-९]/g, d => "०१२३४५६७८९".indexOf(d));
+    }
+
+    async function handleStudentFeeSearchSubmit(event) {
+      if (event) event.preventDefault();
+      const inputEl = document.getElementById('teacherFeeScholarInput');
+      const rawQuery = (inputEl?.value || '').trim();
+      const query = toAsciiDigits(rawQuery).trim();
+
+      if (!query) {
+        showTeacherFeeError('स्कॉलर नंबर या नाम आवश्यक है', 'कृपया विद्यार्थी का स्कॉलर नंबर (उदा. 2817, 2926) अथवा नाम दर्ज करें।');
+        return;
+      }
+
+      const loadingEl = document.getElementById('teacherFeeLoading');
+      const emptyEl = document.getElementById('teacherFeeEmptyState');
+      const errorEl = document.getElementById('teacherFeeError');
+      const resultContainer = document.getElementById('teacherFeeResultContainer');
+      const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+      const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+      const searchBtn = document.getElementById('btnTeacherFeeSearch');
+
+      if (loadingEl) loadingEl.style.display = 'block';
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (errorEl) errorEl.style.display = 'none';
+      if (resultContainer) resultContainer.style.display = 'none';
+      if (multiMatchContainer) multiMatchContainer.style.display = 'none';
+      if (classRosterContainer) classRosterContainer.style.display = 'none';
+      if (searchBtn) searchBtn.disabled = true;
+
+      try {
+        const records = await fetchStudentFeesSheetIfNeeded();
+        const cleanQuery = query.toLowerCase().replace(/\s+/g, '');
+
+        // 1. Exact Scholar No match
+        let exactScholarMatches = records.filter(r => r.scholarNo && r.scholarNo.trim() === query);
+
+        if (exactScholarMatches.length === 1) {
+          if (loadingEl) loadingEl.style.display = 'none';
+          if (searchBtn) searchBtn.disabled = false;
+          window._currentFoundStudentFee = exactScholarMatches[0];
+          renderStudentFeeResult(exactScholarMatches[0]);
+          return;
+        } else if (exactScholarMatches.length > 1) {
+          if (loadingEl) loadingEl.style.display = 'none';
+          if (searchBtn) searchBtn.disabled = false;
+          renderMultiStudentMatches(exactScholarMatches, rawQuery);
+          return;
+        }
+
+        // 2. Scholar No contains or normalized match
+        let scholarMatches = records.filter(r => r.scholarNo && r.scholarNo.toLowerCase().replace(/\s+/g, '') === cleanQuery);
+        if (scholarMatches.length === 1) {
+          if (loadingEl) loadingEl.style.display = 'none';
+          if (searchBtn) searchBtn.disabled = false;
+          window._currentFoundStudentFee = scholarMatches[0];
+          renderStudentFeeResult(scholarMatches[0]);
+          return;
+        } else if (scholarMatches.length > 1) {
+          if (loadingEl) loadingEl.style.display = 'none';
+          if (searchBtn) searchBtn.disabled = false;
+          renderMultiStudentMatches(scholarMatches, rawQuery);
+          return;
+        }
+
+        // 3. Name or Father Name match
+        let nameMatches = records.filter(r => {
+          const sName = (r.studentName || '').toLowerCase();
+          const fName = (r.fatherName || '').toLowerCase();
+          const sNo = (r.scholarNo || '').toLowerCase();
+          const q = query.toLowerCase();
+          return sNo.includes(cleanQuery) || sName.includes(q) || fName.includes(q);
+        });
+
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (searchBtn) searchBtn.disabled = false;
+
+        if (nameMatches.length === 1) {
+          window._currentFoundStudentFee = nameMatches[0];
+          renderStudentFeeResult(nameMatches[0]);
+        } else if (nameMatches.length > 1) {
+          renderMultiStudentMatches(nameMatches, rawQuery);
+        } else {
+          showTeacherFeeError('छात्र रिकॉर्ड नहीं मिला', `सर्च "${escapeHtml(rawQuery)}" का कोई रिकॉर्ड उपलब्ध नहीं है। कृपया सही स्कॉलर नंबर (Enter Scholar Number) अथवा छात्र का नाम दर्ज करें।`);
+        }
+      } catch (err) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (searchBtn) searchBtn.disabled = false;
+        showTeacherFeeError('डेटा लोड त्रुटि', 'गूगल शीट से फीस डेटा प्राप्त करने में असमर्थ। कृपया पुनः प्रयास करें।');
+      }
+    }
+
+    // Render list when multiple students match search query
+    function renderMultiStudentMatches(matches, searchQuery) {
+      const container = document.getElementById('teacherFeeMultiMatchContainer');
+      if (!container) return;
+
+      let rowsHtml = matches.slice(0, 50).map((s, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9; background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+          <td style="padding: 10px 12px; font-weight: 700; color: #64748b;">${idx + 1}</td>
+          <td style="padding: 10px 12px; font-weight: 800; color: #0284c7;">${escapeHtml(s.scholarNo || '-')}</td>
+          <td style="padding: 10px 12px; font-weight: 800; color: #0f172a;">${escapeHtml(s.studentName || '-')}</td>
+          <td style="padding: 10px 12px; color: #475569;">${escapeHtml(s.fatherName || '-')}</td>
+          <td style="padding: 10px 12px; font-weight: 700; color: #0d9488;">${escapeHtml(s.className || '-')}</td>
+          <td style="padding: 10px 12px; font-weight: 900; color: #0f766e;">${formatFeeCurrency(s.total)}</td>
+          <td style="padding: 10px 12px; text-align: right;">
+            <button type="button" onclick="selectStudentForFeeView('${escapeHtml(s.scholarNo)}')" style="background: #0d9488; color: #ffffff; border: none; border-radius: var(--radius-sm); padding: 6px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 6px rgba(13,148,136,0.2);">
+              विवरण देखें 👁️
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <div style="background: #ffffff; border: 2px solid #5eead4; border-radius: var(--radius-md); padding: 1.25rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.75rem;">
+            <div style="font-weight: 800; color: #0f766e; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+              <span>👥</span> <span>कुल ${matches.length} छात्र मिले ("${escapeHtml(searchQuery)}")</span>
+            </div>
+            <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">
+              वांछित छात्र के सामने <strong>'विवरण देखें'</strong> पर क्लिक करें
+            </span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+              <thead>
+                <tr style="background: #f0fdfa; color: #0f766e; border-bottom: 2px solid #99f6e4;">
+                  <th style="padding: 10px 12px;">#</th>
+                  <th style="padding: 10px 12px;">स्कॉलर नं</th>
+                  <th style="padding: 10px 12px;">विद्यार्थी का नाम</th>
+                  <th style="padding: 10px 12px;">पिता का नाम</th>
+                  <th style="padding: 10px 12px;">कक्षा</th>
+                  <th style="padding: 10px 12px;">कुल देय फीस</th>
+                  <th style="padding: 10px 12px; text-align: right;">एक्शन</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      container.style.display = 'block';
+    }
+
+    // Handle Class Dropdown selection to view all students in that class
+    async function handleClassFeeFilterChange(className) {
+      const classVal = (className || '').trim();
+      const emptyEl = document.getElementById('teacherFeeEmptyState');
+      const errorEl = document.getElementById('teacherFeeError');
+      const resultContainer = document.getElementById('teacherFeeResultContainer');
+      const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+      const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+      const loadingEl = document.getElementById('teacherFeeLoading');
+
+      if (!classVal) {
+        clearTeacherFeeSearch();
+        return;
+      }
+
+      if (loadingEl) loadingEl.style.display = 'block';
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (errorEl) errorEl.style.display = 'none';
+      if (resultContainer) resultContainer.style.display = 'none';
+      if (multiMatchContainer) multiMatchContainer.style.display = 'none';
+      if (classRosterContainer) classRosterContainer.style.display = 'none';
+
+      try {
+        const records = await fetchStudentFeesSheetIfNeeded();
+        if (loadingEl) loadingEl.style.display = 'none';
+
+        const filtered = records.filter(r => r.className && r.className.trim().toUpperCase() === classVal.toUpperCase());
+
+        if (!filtered || filtered.length === 0) {
+          showTeacherFeeError('कक्षा रिकॉर्ड नहीं मिला', `कक्षा "${escapeHtml(classVal)}" में कोई छात्र रिकॉर्ड नहीं मिला।`);
+          return;
+        }
+
+        // Render Class Roster Table
+        let rowsHtml = filtered.map((s, idx) => `
+          <tr style="border-bottom: 1px solid #f1f5f9; background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+            <td style="padding: 10px 12px; font-weight: 700; color: #64748b;">${idx + 1}</td>
+            <td style="padding: 10px 12px; font-weight: 800; color: #0284c7;">${escapeHtml(s.scholarNo || '-')}</td>
+            <td style="padding: 10px 12px; font-weight: 800; color: #0f172a;">${escapeHtml(s.studentName || '-')}</td>
+            <td style="padding: 10px 12px; color: #475569;">${escapeHtml(s.fatherName || '-')}</td>
+            <td style="padding: 10px 12px; font-weight: 900; color: #0f766e;">${formatFeeCurrency(s.total)}</td>
+            <td style="padding: 10px 12px; text-align: right;">
+              <button type="button" onclick="selectStudentForFeeView('${escapeHtml(s.scholarNo)}')" style="background: #0d9488; color: #ffffff; border: none; border-radius: var(--radius-sm); padding: 6px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 6px rgba(13,148,136,0.2);">
+                विवरण देखें 👁️
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        classRosterContainer.innerHTML = `
+          <div style="background: #ffffff; border: 2px solid #5eead4; border-radius: var(--radius-md); padding: 1.25rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.75rem;">
+              <div>
+                <span class="section-chip" style="background: #e0f2fe; color: #0369a1; font-size: 0.8rem; font-weight: 800;">
+                  कक्षा सूची (Classwise Roster)
+                </span>
+                <h4 style="margin: 4px 0 0 0; color: #0f766e; font-size: 1.2rem; font-weight: 800;">
+                  🏫 कक्षा: ${escapeHtml(classVal)} (कुल विद्यार्थी: ${filtered.length})
+                </h4>
+              </div>
+              <button type="button" onclick="clearTeacherFeeSearch()" class="btn-hero-sec" style="background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; padding: 6px 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">
+                ✕ सूची बंद करें
+              </button>
+            </div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                <thead>
+                  <tr style="background: #f0fdfa; color: #0f766e; border-bottom: 2px solid #99f6e4;">
+                    <th style="padding: 10px 12px;">#</th>
+                    <th style="padding: 10px 12px;">स्कॉलर नं</th>
+                    <th style="padding: 10px 12px;">विद्यार्थी का नाम</th>
+                    <th style="padding: 10px 12px;">पिता का नाम</th>
+                    <th style="padding: 10px 12px;">कुल देय फीस</th>
+                    <th style="padding: 10px 12px; text-align: right;">एक्शन</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+
+        classRosterContainer.style.display = 'block';
+      } catch (err) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        showTeacherFeeError('कनेक्शन त्रुटि', 'गूगल शीट से फीस डेटा प्राप्त करने में असमर्थ। कृपया इंटरनेट कनेक्शन जांचें।');
+      }
+    }
+
+    // Select a student from Roster or Multi-match to view full fee slip
+    async function selectStudentForFeeView(scholarNo) {
+      if (!scholarNo) return;
+      try {
+        const records = await fetchStudentFeesSheetIfNeeded();
+        const student = records.find(r => r.scholarNo && r.scholarNo.trim() === scholarNo.trim());
+        if (student) {
+          window._currentFoundStudentFee = student;
+          renderStudentFeeResult(student);
+          const resContainer = document.getElementById('teacherFeeResultContainer');
+          if (resContainer) {
+            resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } else {
+          showTeacherFeeError('त्रुटि', 'छात्र रिकॉर्ड प्राप्त नहीं हुआ।');
+        }
+      } catch (err) {
+        showTeacherFeeError('त्रुटि', 'छात्र विवरण लोड करने में असमर्थ।');
+      }
+    }
+
+    function showTeacherFeeError(title, desc) {
+      const errorEl = document.getElementById('teacherFeeError');
+      const titleEl = document.getElementById('teacherFeeErrorTitle');
+      const descEl = document.getElementById('teacherFeeErrorDesc');
+      const emptyEl = document.getElementById('teacherFeeEmptyState');
+      const resultContainer = document.getElementById('teacherFeeResultContainer');
+      const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+      const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (resultContainer) resultContainer.style.display = 'none';
+      if (multiMatchContainer) multiMatchContainer.style.display = 'none';
+      if (classRosterContainer) classRosterContainer.style.display = 'none';
+      if (titleEl) titleEl.textContent = title;
+      if (descEl) descEl.textContent = desc;
+      if (errorEl) errorEl.style.display = 'block';
+    }
+
+    function clearTeacherFeeSearch() {
+      const inputEl = document.getElementById('teacherFeeScholarInput');
+      if (inputEl) inputEl.value = '';
+      const classFilter = document.getElementById('teacherFeeClassFilter');
+      if (classFilter) classFilter.value = '';
+
+      const loadingEl = document.getElementById('teacherFeeLoading');
+      const emptyEl = document.getElementById('teacherFeeEmptyState');
+      const errorEl = document.getElementById('teacherFeeError');
+      const resultContainer = document.getElementById('teacherFeeResultContainer');
+      const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+      const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (errorEl) errorEl.style.display = 'none';
+      if (multiMatchContainer) {
+        multiMatchContainer.style.display = 'none';
+        multiMatchContainer.innerHTML = '';
+      }
+      if (classRosterContainer) {
+        classRosterContainer.style.display = 'none';
+        classRosterContainer.innerHTML = '';
+      }
+      if (resultContainer) {
+        resultContainer.style.display = 'none';
+        resultContainer.innerHTML = '';
+      }
+      if (emptyEl) emptyEl.style.display = 'block';
+      window._currentFoundStudentFee = null;
+    }
+
+    function formatFeeCurrency(val) {
+      if (!val || val === '-' || val === '0' || val === '0.00' || val === '') return '₹0';
+      const clean = val.toString().replace(/[^0-9.-]/g, '');
+      const num = parseFloat(clean);
+      if (isNaN(num)) return val;
+      return '₹' + num.toLocaleString('en-IN');
+    }
+
+    function renderStudentFeeResult(student) {
+      const container = document.getElementById('teacherFeeResultContainer');
+      if (!container) return;
+
+      const totalFormatted = formatFeeCurrency(student.total);
+
+      const conveyanceMonths = [
+        { name: 'जुलाई (July)', amt: student.conveyanceJuly },
+        { name: 'अगस्त (August)', amt: student.conveyanceAugust },
+        { name: 'सितम्बर (September)', amt: student.conveyanceSeptember },
+        { name: 'अक्टूबर (October)', amt: student.conveyanceOctober },
+        { name: 'नवम्बर (November)', amt: student.conveyanceNovember },
+        { name: 'दिसम्बर (December)', amt: student.conveyanceDecember },
+        { name: 'जनवरी (January)', amt: student.conveyanceJanuary },
+        { name: 'फरवरी (February)', amt: student.conveyanceFebruary },
+        { name: 'मार्च (March)', amt: student.conveyanceMarch },
+        { name: 'अप्रैल (April)', amt: student.conveyanceApril }
+      ];
+
+      const conveyanceRowsHtml = conveyanceMonths.map(m => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); font-size: 0.85rem;">
+          <span style="color: #475569;">${m.name}</span>
+          <span style="font-weight: 700; color: ${m.amt && m.amt !== '0' && m.amt !== '0.00' ? '#0f766e' : '#94a3b8'};">${formatFeeCurrency(m.amt)}</span>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div style="background: linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%); border: 2px solid #5eead4; border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(13,148,136,0.1);">
+          <!-- Top Profile Banner -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1.5px solid #99f6e4; padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="background: #0d9488; color: #ffffff; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 800;">
+                  स्कॉलर नं: ${escapeHtml(student.scholarNo || 'N/A')}
+                </span>
+                <span style="background: #ffffff; color: #0f766e; border: 1px solid #99f6e4; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;">
+                  कक्षा: ${escapeHtml(student.className || 'N/A')}
+                </span>
+              </div>
+              <h2 style="margin: 8px 0 2px; color: #042f2e; font-size: 1.5rem; font-weight: 800;">
+                ${escapeHtml(student.studentName || 'छात्र')}
+              </h2>
+              <div style="font-size: 0.95rem; color: #134e4a;">
+                👨‍👦 <strong>पिता का नाम:</strong> ${escapeHtml(student.fatherName || '-')}
+              </div>
+            </div>
+
+            <!-- Total Outstanding Badge -->
+            <div style="background: #ffffff; border: 2px solid #0d9488; border-radius: var(--radius-md); padding: 1rem 1.4rem; text-align: right; box-shadow: 0 4px 12px rgba(13,148,136,0.15); min-width: 180px;">
+              <div style="font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: 800; letter-spacing: 0.5px;">
+                कुल देय शुल्क (Total Due)
+              </div>
+              <div style="font-size: 1.85rem; font-weight: 900; color: #0f766e; margin-top: 4px;">
+                ${totalFormatted}
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Category Breakdown Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+            
+            <!-- Category 1: प्रवेश व पूर्व देय -->
+            <div style="background: #ffffff; border: 1.5px solid #ccfbf1; border-radius: var(--radius-md); padding: 1.15rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+              <div style="font-weight: 800; color: #0f766e; font-size: 0.95rem; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                <span>📋</span> <span>1. प्रवेश एवं पुराना शुल्क (Admission & Old Due)</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem;">
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>पुराना बकाया (Prev Year Due):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.prevYearDue)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>नवीन प्रवेश शुल्क (Admission Fee):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.admissionFeeNew)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>नवीनीकरण शुल्क (Renewable Fee):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.renewableFee)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>बालक कोष (I Ins Boys Fund):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.boysFund)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category 2: ट्यूशन फीस (5 किस्तें) -->
+            <div style="background: #ffffff; border: 1.5px solid #ccfbf1; border-radius: var(--radius-md); padding: 1.15rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+              <div style="font-weight: 800; color: #0369a1; font-size: 0.95rem; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                <span>📚</span> <span>2. ट्यूशन फीस (Tuition Fee Installments)</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem;">
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>प्रथम किस्त (I Ins Tuition):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.tution1)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>द्वितीय किस्त (II Ins Tuition):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.tution2)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>तृतीय किस्त (III Ins Tuition):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.tution3)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>चतुर्थ किस्त (IV Ins Tuition):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.tution4)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>पंचम किस्त (V Ins Tuition):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.tution5)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category 3: वाहन किराया (माहवार) -->
+            <div style="background: #ffffff; border: 1.5px solid #ccfbf1; border-radius: var(--radius-md); padding: 1.15rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+              <div style="font-weight: 800; color: #c2410c; font-size: 0.95rem; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                <span>🚌</span> <span>3. वाहन किराया (Conveyance / Transport)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                ${conveyanceRowsHtml}
+              </div>
+            </div>
+
+            <!-- Category 4: अन्य मद, विलंब शुल्क एवं समायोजन -->
+            <div style="background: #ffffff; border: 1.5px solid #ccfbf1; border-radius: var(--radius-md); padding: 1.15rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+              <div style="font-weight: 800; color: #6d28d9; font-size: 0.95rem; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                <span>⚙️</span> <span>4. अन्य मद व समायोजन (Other & Adjustments)</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem;">
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>दिसम्बर रजिस्ट्रेशन शुल्क:</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.decRegistrationFee)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>अप्रैल पुराना बकाया (April Old Due):</span>
+                  <strong style="color: #0f172a;">${formatFeeCurrency(student.aprilOldDue)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>विलंब शुल्क (Late Fee):</span>
+                  <strong style="color: #b91c1c;">${formatFeeCurrency(student.lateFee)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #475569;">
+                  <span>अग्रिम समायोजन (Advance):</span>
+                  <strong style="color: #15803d;">${formatFeeCurrency(student.advanceAdjustable)}</strong>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1rem; border-top: 1.5px solid #99f6e4;">
+            <button type="button" class="btn-hero-sec" onclick="clearTeacherFeeSearch()" style="background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; font-weight: 700; cursor: pointer; padding: 0.65rem 1.15rem; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+              <span>✕</span> <span>बंद करें / नई खोज</span>
+            </button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn-hero-sec" onclick="shareStudentFeeOnWhatsApp()" style="background: #25d366; color: #ffffff; border: none; font-weight: 700; cursor: pointer; padding: 0.65rem 1.25rem; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(37,211,102,0.3);">
+                <span>💬</span> <span>अभिभावक को WhatsApp पर भेजें</span>
+              </button>
+              <button type="button" class="btn-hero-sec" onclick="printStudentFeeSlip()" style="background: #0f766e; color: #ffffff; border: none; font-weight: 700; cursor: pointer; padding: 0.65rem 1.25rem; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                <span>🖨️</span> <span>शुल्क विवरण प्रिंट करें</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.style.display = 'block';
+    }
+
+    function shareStudentFeeOnWhatsApp() {
+      const student = window._currentFoundStudentFee;
+      if (!student) return;
+
+      const text = `*माँ दुर्गा उ.मा.वि. सेमरिया (रीवा)*\n` +
+        `*छात्र शुल्क विवरण सूचना (Fee Status)*\n\n` +
+        `👤 *विद्यार्थी:* ${student.studentName}\n` +
+        `🔢 *स्कॉलर नं:* ${student.scholarNo}\n` +
+        `🏫 *कक्षा:* ${student.className}\n` +
+        `👨‍👦 *पिता का नाम:* ${student.fatherName}\n` +
+        `💰 *कुल देय शुल्क:* ${formatFeeCurrency(student.total)}\n\n` +
+        `_विस्तृत जानकारी हेतु कृपया विद्यालय कार्यालय से संपर्क करें।_\n` +
+        `📞 संपर्क: 9200178385, 9669527633`;
+
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
+    function printStudentFeeSlip() {
+      const student = window._currentFoundStudentFee;
+      if (!student) return;
+
+      const printWindow = window.open('', '_blank', 'width=800,height=700');
+      if (!printWindow) {
+        alert('कृपया ब्राउज़र में पॉप-अप अनुमति दें।');
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Fee Slip - ${escapeHtml(student.studentName)} (${escapeHtml(student.scholarNo)})</title>
+          <style>
+            body { font-family: system-ui, -apple-system, sans-serif; padding: 25px; color: #0f172a; line-height: 1.4; }
+            .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px; }
+            .title { font-size: 20px; font-weight: 800; }
+            .subtitle { font-size: 13px; color: #475569; margin-top: 4px; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; font-size: 14px; background: #f8fafc; padding: 12px; border-radius: 6px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+            th, td { border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-size: 13px; }
+            th { background: #f1f5f9; font-weight: 700; }
+            .total-row { background: #f0fdfa; font-weight: 800; font-size: 14px; }
+            .footer { margin-top: 30px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="title">माँ दुर्गा हायर सेकेंडरी स्कूल, सेमरिया (रीवा म.प्र.)</div>
+            <div class="subtitle">UDISE: 23140402055 | कोड: 322517 | छात्र शुल्क विवरण रसीद</div>
+          </div>
+          <div class="info-grid">
+            <div><strong>छात्र का नाम:</strong> ${escapeHtml(student.studentName)}</div>
+            <div><strong>स्कॉलर नंबर:</strong> ${escapeHtml(student.scholarNo)}</div>
+            <div><strong>पिता का नाम:</strong> ${escapeHtml(student.fatherName)}</div>
+            <div><strong>कक्षा:</strong> ${escapeHtml(student.className)}</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>क्र.</th>
+                <th>शुल्क विवरण (Fee Head)</th>
+                <th>राशि (Amount)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>पुराना बकाया (Previous Year Due)</td><td>${formatFeeCurrency(student.prevYearDue)}</td></tr>
+              <tr><td>2</td><td>नवीन प्रवेश शुल्क (Admission Fee)</td><td>${formatFeeCurrency(student.admissionFeeNew)}</td></tr>
+              <tr><td>3</td><td>नवीनीकरण शुल्क (Renewable Fee)</td><td>${formatFeeCurrency(student.renewableFee)}</td></tr>
+              <tr><td>4</td><td>बालक कोष (Boys Fund)</td><td>${formatFeeCurrency(student.boysFund)}</td></tr>
+              <tr><td>5</td><td>ट्यूशन फीस किस्त 1</td><td>${formatFeeCurrency(student.tution1)}</td></tr>
+              <tr><td>6</td><td>ट्यूशन फीस किस्त 2</td><td>${formatFeeCurrency(student.tution2)}</td></tr>
+              <tr><td>7</td><td>ट्यूशन फीस किस्त 3</td><td>${formatFeeCurrency(student.tution3)}</td></tr>
+              <tr><td>8</td><td>ट्यूशन फीस किस्त 4</td><td>${formatFeeCurrency(student.tution4)}</td></tr>
+              <tr><td>9</td><td>ट्यूशन फीस किस्त 5</td><td>${formatFeeCurrency(student.tution5)}</td></tr>
+              <tr><td>10</td><td>दिसम्बर रजिस्ट्रेशन शुल्क</td><td>${formatFeeCurrency(student.decRegistrationFee)}</td></tr>
+              <tr><td>11</td><td>विलंब शुल्क (Late Fee)</td><td>${formatFeeCurrency(student.lateFee)}</td></tr>
+              <tr><td>12</td><td>अग्रिम समायोजन (Advance Adjustable)</td><td>${formatFeeCurrency(student.advanceAdjustable)}</td></tr>
+              <tr class="total-row">
+                <td colspan="2"><strong>कुल देय शुल्क (Total Outstanding Due)</strong></td>
+                <td><strong>${formatFeeCurrency(student.total)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="footer">
+            <div>कंप्यूटर जनरेटेड प्रति | विद्यालय कार्यालय सेमरिया रीवा</div>
+            <div>अधिकृत हस्ताक्षर __________________</div>
+          </div>
+          <script>
+            window.onload = function() { window.print(); };
+          <\/script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
     }
 
     function handleSaveAttendance(event) {
@@ -7272,25 +8579,25 @@ function doPost(e) {
 
     function switchAdminTab(tab) {
       const admContent = document.getElementById('adminTabContentAdmissions');
+      const waContent = document.getElementById('adminTabContentWhatsApp');
       const marksContent = document.getElementById('adminTabContentMarks');
       const fbContent = document.getElementById('adminTabContentFeedbacks');
       const noticeContent = document.getElementById('adminTabContentNotice');
       const tickerContent = document.getElementById('adminTabContentTicker');
       const galleryContent = document.getElementById('adminTabContentGallery');
       const resultLinkContent = document.getElementById('adminTabContentResultLink');
-      const sheetsContent = document.getElementById('adminTabContentSheets');
 
       const btnAdm = document.getElementById('adminTabBtnAdm');
+      const btnWa = document.getElementById('adminTabBtnWhatsApp');
       const btnMarks = document.getElementById('adminTabBtnMarks');
       const btnFb = document.getElementById('adminTabBtnFb');
       const btnNotice = document.getElementById('adminTabBtnNotice');
       const btnTicker = document.getElementById('adminTabBtnTicker');
       const btnGallery = document.getElementById('adminTabBtnGallery');
       const btnResultLink = document.getElementById('adminTabBtnResultLink');
-      const btnSheets = document.getElementById('adminTabBtnSheets');
 
-      [admContent, marksContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent, sheetsContent].forEach(c => { if (c) c.style.display = 'none'; });
-      [btnAdm, btnMarks, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink, btnSheets].forEach(b => { 
+      [admContent, waContent, marksContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent].forEach(c => { if (c) c.style.display = 'none'; });
+      [btnAdm, btnWa, btnMarks, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink].forEach(b => { 
         if (b) {
           b.style.background = '#f8fafc';
           b.style.color = '#334155';
@@ -7305,6 +8612,15 @@ function doPost(e) {
         btnAdm.style.color = '#ffffff';
         btnAdm.style.border = '1px solid #0284c7';
         btnAdm.style.boxShadow = '0 2px 8px rgba(2,132,199,0.25)';
+      } else if (tab === 'whatsapp' && waContent && btnWa) {
+        waContent.style.display = 'block';
+        btnWa.style.background = '#15803d';
+        btnWa.style.color = '#ffffff';
+        btnWa.style.border = '1px solid #15803d';
+        btnWa.style.boxShadow = '0 2px 8px rgba(21,128,61,0.25)';
+        if (typeof renderAdminWhatsAppGroups === 'function') {
+          renderAdminWhatsAppGroups();
+        }
       } else if (tab === 'marks' && marksContent && btnMarks) {
         marksContent.style.display = 'block';
         btnMarks.style.background = '#c2410c';
@@ -7345,12 +8661,6 @@ function doPost(e) {
         btnResultLink.style.border = '1px solid #be123c';
         btnResultLink.style.boxShadow = '0 2px 8px rgba(190,18,60,0.25)';
         loadAdminResultLinkConfig();
-      } else if (tab === 'sheets' && sheetsContent && btnSheets) {
-        sheetsContent.style.display = 'block';
-        btnSheets.style.background = '#166534';
-        btnSheets.style.color = '#ffffff';
-        btnSheets.style.border = '1px solid #166534';
-        btnSheets.style.boxShadow = '0 2px 8px rgba(22,101,52,0.25)';
       }
     }
 
@@ -7358,14 +8668,26 @@ function doPost(e) {
       const admissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
       const marksSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
       const feedbacks = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
+      const waGroups = typeof getWhatsAppGroups === 'function' ? getWhatsAppGroups() : [];
 
       // Update counters
       const statAdm = document.getElementById('statAdmissionsCount');
       const statMarks = document.getElementById('statMarksSheetsCount');
       const statFb = document.getElementById('statFeedbacksCount');
+      const statWa = document.getElementById('statWhatsAppCount');
       const badgeAdm = document.getElementById('tabAdmCountBadge');
       const badgeMarks = document.getElementById('tabMarksCountBadge');
       const badgeFb = document.getElementById('tabFbCountBadge');
+      const badgeWa = document.getElementById('tabWhatsAppCountBadge');
+
+      if (statAdm) statAdm.textContent = admissions.length;
+      if (statMarks) statMarks.textContent = marksSheets.length;
+      if (statFb) statFb.textContent = feedbacks.length;
+      if (statWa) statWa.textContent = waGroups.length;
+      if (badgeAdm) badgeAdm.textContent = admissions.length;
+      if (badgeMarks) badgeMarks.textContent = marksSheets.length;
+      if (badgeFb) badgeFb.textContent = feedbacks.length;
+      if (badgeWa) badgeWa.textContent = waGroups.length;
 
       if (statAdm) statAdm.textContent = admissions.length;
       if (statMarks) statMarks.textContent = marksSheets.length;
@@ -9313,6 +10635,417 @@ function doPost(e) {
       });
     }
 
+    // ==========================================================================
+    // 12. CLASS-WISE WHATSAPP GROUPS DYNAMIC CONTROLLER & ADMIN MANAGER
+    // ==========================================================================
+    const DEFAULT_WHATSAPP_GROUPS = [
+      {
+        id: 'wa-class-4th',
+        className: 'Class 4th Group',
+        badge: '4th',
+        sub: 'कक्षा 4थी आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/KL8gLpiBNrc6lhVEPnwVmP',
+        btnText: 'Join Class 4th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-5th',
+        className: 'Class 5th Group',
+        badge: '5th',
+        sub: 'कक्षा 5वीं आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/DwZKKN3R5ixIc92LwjfCvS',
+        btnText: 'Join Class 5th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-8th',
+        className: 'Class 8th Group',
+        badge: '8th',
+        sub: 'कक्षा 8वीं बोर्ड आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/LGqCRBl4EubE8NoF0YMSf6',
+        btnText: 'Join Class 8th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-9th',
+        className: 'Class 9th Group',
+        badge: '9th',
+        sub: 'कक्षा 9वीं आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/IbDfB52AEkU5ev0wAK7GXb',
+        btnText: 'Join Class 9th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-10th',
+        className: 'Class 10th Board',
+        badge: '10th',
+        sub: 'कक्षा 10वीं बोर्ड विशेष ग्रुप',
+        link: 'https://chat.whatsapp.com/CWcP1g8k9HJBr27fGy04n0',
+        btnText: 'Join Class 10th Board ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-11th',
+        className: 'क्लास 11th (Science & Commerce)',
+        badge: '11th',
+        sub: '11वीं गणित, विज्ञान, वाणिज्य संकाय',
+        link: 'https://chat.whatsapp.com/EmLysOwKpYqEHp5cCR3mOE',
+        btnText: 'Join Class 11th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-12th',
+        className: 'Class 12th Board',
+        badge: '12th',
+        sub: '12वीं हायर सेकेंडरी बोर्ड ग्रुप',
+        link: 'https://chat.whatsapp.com/BOcoXHvJZ8SCPyv2Mm1RBL',
+        btnText: 'Join Class 12th Board ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-helpline',
+        className: 'School Admission Care',
+        badge: 'MD',
+        sub: 'प्रवेश सहायता व सामान्य पूछताछ',
+        link: 'https://wa.me/919200178385?text=Namaste%20Maa%20Durga%20School%20Semariya,%20I%20want%20to%20know%20about%20admission.',
+        btnText: 'Chat on WhatsApp ↗',
+        status: 'active',
+        isCare: true
+      }
+    ];
+
+    const WA_SVG_ICON = `<svg class="wa-svg-inline" viewBox="0 0 24 24" style="width:1.15rem; height:1.15rem; fill:currentColor; vertical-align:middle;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>`;
+
+    function getWhatsAppGroups() {
+      let groups = null;
+      try {
+        const stored = localStorage.getItem('mdhss_whatsapp_groups');
+        if (stored) {
+          groups = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Error reading mdhss_whatsapp_groups:', e);
+      }
+      if (!groups || !Array.isArray(groups) || groups.length === 0) {
+        groups = [...DEFAULT_WHATSAPP_GROUPS];
+        localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(groups));
+      }
+      return groups;
+    }
+
+    function saveWhatsAppGroupsToStorage(groups) {
+      localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(groups));
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('whatsapp_groups', groups);
+      }
+      renderPublicWhatsAppGroups();
+      renderAdminWhatsAppGroups();
+      if (typeof renderAdminTables === 'function') {
+        renderAdminTables();
+      }
+    }
+
+    function renderPublicWhatsAppGroups() {
+      const grid = document.getElementById('publicWhatsAppCardsGrid');
+      if (!grid) return;
+      const groups = getWhatsAppGroups();
+      const activeGroups = groups.filter(g => g.status !== 'inactive');
+
+      if (activeGroups.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:2.5rem; color:#64748b; background:#f8fafc; border-radius:12px; border:1px dashed #cbd5e1;">वर्तमान में कोई व्हाट्सएप ग्रुप लिंक सक्रिय नहीं है। कृपया स्कूल हेल्पलाइन पर संपर्क करें।</div>';
+        return;
+      }
+
+      grid.innerHTML = activeGroups.map(item => {
+        const isCare = item.isCare || item.id === 'wa-helpline';
+        const cardStyle = isCare ? 'background:#f0fdf4; border: 1.5px solid #86efac;' : '';
+        const bubbleStyle = isCare ? 'background: linear-gradient(135deg, #16a34a, #15803d);' : '';
+        const btnStyle = isCare ? 'background: linear-gradient(135deg, #16a34a, #15803d);' : '';
+        const btnText = item.btnText || (isCare ? 'Chat on WhatsApp ↗' : `Join ${item.className || 'Group'} ↗`);
+
+        return `
+          <div class="wa-class-card" style="${cardStyle}">
+            <div class="wa-icon-bubble" style="${bubbleStyle}">${item.badge || 'WA'}</div>
+            <h4 class="wa-class-title">${item.className || 'WhatsApp Group'}</h4>
+            <p class="wa-class-sub">${item.sub || 'आधिकारिक ग्रुप'}</p>
+            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="btn-join-wa" style="${btnStyle}">
+              ${WA_SVG_ICON}
+              ${btnText}
+            </a>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAdminWhatsAppGroups(filterQuery) {
+      const container = document.getElementById('adminWhatsAppListContainer');
+      const countEl = document.getElementById('admWaGroupCount');
+      if (!container) return;
+
+      const groups = getWhatsAppGroups();
+      if (countEl) countEl.textContent = groups.length;
+
+      const query = (filterQuery !== undefined ? filterQuery : (document.getElementById('waSearchFilter')?.value || '')).trim().toLowerCase();
+      
+      const filtered = groups.filter(g => {
+        if (!query) return true;
+        return (g.className && g.className.toLowerCase().includes(query)) ||
+               (g.badge && g.badge.toLowerCase().includes(query)) ||
+               (g.sub && g.sub.toLowerCase().includes(query)) ||
+               (g.link && g.link.toLowerCase().includes(query));
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding: 2.5rem; background:#f8fafc; border-radius:8px; border:1px dashed #cbd5e1; color:#64748b;">
+            <span style="font-size:2rem; display:block; margin-bottom:8px;">🔍</span>
+            कोई व्हाट्सएप ग्रुप नहीं मिला। खोज शब्द बदलें या नया ग्रुप जोड़ें।
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map((item) => {
+        const isActive = item.status !== 'inactive';
+        return `
+          <div class="glass-card" style="background:#ffffff; border:1.5px solid ${isActive ? '#bbf7d0' : '#e2e8f0'}; border-radius:var(--radius-sm); padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:all 0.2s ease;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:0.75rem;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #22c55e, #16a34a); color:#fff; font-weight:800; font-size:0.95rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    ${item.badge || 'WA'}
+                  </div>
+                  <div>
+                    <h5 style="margin:0; font-size:1.02rem; font-weight:800; color:#0f172a;">${item.className || 'WhatsApp Group'}</h5>
+                    <span style="font-size:0.78rem; color:#64748b;">${item.sub || 'आधिकारिक ग्रुप'}</span>
+                  </div>
+                </div>
+                <span style="font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:9999px; ${isActive ? 'background:#dcfce7; color:#15803d; border:1px solid #86efac;' : 'background:#fee2e2; color:#991b1b; border:1px solid #fecaca;'}">
+                  ${isActive ? '🟢 सक्रिय' : '🔴 निष्क्रिय'}
+                </span>
+              </div>
+
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; margin-bottom:0.85rem;">
+                <div style="font-size:0.72rem; font-weight:700; color:#64748b; margin-bottom:2px;">व्हाट्सएप लिंक:</div>
+                <div style="font-family:monospace; font-size:0.78rem; color:#0369a1; word-break:break-all; font-weight:700; max-height:48px; overflow-y:auto;">
+                  ${item.link}
+                </div>
+              </div>
+
+              ${item.btnText ? `<div style="font-size:0.76rem; color:#475569; margin-bottom:0.75rem;"><strong>बटन टेक्स्ट:</strong> ${item.btnText}</div>` : ''}
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap; border-top:1px solid #f1f5f9; padding-top:0.75rem; margin-top:0.5rem;">
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="btn-hero-sec" style="font-size:0.78rem; padding:0.35rem 0.65rem; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; cursor:pointer; font-weight:700;" onclick="editAdminWhatsAppGroup('${item.id}')" title="इस क्लास का लिंक या विवरण बदलें">
+                  ✏️ एडिट करें
+                </button>
+                <button type="button" class="btn-hero-sec" style="font-size:0.78rem; padding:0.35rem 0.65rem; background:#f0fdf4; color:#15803d; border:1px solid #86efac; cursor:pointer; font-weight:700;" onclick="testWhatsAppLinkDirect('${item.link}')" title="ब्राउज़र में खोलकर टेस्ट करें">
+                  🔗 टेस्ट ↗
+                </button>
+                <button type="button" class="btn-hero-sec" style="font-size:0.78rem; padding:0.35rem 0.65rem; background:#f8fafc; color:#334155; border:1px solid #cbd5e1; cursor:pointer;" onclick="copyWhatsAppLinkDirect('${item.link}')" title="क्लिपबोर्ड में कॉपी करें">
+                  📋 कॉपी
+                </button>
+              </div>
+              <button type="button" class="btn-hero-sec" style="font-size:0.75rem; padding:0.35rem 0.55rem; background:#fee2e2; color:#991b1b; border:1px solid #fecaca; cursor:pointer;" onclick="deleteAdminWhatsAppGroup('${item.id}')" title="इस ग्रुप को हटाएं">
+                🗑️ हटाएं
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterAdminWhatsAppGroups() {
+      const q = document.getElementById('waSearchFilter')?.value || '';
+      renderAdminWhatsAppGroups(q);
+    }
+
+    function focusWhatsAppAddForm() {
+      cancelEditAdminWhatsAppGroup();
+      const input = document.getElementById('waInputClassName');
+      if (input) {
+        input.focus();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function testCurrentWaLinkInput() {
+      const url = document.getElementById('waInputUrl')?.value.trim();
+      if (!url) {
+        alert('कृपया पहले व्हाट्सएप लिंक दर्ज करें!');
+        return;
+      }
+      window.open(url, '_blank');
+    }
+
+    function testWhatsAppLinkDirect(url) {
+      if (!url) return;
+      window.open(url, '_blank');
+    }
+
+    function copyWhatsAppLinkDirect(url) {
+      if (!url) return;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('✅ व्हाट्सएप ग्रुप लिंक क्लिपबोर्ड पर कॉपी हो गया:\n' + url);
+      }).catch(() => {
+        alert('व्हाट्सएप लिंक:\n' + url);
+      });
+    }
+
+    function saveAdminWhatsAppGroup(event) {
+      if (event && event.preventDefault) event.preventDefault();
+
+      const editId = document.getElementById('waEditGroupId')?.value.trim();
+      const className = document.getElementById('waInputClassName')?.value.trim();
+      const badge = document.getElementById('waInputBadge')?.value.trim();
+      const link = document.getElementById('waInputUrl')?.value.trim();
+      const sub = document.getElementById('waInputSub')?.value.trim() || `${className} आधिकारिक ग्रुप`;
+      const btnText = document.getElementById('waInputBtnText')?.value.trim() || `Join ${className} ↗`;
+      const status = document.getElementById('waInputStatus')?.value || 'active';
+
+      if (!className || !badge || !link) {
+        alert('कृपया कक्षा का नाम, बैज और व्हाट्सएप लिंक अवश्य भरें!');
+        return;
+      }
+
+      let groups = getWhatsAppGroups();
+
+      if (editId) {
+        // Edit existing group
+        const idx = groups.findIndex(g => g.id === editId);
+        if (idx !== -1) {
+          groups[idx] = {
+            ...groups[idx],
+            className,
+            badge,
+            link,
+            sub,
+            btnText,
+            status,
+            updatedAt: new Date().toISOString()
+          };
+        } else {
+          groups.unshift({
+            id: editId,
+            className,
+            badge,
+            link,
+            sub,
+            btnText,
+            status,
+            updatedAt: new Date().toISOString()
+          });
+        }
+      } else {
+        // Add new group
+        const newId = 'wa-' + Date.now();
+        groups.push({
+          id: newId,
+          className,
+          badge,
+          link,
+          sub,
+          btnText,
+          status,
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      saveWhatsAppGroupsToStorage(groups);
+
+      // Show success feedback
+      const badgeSuccess = document.getElementById('waSaveSuccessBadge');
+      if (badgeSuccess) {
+        badgeSuccess.style.display = 'inline-block';
+        setTimeout(() => { badgeSuccess.style.display = 'none'; }, 4000);
+      }
+
+      cancelEditAdminWhatsAppGroup();
+      alert(`✅ कक्षा ग्रुप '${className}' सफलतापूर्वक सुरक्षित कर दिया गया है!`);
+    }
+
+    function editAdminWhatsAppGroup(id) {
+      const groups = getWhatsAppGroups();
+      const target = groups.find(g => g.id === id);
+      if (!target) return;
+
+      if (document.getElementById('waEditGroupId')) document.getElementById('waEditGroupId').value = target.id;
+      if (document.getElementById('waInputClassName')) document.getElementById('waInputClassName').value = target.className || '';
+      if (document.getElementById('waInputBadge')) document.getElementById('waInputBadge').value = target.badge || '';
+      if (document.getElementById('waInputUrl')) document.getElementById('waInputUrl').value = target.link || '';
+      if (document.getElementById('waInputSub')) document.getElementById('waInputSub').value = target.sub || '';
+      if (document.getElementById('waInputBtnText')) document.getElementById('waInputBtnText').value = target.btnText || '';
+      if (document.getElementById('waInputStatus')) document.getElementById('waInputStatus').value = target.status || 'active';
+
+      // Update UI mode
+      const titleEl = document.getElementById('waFormTitleText');
+      if (titleEl) titleEl.textContent = `ग्रुप सम्पादित करें: ${target.className}`;
+      const badgeEl = document.getElementById('waFormModeBadge');
+      if (badgeEl) {
+        badgeEl.textContent = `✏️ सम्पादन मोड (${target.badge})`;
+        badgeEl.style.background = '#fef3c7';
+        badgeEl.style.color = '#b45309';
+        badgeEl.style.border = '1px solid #fde68a';
+      }
+      const submitBtnText = document.getElementById('waSubmitBtnText');
+      if (submitBtnText) submitBtnText.textContent = 'अपडेट सुरक्षित करें (Update Group)';
+
+      const cancelBtnTop = document.getElementById('waCancelEditBtnTop');
+      const cancelBtnBottom = document.getElementById('waCancelEditBtnBottom');
+      if (cancelBtnTop) cancelBtnTop.style.display = 'inline-block';
+      if (cancelBtnBottom) cancelBtnBottom.style.display = 'inline-block';
+
+      // Smooth scroll to form
+      const formCard = document.getElementById('adminWaFormContainer');
+      if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelEditAdminWhatsAppGroup() {
+      if (document.getElementById('waEditGroupId')) document.getElementById('waEditGroupId').value = '';
+      if (document.getElementById('waInputClassName')) document.getElementById('waInputClassName').value = '';
+      if (document.getElementById('waInputBadge')) document.getElementById('waInputBadge').value = '';
+      if (document.getElementById('waInputUrl')) document.getElementById('waInputUrl').value = '';
+      if (document.getElementById('waInputSub')) document.getElementById('waInputSub').value = '';
+      if (document.getElementById('waInputBtnText')) document.getElementById('waInputBtnText').value = '';
+      if (document.getElementById('waInputStatus')) document.getElementById('waInputStatus').value = 'active';
+
+      const titleEl = document.getElementById('waFormTitleText');
+      if (titleEl) titleEl.textContent = 'व्हाट्सएप ग्रुप जोड़ें / सम्पादित करें (Add / Edit WhatsApp Group)';
+      const badgeEl = document.getElementById('waFormModeBadge');
+      if (badgeEl) {
+        badgeEl.textContent = '➕ नया ग्रुप मोड';
+        badgeEl.style.background = '#eff6ff';
+        badgeEl.style.color = '#1d4ed8';
+        badgeEl.style.border = '1px solid #bfdbfe';
+      }
+      const submitBtnText = document.getElementById('waSubmitBtnText');
+      if (submitBtnText) submitBtnText.textContent = 'ग्रुप सुरक्षित करें (Save Group)';
+
+      const cancelBtnTop = document.getElementById('waCancelEditBtnTop');
+      const cancelBtnBottom = document.getElementById('waCancelEditBtnBottom');
+      if (cancelBtnTop) cancelBtnTop.style.display = 'none';
+      if (cancelBtnBottom) cancelBtnBottom.style.display = 'none';
+    }
+
+    function deleteAdminWhatsAppGroup(id) {
+      const groups = getWhatsAppGroups();
+      const target = groups.find(g => g.id === id);
+      const name = target ? target.className : 'ग्रुप';
+      if (!confirm(`क्या आप वाकई '${name}' को हटाना चाहते हैं?`)) return;
+
+      const remaining = groups.filter(g => g.id !== id);
+      saveWhatsAppGroupsToStorage(remaining);
+      alert(`✅ '${name}' सफलतापूर्वक हटा दिया गया है!`);
+    }
+
+    function resetDefaultWhatsAppGroups() {
+      if (!confirm('क्या आप सभी व्हाट्सएप ग्रुप्स को मूल डिफ़ॉल्ट 8 लिंक्स में रीसेट करना चाहते हैं?')) return;
+      saveWhatsAppGroupsToStorage([...DEFAULT_WHATSAPP_GROUPS]);
+      cancelEditAdminWhatsAppGroup();
+      alert('✅ मूल 8 व्हाट्सएप ग्रुप्स सफलतापूर्वक बहाल कर दिए गए हैं!');
+    }
+
     // Scroll to top button visibility
     window.addEventListener('scroll', () => {
       const topBtn = document.getElementById('scrollTopBtn');
@@ -9325,7 +11058,7 @@ function doPost(e) {
       }
     });
 
-    // Expose all admin and modal configuration methods on window
+    // Expose all admin, whatsapp and modal configuration methods on window
     window.switchAdminTab = switchAdminTab;
     window.saveAdminNoticeSettings = saveAdminNoticeSettings;
     window.loadAdminNoticeSettings = loadAdminNoticeSettings;
@@ -9346,6 +11079,21 @@ function doPost(e) {
     window.openAddImageModal = openAddImageModal;
     window.closeAddImageModal = closeAddImageModal;
     window.saveNewCustomGalleryImage = saveNewCustomGalleryImage;
+
+    // WhatsApp Groups exports
+    window.getWhatsAppGroups = getWhatsAppGroups;
+    window.renderPublicWhatsAppGroups = renderPublicWhatsAppGroups;
+    window.renderAdminWhatsAppGroups = renderAdminWhatsAppGroups;
+    window.filterAdminWhatsAppGroups = filterAdminWhatsAppGroups;
+    window.focusWhatsAppAddForm = focusWhatsAppAddForm;
+    window.testCurrentWaLinkInput = testCurrentWaLinkInput;
+    window.testWhatsAppLinkDirect = testWhatsAppLinkDirect;
+    window.copyWhatsAppLinkDirect = copyWhatsAppLinkDirect;
+    window.saveAdminWhatsAppGroup = saveAdminWhatsAppGroup;
+    window.editAdminWhatsAppGroup = editAdminWhatsAppGroup;
+    window.cancelEditAdminWhatsAppGroup = cancelEditAdminWhatsAppGroup;
+    window.deleteAdminWhatsAppGroup = deleteAdminWhatsAppGroup;
+    window.resetDefaultWhatsAppGroups = resetDefaultWhatsAppGroups;
   </script>
 
   <!-- ==========================================================================
