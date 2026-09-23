@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>फर्स्ट-टाइम नोटिफिकेशन पॉपअप (Notification Component) | Maa Durga H.S. School Semariya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Tiro Devanagari Hindi', sans-serif; }
+    body { background: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+    .modal-backdrop { width: 100%; max-width: 600px; }
+    .notice-card { background: #ffffff; color: #0f172a; border-radius: 18px; border: 2.5px solid #38bdf8; box-shadow: 0 25px 60px rgba(0,0,0,0.5); overflow: hidden; }
+    .notice-header { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; }
+    .notice-body { padding: 22px; line-height: 1.65; color: #334155; font-size: 0.96rem; }
+    .notice-footer { padding: 16px 22px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0.75rem 1.4rem; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; text-decoration: none; font-size: 0.95rem; }
+    .btn-pri { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; }
+    .btn-close-bottom { background: #fee2e2; color: #dc2626; border: 2px solid #fca5a5; width: 100%; font-size: 1rem; padding: 0.85rem 1rem; }
+    .btn-close-bottom:hover { background: #fecaca; }
+  </style>
+</head>
+<body>
+  <div class="modal-backdrop">
+    <div class="notice-card">
+      <div class="notice-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #fff;" alt="Logo">
+          <div>
+            <span id="popBadge" style="background: rgba(255,255,255,0.25); padding: 3px 10px; border-radius: 9999px; font-size: 0.78rem; font-weight: 700;">
+              🔔 आवश्यक सूचना • सत्र 2026-27
+            </span>
+            <div style="font-size: 0.82rem; color: #e0f2fe; margin-top: 2px;">Maa Durga H.S. School Semariya (Rewa)</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice-body">
+        <h2 id="popTitle" style="font-size: 1.35rem; color: #0284c7; font-weight: 800; margin-bottom: 0.75rem;">
+          माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!
+        </h2>
+        <div id="popBody" style="margin-bottom: 1rem; font-size: 0.94rem; line-height: 1.6;">
+          नवीन शैक्षणिक सत्र 2026-27 के लिए नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रक्रिया प्रारंभ हो चुकी है। विद्यालय समय: प्रातः 09:30 से सायं 04:00 बजे।
+        </div>
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px; font-size: 0.88rem; color: #166534; margin-bottom: 1rem;">
+          ✅ डिजिटल स्मार्ट क्लासरूम • 100% CCTV निगरानी • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा
+        </div>
+        <p style="font-size: 0.88rem; color: #64748b;">
+          अधिक जानकारी या पूछताछ हेतु संपर्क करें: <strong>9200178385, 7024036526</strong>
+        </p>
+      </div>
+      <div class="notice-footer">
+        <a id="popBtn" href="admission-portal.html" class="btn btn-pri">📝 ऑनलाइन प्रवेश फॉर्म भरें (Admission Open)</a>
+        <!-- Close button at the very bottom as requested -->
+        <button type="button" class="btn btn-close-bottom" onclick="closeNotice()">
+          ❌ सूचना बंद करें एवं मुख्य पोर्टल पर जाएं (Close Notification)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Load custom settings from localStorage if set by Admin
+    function loadPopupSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('mdhss_popup_notification') || 'null');
+        if (saved) {
+          if (saved.title) document.getElementById('popTitle').textContent = saved.title;
+          if (saved.badge) document.getElementById('popBadge').textContent = saved.badge;
+          if (saved.body) document.getElementById('popBody').innerHTML = saved.body.replace(/\n/g, '<br>');
+          if (saved.btnText) document.getElementById('popBtn').textContent = saved.btnText;
+          if (saved.btnUrl) document.getElementById('popBtn').href = saved.btnUrl;
+        }
+      } catch (e) {}
+    }
+
+    function closeNotice() {
+      sessionStorage.setItem('mdhss_notice_popup_dismissed', 'true');
+      alert('सूचना बंद कर दी गई है। आप मुख्य पृष्ठ पर जा रहे हैं।');
+      window.location.href = '../index.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', loadPopupSettings);
+  </script>
+</body>
+</html>

@@ -27,7 +27,24 @@ function feesSheetProxyPlugin(): Plugin {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       const now = Date.now();
-      if (cachedCsv && now - cacheTime < 5 * 60 * 1000) {
+      // Live sync: short 20-second cache so Excel/Google Sheet updates reflect in 1-2 seconds
+      if (cachedCsv && now - cacheTime < 20 * 1000) {
+        res.end(cachedCsv);
+        return;
+      }
+      try {
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSv0gTbGo5P8wkB4CYuVIWzvXDOu1INb_L8beoaLYrXIyw9noqOIIln5PxxlP2S9apBakQfq48_YLZ8/pub?output=csv';
+        const resp = await fetch(sheetUrl);
+        if (resp.ok) {
+          cachedCsv = await resp.text();
+          cacheTime = now;
+          res.end(cachedCsv);
+          return;
+        }
+      } catch (err: any) {
+        // live fetch failed, try fallback
+      }
+      if (cachedCsv) {
         res.end(cachedCsv);
         return;
       }
@@ -36,25 +53,13 @@ function feesSheetProxyPlugin(): Plugin {
         if (fs.existsSync(localCsvPath)) {
           const localCsv = fs.readFileSync(localCsvPath, 'utf8');
           res.end(localCsv);
-          refreshSheet();
           return;
         }
       } catch (err: any) {
-        // continue to fetch
+        // continue
       }
-      try {
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSv0gTbGo5P8wkB4CYuVIWzvXDOu1INb_L8beoaLYrXIyw9noqOIIln5PxxlP2S9apBakQfq48_YLZ8/pub?output=csv';
-        const resp = await fetch(sheetUrl);
-        if (!resp.ok) {
-          throw new Error(`Sheet returned ${resp.status}`);
-        }
-        cachedCsv = await resp.text();
-        cacheTime = now;
-        res.end(cachedCsv);
-      } catch (err: any) {
-        res.statusCode = 502;
-        res.end(`Error fetching sheet: ${err.message}`);
-      }
+      res.statusCode = 502;
+      res.end('Error fetching fees sheet');
       return;
     }
 

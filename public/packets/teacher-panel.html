@@ -449,20 +449,6 @@
       document.getElementById('logoutBtn').style.display = 'inline-flex';
       document.getElementById('activeTeacherName').textContent = currentTeacher.name;
       document.getElementById('activeTeacherPhone').textContent = '📞 ' + currentTeacher.phone;
-
-      // Silently sync latest fees from Google Sheet in background upon teacher login
-      try {
-        const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv0gTbGo5P8wkB4CYuVIWzvXDOu1INb_L8beoaLYrXIyw9noqOIIln5PxxlP2S9apBakQfq48_YLZ8/pub?output=csv";
-        fetch('/api/fees-sheet-csv').catch(() => fetch(sheetCsvUrl)).then(r => r.text()).then(txt => {
-          if (txt && txt.length > 200 && !txt.includes('<!DOCTYPE')) {
-            const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-            if (lines.length > 0) {
-              const c0 = (lines[0].split(',')[0] || '').replace(/['"]/g, '').trim();
-              if (c0) localStorage.setItem('mdhss_fees_report_date', c0);
-            }
-          }
-        }).catch(() => {});
-      } catch (e) {}
     }
 
     function logoutTeacher() {

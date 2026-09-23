@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>छात्र शुल्क विवरण एवं बकाया जांच (Student Fee Portal) | Maa Durga H.S. School Semariya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --navy: #0f172a;
+      --teal: #0f766e;
+      --bg: #f0fdfa;
+      --card-bg: rgba(255,255,255,0.96);
+      --border: #99f6e4;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Tiro Devanagari Hindi', sans-serif; }
+    body { background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 50%, #ffffff 100%); min-height: 100vh; padding: 1.25rem 1rem; color: #1e293b; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .glass-card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(15,118,110,0.08); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; border-bottom: 2px solid #ccfbf1; padding-bottom: 1.25rem; margin-bottom: 1.5rem; }
+    .brand-flex { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--teal); object-fit: cover; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.92rem; border: none; cursor: pointer; text-decoration: none; transition: 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; }
+    .btn-primary:hover { background: #115e59; transform: translateY(-1px); }
+    .btn-secondary { background: #f8fafc; color: #334155; border: 1.5px solid #cbd5e1; }
+    .btn-secondary:hover { background: #f1f5f9; }
+    .sample-pill { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: 1px solid #bae6fd; transition: 0.2s; }
+    .sample-pill:hover { background: #bae6fd; }
+    .fee-item-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; font-size: 0.92rem; }
+    @media print {
+      body * { visibility: hidden; }
+      #printableFeeReceipt, #printableFeeReceipt * { visibility: visible; }
+      #printableFeeReceipt { position: absolute; left: 0; top: 0; width: 100%; border: none !important; box-shadow: none !important; }
+      .no-print { display: none !important; }
+    }
+  </style>
+  <script src="fees-data.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Navigation Header -->
+    <div class="glass-card no-print">
+      <div class="header-bar">
+        <div class="brand-flex">
+          <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.src='https://placehold.co/80x80/0d9488/ffffff?text=MDHSS'" class="brand-logo" alt="MDHSS Logo">
+          <div>
+            <h1 style="font-size: 1.3rem; color: #0f766e; font-weight: 800;">माँ दुर्गा उच्चतर माध्यमिक विद्यालय, सेमरिया</h1>
+            <p style="font-size: 0.85rem; color: #64748b;">सत्र 2026-27 • अधिकृत छात्र शुल्क जांच एवं रसीद पोर्टल (Fee Portal)</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="../index.html" class="btn btn-secondary">🏠 मुख्य वेबसाइट (Home)</a>
+          <a href="teacher-panel.html" class="btn btn-secondary" style="background:#f0fdfa; color:#0f766e; border-color:#99f6e4;">👨‍🏫 शिक्षक पोर्टल (Teacher Panel)</a>
+          <a href="admin-panel.html" class="btn btn-secondary">🔐 एडमिन पैनल</a>
+          <a href="admission-portal.html" class="btn btn-secondary" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">📝 Admission 2026-27</a>
+        </div>
+      </div>
+
+      <!-- Hero Banner & Search Form -->
+      <div style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border: 1.5px solid #99f6e4; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; color: #0f766e; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+              <span>💰</span> <span>छात्र शुल्क विवरण एवं बकाया जांच (Student Fee Status)</span>
+            </h2>
+            <p style="font-size: 0.88rem; color: #334155; margin-top: 4px;">
+              स्कॉलर नंबर (उदा. 2817, 2704, 1922) अथवा छात्र का नाम दर्ज कर तुरंत विवरण देखें।
+            </p>
+          </div>
+          <span id="feeReportDateBadge" style="background: #ffffff; color: #0f766e; padding: 6px 14px; border-radius: 9999px; font-size: 0.85rem; font-weight: 800; border: 1px solid #99f6e4; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+            📅 डेटा अपडेट: 23-Sep-2026
+          </span>
+        </div>
+
+        <form id="feeSearchForm" onsubmit="handleFeeSearch(event)">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="feeScholarInput" placeholder="स्कॉलर नंबर अथवा नाम दर्ज करें (उदा. 2817, 2729, Pranshu)..." style="flex: 1; min-width: 250px; padding: 0.75rem 1rem; border: 2px solid #5eead4; border-radius: 8px; font-size: 1rem; font-weight: 600; outline: none;" required>
+            <button type="submit" id="btnFeeSearch" class="btn btn-primary" style="padding: 0.75rem 1.75rem; font-size: 1rem;">
+              🔍 शुल्क खोजें
+            </button>
+            <button type="button" onclick="clearSearch()" class="btn btn-secondary">
+              ✕ रीसेट
+            </button>
+          </div>
+        </form>
+
+        <!-- Quick Sample Queries -->
+        <div style="margin-top: 0.85rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 0.82rem; font-weight: 700; color: #475569;">त्वरित जांचें:</span>
+          <span class="sample-pill" onclick="quickFillSearch('2817')">स्कॉलर 2817 (AKRITI)</span>
+          <span class="sample-pill" onclick="quickFillSearch('1922')">स्कॉलर 1922 (PRANSHU)</span>
+          <span class="sample-pill" onclick="quickFillSearch('2729')">स्कॉलर 2729 (PRATEEK)</span>
+          <span class="sample-pill" onclick="quickFillSearch('2372')">स्कॉलर 2372 (RIYANSH)</span>
+          <span class="sample-pill" onclick="quickFillSearch('2606')">स्कॉलर 2606 (RUHI)</span>
+        </div>
+
+        <!-- Class Filter Dropdown -->
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #99f6e4; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <label style="font-weight: 700; font-size: 0.88rem; color: #0f766e;">🏫 अथवा कक्षा अनुसार सूची देखें:</label>
+          <select id="feeClassFilter" onchange="handleClassFilterChange(this.value)" style="padding: 6px 14px; border: 1.5px solid #5eead4; border-radius: 6px; font-weight: 700; background: #fff; color: #0f766e; outline: none; cursor: pointer;">
+            <option value="">-- कक्षा चुनें (All Classes) --</option>
+            <option value="NURSERY">NURSERY</option>
+            <option value="LKG">LKG</option>
+            <option value="UKG">UKG</option>
+            <option value="1ST">1ST (कक्षा 1)</option>
+            <option value="2ND">2ND (कक्षा 2)</option>
+            <option value="3RD">3RD (कक्षा 3)</option>
+            <option value="4TH">4TH (कक्षा 4)</option>
+            <option value="5TH">5TH (कक्षा 5)</option>
+            <option value="6TH">6TH (कक्षा 6)</option>
+            <option value="7TH">7TH (कक्षा 7)</option>
+            <option value="8TH">8TH (कक्षा 8)</option>
+            <option value="9TH">9TH (कक्षा 9)</option>
+            <option value="10TH">10TH (कक्षा 10)</option>
+            <option value="11TH">11TH (कक्षा 11)</option>
+            <option value="12TH">12TH (कक्षा 12)</option>
+            <option value="FEES PENDING">FEES PENDING (बकाया सूची)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="feeLoading" style="display: none; text-align: center; padding: 2rem; background: #f0fdfa; border: 1.5px dashed #5eead4; border-radius: var(--radius); margin-bottom: 1.5rem;">
+        <div style="font-size: 2rem; animation: spin 1s linear infinite; display: inline-block;">⏳</div>
+        <p style="font-size: 1rem; color: #0f766e; font-weight: 700; margin-top: 0.5rem;">छात्र शुल्क रिकॉर्ड लोड हो रहा है, कृपया प्रतीक्षा करें...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="feeError" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 1.5rem; font-weight: 600;">
+      </div>
+
+      <!-- Multi-Match List Container -->
+      <div id="feeMultiMatchContainer" style="display: none; margin-bottom: 1.5rem;"></div>
+
+      <!-- Class Roster List Container -->
+      <div id="feeClassRosterContainer" style="display: none; margin-bottom: 1.5rem;"></div>
+
+      <!-- Single Student Fee Breakdown Result Card -->
+      <div id="feeResultCard" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    let _cachedStudentFees = null;
+
+    function quickFillSearch(val) {
+      const input = document.getElementById('feeScholarInput');
+      if (input) {
+        input.value = val;
+        handleFeeSearch();
+      }
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('feeScholarInput');
+      if (input) input.value = '';
+      document.getElementById('feeError').style.display = 'none';
+      document.getElementById('feeMultiMatchContainer').style.display = 'none';
+      document.getElementById('feeClassRosterContainer').style.display = 'none';
+      document.getElementById('feeResultCard').style.display = 'none';
+    }
+
+    function normalizeFeeStudent(raw) {
+      const parseNum = (v) => {
+        if (!v) return 0;
+        const cleaned = String(v).replace(/[^0-9.-]/g, '');
+        const n = parseFloat(cleaned);
+        return isNaN(n) ? 0 : n;
+      };
+
+      const sNo = raw.sNo || '';
+      const scholarNo = String(raw.scholarNo || '').trim();
+      const studentName = String(raw.studentName || '').trim();
+      const fatherName = String(raw.fatherName || '-').trim();
+      const className = String(raw.className || '-').trim();
+
+      const prevYearDue = parseNum(raw.prevYearDue);
+      const admissionFeeNew = parseNum(raw.admissionFeeNew);
+      const renewableFee = parseNum(raw.renewableFee);
+      const boysFund = parseNum(raw.boysFund);
+      const tution1 = parseNum(raw.tution1);
+      const tution2 = parseNum(raw.tution2);
+      const conveyanceJuly = parseNum(raw.conveyanceJuly);
+      const conveyanceAugust = parseNum(raw.conveyanceAugust);
+      const tution3 = parseNum(raw.tution3);
+      const tution4 = parseNum(raw.tution4);
+      const conveyanceSeptember = parseNum(raw.conveyanceSeptember);
+      const conveyanceOctober = parseNum(raw.conveyanceOctober);
+      const tution5 = parseNum(raw.tution5);
+      const conveyanceNovember = parseNum(raw.conveyanceNovember);
+      const conveyanceDecember = parseNum(raw.conveyanceDecember);
+      const decRegistrationFee = parseNum(raw.decRegistrationFee);
+      const conveyanceJanuary = parseNum(raw.conveyanceJanuary);
+      const conveyanceFebruary = parseNum(raw.conveyanceFebruary);
+      const conveyanceMarch = parseNum(raw.conveyanceMarch);
+      const conveyanceApril = parseNum(raw.conveyanceApril);
+      const aprilOldDue = parseNum(raw.aprilOldDue);
+      const lateFee = parseNum(raw.lateFee);
+      const advanceAdjustable = parseNum(raw.advanceAdjustable);
+      let total = parseNum(raw.total);
+
+      const calculatedTotal = prevYearDue + admissionFeeNew + renewableFee + boysFund +
+        tution1 + tution2 + conveyanceJuly + conveyanceAugust +
+        tution3 + tution4 + conveyanceSeptember + conveyanceOctober +
+        tution5 + conveyanceNovember + conveyanceDecember + decRegistrationFee +
+        conveyanceJanuary + conveyanceFebruary + conveyanceMarch + conveyanceApril +
+        aprilOldDue + lateFee - advanceAdjustable;
+
+      if (total <= 0 && calculatedTotal > 0) {
+        total = calculatedTotal;
+      }
+
+      return {
+        sNo, scholarNo, studentName, fatherName, className,
+        prevYearDue, admissionFeeNew, renewableFee, boysFund,
+        tution1, tution2, conveyanceJuly, conveyanceAugust,
+        tution3, tution4, conveyanceSeptember, conveyanceOctober,
+        tution5, conveyanceNovember, conveyanceDecember, decRegistrationFee,
+        conveyanceJanuary, conveyanceFebruary, conveyanceMarch, conveyanceApril,
+        aprilOldDue, lateFee, advanceAdjustable, total
+      };
+    }
+
+    async function getStudentFeesList() {
+      // 1. Instant access via window.MDHSS_STUDENT_FEES
+      if (window.MDHSS_STUDENT_FEES && Array.isArray(window.MDHSS_STUDENT_FEES) && window.MDHSS_STUDENT_FEES.length > 50) {
+        _cachedStudentFees = window.MDHSS_STUDENT_FEES.map(normalizeFeeStudent);
+        return _cachedStudentFees;
+      }
+
+      if (_cachedStudentFees && _cachedStudentFees.length > 50) {
+        return _cachedStudentFees;
+      }
+
+      // 2. Local storage
+      try {
+        const saved = localStorage.getItem('mdhss_cached_student_fees_records');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 50) {
+            _cachedStudentFees = parsed.map(normalizeFeeStudent);
+            return _cachedStudentFees;
+          }
+        }
+      } catch (e) {}
+
+      // 3. Fallback path fetches
+      const urls = ['fees-data.json', '/fees-data.json', '../fees-data.json', '../public/fees-data.json'];
+      for (const u of urls) {
+        try {
+          const res = await fetch(u);
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 50) {
+              _cachedStudentFees = data.map(normalizeFeeStudent);
+              try { localStorage.setItem('mdhss_cached_student_fees_records', JSON.stringify(data)); } catch (e) {}
+              return _cachedStudentFees;
+            }
+          }
+        } catch (e) {}
+      }
+
+      throw new Error('छात्र फीस रिकॉर्ड लोड करने में समस्या हुई। कृपया पुनः प्रयास करें।');
+    }
+
+    async function handleFeeSearch(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('feeScholarInput');
+      let query = (input?.value || '').trim();
+      const loading = document.getElementById('feeLoading');
+      const errBox = document.getElementById('feeError');
+      const multiBox = document.getElementById('feeMultiMatchContainer');
+      const classBox = document.getElementById('feeClassRosterContainer');
+      const resultCard = document.getElementById('feeResultCard');
+
+      if (!query) return;
+
+      // Convert Hindi numerals
+      const hindiNums = ['०','१','२','३','४','५','६','७','८','९'];
+      hindiNums.forEach((h, idx) => { query = query.replaceAll(h, String(idx)); });
+
+      errBox.style.display = 'none';
+      multiBox.style.display = 'none';
+      classBox.style.display = 'none';
+      resultCard.style.display = 'none';
+      loading.style.display = 'block';
+
+      try {
+        const records = await getStudentFeesList();
+        loading.style.display = 'none';
+
+        const cleanQuery = query.toLowerCase().replace(/\s+/g, '');
+
+        // 1. Exact Scholar Match
+        let matches = records.filter(r => r.scholarNo && r.scholarNo.trim() === query);
+
+        // 2. Numeric partial match
+        if (matches.length === 0 && /^\d+$/.test(query)) {
+          matches = records.filter(r => r.scholarNo && r.scholarNo.includes(query));
+        }
+
+        // 3. Name or father match
+        if (matches.length === 0) {
+          matches = records.filter(r => {
+            const name = (r.studentName || '').toLowerCase().replace(/\s+/g, '');
+            const father = (r.fatherName || '').toLowerCase().replace(/\s+/g, '');
+            return name.includes(cleanQuery) || father.includes(cleanQuery);
+          });
+        }
+
+        if (matches.length === 0) {
+          errBox.innerHTML = `❌ स्कॉलर नंबर अथवा नाम "<strong>${query}</strong>" का कोई छात्र रिकॉर्ड उपलब्ध नहीं है। कृपया सही स्कॉलर नंबर दर्ज करें।`;
+          errBox.style.display = 'block';
+          return;
+        }
+
+        if (matches.length === 1) {
+          renderStudentFeeResult(matches[0]);
+        } else {
+          renderMultiMatches(matches, query);
+        }
+
+      } catch (err) {
+        loading.style.display = 'none';
+        errBox.textContent = 'स्कॉलर नंबर अथवा नाम पुनः जांचें।';
+        errBox.style.display = 'block';
+      }
+    }
+
+    async function handleClassFilterChange(className) {
+      if (!className) return;
+      const loading = document.getElementById('feeLoading');
+      const errBox = document.getElementById('feeError');
+      const multiBox = document.getElementById('feeMultiMatchContainer');
+      const classBox = document.getElementById('feeClassRosterContainer');
+      const resultCard = document.getElementById('feeResultCard');
+
+      errBox.style.display = 'none';
+      multiBox.style.display = 'none';
+      resultCard.style.display = 'none';
+      classBox.style.display = 'none';
+      loading.style.display = 'block';
+
+      try {
+        const records = await getStudentFeesList();
+        loading.style.display = 'none';
+
+        const target = className.trim().toUpperCase();
+        const filtered = records.filter(r => {
+          const c = (r.className || '').trim().toUpperCase();
+          return c === target || c.startsWith(target + ' ') || c.includes(target);
+        });
+
+        if (filtered.length === 0) {
+          errBox.innerHTML = `कक्षा <strong>${className}</strong> में कोई छात्र रिकॉर्ड नहीं मिला।`;
+          errBox.style.display = 'block';
+          return;
+        }
+
+        const totalDue = filtered.reduce((acc, cur) => acc + (cur.total || 0), 0);
+
+        let rowsHtml = filtered.map((s, idx) => `
+          <tr style="border-bottom: 1px solid #f1f5f9; background: ${idx % 2 === 0 ? '#fff' : '#f8fafc'};">
+            <td style="padding: 10px; font-weight: 700; color: #64748b; text-align: center;">${idx + 1}</td>
+            <td style="padding: 10px; font-weight: 800; color: #0f766e;">${s.scholarNo}</td>
+            <td style="padding: 10px; font-weight: 800; color: #0f172a;">${s.studentName}</td>
+            <td style="padding: 10px; color: #475569;">${s.fatherName}</td>
+            <td style="padding: 10px; font-weight: 800; color: #0f766e;">₹${s.total.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px; text-align: right;">
+              <button onclick="renderStudentFeeResultByScholar('${s.scholarNo}')" class="btn btn-primary" style="padding: 5px 12px; font-size: 0.82rem;">
+                रसीद देखें 👁️
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        classBox.innerHTML = `
+          <div style="background: #ffffff; border: 2px solid #5eead4; border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.75rem;">
+              <div>
+                <h3 style="color: #0f766e; font-size: 1.15rem; font-weight: 800; margin: 0;">
+                  🏫 कक्षा: ${className} (कुल छात्र: ${filtered.length})
+                </h3>
+                <span style="font-size: 0.85rem; color: #475569; font-weight: 700;">
+                  कक्षा कुल देय शुल्क: ₹${totalDue.toLocaleString('en-IN')}
+                </span>
+              </div>
+              <button type="button" onclick="clearSearch()" class="btn btn-secondary" style="font-size: 0.82rem;">✕ बंद करें</button>
+            </div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                <thead>
+                  <tr style="background: #f0fdfa; color: #0f766e; border-bottom: 2px solid #99f6e4;">
+                    <th style="padding: 10px; text-align: center;">#</th>
+                    <th style="padding: 10px;">स्कॉलर नं</th>
+                    <th style="padding: 10px;">विद्यार्थी का नाम</th>
+                    <th style="padding: 10px;">पिता का नाम</th>
+                    <th style="padding: 10px;">कुल देय शुल्क</th>
+                    <th style="padding: 10px; text-align: right;">एक्शन</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        classBox.style.display = 'block';
+
+      } catch (err) {
+        loading.style.display = 'none';
+        errBox.textContent = 'त्रुटि: ' + (err.message || 'कक्षा डेटा लोड करने में समस्या हुई।');
+        errBox.style.display = 'block';
+      }
+    }
+
+    async function renderStudentFeeResultByScholar(scholarNo) {
+      const records = await getStudentFeesList();
+      const s = records.find(r => r.scholarNo === scholarNo);
+      if (s) {
+        renderStudentFeeResult(s);
+        const card = document.getElementById('feeResultCard');
+        if (card) card.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function renderMultiMatches(matches, query) {
+      const container = document.getElementById('feeMultiMatchContainer');
+      let rows = matches.slice(0, 50).map((s, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9; background: ${idx % 2 === 0 ? '#fff' : '#f8fafc'};">
+          <td style="padding: 10px; font-weight: 700; color: #64748b; text-align: center;">${idx + 1}</td>
+          <td style="padding: 10px; font-weight: 800; color: #0f766e;">${s.scholarNo}</td>
+          <td style="padding: 10px; font-weight: 800; color: #0f172a;">${s.studentName}</td>
+          <td style="padding: 10px; color: #475569;">${s.fatherName}</td>
+          <td style="padding: 10px; font-weight: 700; color: #0d9488;">${s.className}</td>
+          <td style="padding: 10px; font-weight: 800; color: #0f766e;">₹${s.total.toLocaleString('en-IN')}</td>
+          <td style="padding: 10px; text-align: right;">
+            <button onclick="renderStudentFeeResultByScholar('${s.scholarNo}')" class="btn btn-primary" style="padding: 5px 12px; font-size: 0.82rem;">
+              रसीद देखें 👁️
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <div style="background: #ffffff; border: 2px solid #5eead4; border-radius: var(--radius); padding: 1.25rem;">
+          <h4 style="color: #0f766e; margin-bottom: 0.75rem; font-size: 1.1rem; font-weight: 800;">
+            👥 कुल ${matches.length} छात्र मिले ("${query}")
+          </h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+              <thead>
+                <tr style="background: #f0fdfa; color: #0f766e;">
+                  <th style="padding: 10px; text-align: center;">#</th>
+                  <th style="padding: 10px;">स्कॉलर नं</th>
+                  <th style="padding: 10px;">विद्यार्थी का नाम</th>
+                  <th style="padding: 10px;">पिता का नाम</th>
+                  <th style="padding: 10px;">कक्षा</th>
+                  <th style="padding: 10px;">कुल देय शुल्क</th>
+                  <th style="padding: 10px; text-align: right;">एक्शन</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      container.style.display = 'block';
+    }
+
+    window._activeFeeTab = 'all';
+
+    function buildStudentFeeModel(student) {
+      const parseNum = (v) => {
+        if (v == null || v === '') return 0;
+        const n = parseFloat(String(v).replace(/,/g, '').trim());
+        return isNaN(n) ? 0 : Math.round(n);
+      };
+
+      const prevYearDue = parseNum(student.prevYearDue);
+      const admissionFee = parseNum(student.admissionFeeNew || student.admissionFee);
+      const renewableFee = parseNum(student.renewableFee);
+      const boysFund = parseNum(student.boysFund);
+      
+      const u = parseNum(student.tution1);
+      const d = parseNum(student.tution2);
+      const f = parseNum(student.tution3);
+      const p = parseNum(student.tution4);
+      const m = parseNum(student.tution5);
+      const totalTuition = u + d + f + p + m;
+
+      const g = parseNum(student.conveyanceJuly);
+      const _ = parseNum(student.conveyanceAugust);
+      const v = parseNum(student.conveyanceSeptember);
+      const y = parseNum(student.conveyanceOctober);
+      const b = parseNum(student.conveyanceNovember);
+      const x = parseNum(student.conveyanceDecember);
+      const S = parseNum(student.conveyanceJanuary);
+      const C = parseNum(student.conveyanceFebruary);
+      const w = parseNum(student.conveyanceMarch);
+      const T = parseNum(student.conveyanceApril);
+      const totalConveyance = g + _ + v + y + b + x + S + C + w + T;
+
+      const decRegistrationFee = parseNum(student.decRegistrationFee);
+      const aprilOldDueFee = parseNum(student.aprilOldDue || student.aprilOldDueFee);
+      const lateFee = parseNum(student.lateFee);
+      const advanceAdjustable = parseNum(student.advanceAdjustable);
+
+      const prevYearTotal = prevYearDue + aprilOldDueFee;
+      const rawTotal = parseNum(student.total);
+      const calculatedTotal = prevYearDue + admissionFee + renewableFee + boysFund + totalTuition + totalConveyance + decRegistrationFee + aprilOldDueFee + lateFee - advanceAdjustable;
+      const grandTotal = rawTotal > 0 ? rawTotal : Math.max(0, calculatedTotal);
+      const currentSessionFee = Math.max(0, grandTotal - prevYearTotal);
+
+      const items = [];
+      if (renewableFee > 0) items.push({ id: 'renewable_fee', nameHindi: 'वार्षिक नवीनीकरण शुल्क', nameEnglish: 'Annual Renewal Fee', category: 'Admission', amount: renewableFee });
+      if (admissionFee > 0) items.push({ id: 'admission_fee', nameHindi: 'नवीन प्रवेश शुल्क', nameEnglish: 'New Admission Fee', category: 'Admission', amount: admissionFee });
+      if (prevYearDue > 0) items.push({ id: 'prev_year_due', nameHindi: 'गत वर्ष का पुराना बकाया', nameEnglish: 'Previous Year Dues', category: 'Dues', amount: prevYearDue });
+      if (boysFund > 0) items.push({ id: 'boys_fund', nameHindi: 'प्रथम किश्त बालक निधि', nameEnglish: 'I Installment Boys Fund', category: 'Other', amount: boysFund });
+      if (u > 0) items.push({ id: 'inst1_tuition', nameHindi: 'प्रथम किश्त शिक्षण शुल्क (I Term)', nameEnglish: 'I Installment Tuition Fee', category: 'Tuition', amount: u });
+      if (d > 0) items.push({ id: 'inst2_tuition', nameHindi: 'द्वितीय किश्त शिक्षण शुल्क (II Term)', nameEnglish: 'II Installment Tuition Fee', category: 'Tuition', amount: d });
+      if (f > 0) items.push({ id: 'inst3_tuition', nameHindi: 'तृतीय किश्त शिक्षण शुल्क (III Term)', nameEnglish: 'III Installment Tuition Fee', category: 'Tuition', amount: f });
+      if (p > 0) items.push({ id: 'inst4_tuition', nameHindi: 'चतुर्थ किश्त शिक्षण शुल्क (IV Term)', nameEnglish: 'IV Installment Tuition Fee', category: 'Tuition', amount: p });
+      if (m > 0) items.push({ id: 'inst5_tuition', nameHindi: 'पंचम किश्त शिक्षण शुल्क (V Term)', nameEnglish: 'V Installment Tuition Fee', category: 'Tuition', amount: m });
+
+      const conveyances = [
+        { monthHindi: 'जुलाई', monthEng: 'July', val: g },
+        { monthHindi: 'अगस्त', monthEng: 'August', val: _ },
+        { monthHindi: 'सितम्बर', monthEng: 'September', val: v },
+        { monthHindi: 'अक्टूबर', monthEng: 'October', val: y },
+        { monthHindi: 'नवम्बर', monthEng: 'November', val: b },
+        { monthHindi: 'दिसम्बर', monthEng: 'December', val: x },
+        { monthHindi: 'जनवरी', monthEng: 'January', val: S },
+        { monthHindi: 'फ़रवरी', monthEng: 'February', val: C },
+        { monthHindi: 'मार्च', monthEng: 'March', val: w },
+        { monthHindi: 'अप्रैल', monthEng: 'April', val: T }
+      ];
+      conveyances.forEach(e => {
+        if (e.val > 0) items.push({ id: `conveyance_${e.monthEng.toLowerCase()}`, nameHindi: `${e.monthHindi} वाहन/बस शुल्क`, nameEnglish: `${e.monthEng} Conveyance Fee`, category: 'Conveyance', amount: e.val });
+      });
+
+      if (decRegistrationFee > 0) items.push({ id: 'dec_reg_fee', nameHindi: 'दिसम्बर पंजीयन/बोर्ड शुल्क', nameEnglish: 'December Registration Fee', category: 'Other', amount: decRegistrationFee });
+      if (aprilOldDueFee > 0) items.push({ id: 'april_old_due', nameHindi: 'अप्रैल पुराना बकाया शुल्क', nameEnglish: 'April Old Due Fee', category: 'Dues', amount: aprilOldDueFee });
+      if (lateFee > 0) items.push({ id: 'late_fee', nameHindi: 'विलंब शुल्क (Late Fee)', nameEnglish: 'Late Fee', category: 'Other', amount: lateFee });
+      if (advanceAdjustable > 0) items.push({ id: 'advance_adjustable', nameHindi: 'अग्रिम समायोजन (छूट/समायोजित)', nameEnglish: 'Advance Adjustable (-)', category: 'Other', amount: -advanceAdjustable });
+
+      return {
+        ...student,
+        prevYearDue, admissionFee, renewableFee, boysFund,
+        inst1Tuition: u, inst2Tuition: d, inst3Tuition: f, inst4Tuition: p, inst5Tuition: m, totalTuition,
+        totalConveyance, decRegistrationFee, aprilOldDueFee, lateFee, advanceAdjustable,
+        prevYearTotal, grandTotal, currentSessionFee, items
+      };
+    }
+
+    function switchFeeTab(tab) {
+      window._activeFeeTab = tab;
+      if (window._currentFoundStudentFee) {
+        renderStudentFeeResult(window._currentFoundStudentFee, tab);
+      }
+    }
+
+    function renderStudentFeeResult(rawStudent, activeTab) {
+      const tab = activeTab || window._activeFeeTab || 'all';
+      window._activeFeeTab = tab;
+
+      const model = buildStudentFeeModel(rawStudent);
+      window._currentFoundStudentFee = model;
+
+      const card = document.getElementById('feeResultCard');
+      const reportDate = window._studentFeesReportDate || '23-Sep-2026';
+      const session = '2026-27';
+
+      const l = model.prevYearTotal;
+      const u = model.grandTotal;
+      const d = model.currentSessionFee;
+
+      let displayItems = model.items;
+      let totalAmountToDisplay = u;
+
+      if (tab === 'prev_year') {
+        displayItems = model.items.filter(it => it.category === 'Dues' || it.id === 'prev_year_due' || it.id === 'april_old_due');
+        totalAmountToDisplay = l;
+      } else if (tab === 'current') {
+        displayItems = model.items.filter(it => it.category !== 'Dues' && it.id !== 'prev_year_due' && it.id !== 'april_old_due');
+        totalAmountToDisplay = d;
+      }
+
+      const isAllZero = (u === 0 && (!model.items || model.items.length === 0));
+
+      if (isAllZero) {
+        card.innerHTML = `
+          <div style="border: 2px solid #34d399; background: #ecfdf5; border-radius: 16px; padding: 2rem; text-align: center; margin: 1.5rem 0; box-shadow: 0 4px 20px rgba(16,185,129,0.1);">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: #d1fae5; color: #047857; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 28px;">
+              ✓
+            </div>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #064e3b; margin: 0 0 6px;">
+              कोई शुल्क बकाया नहीं है (No Dues Pending - ₹0)
+            </h3>
+            <p style="font-size: 0.95rem; font-weight: 600; color: #047857; max-width: 500px; margin: 0 auto 16px;">
+              विद्यार्थी <strong>${escapeHtml(model.studentName || '')}</strong> (स्कॉलर नं. ${escapeHtml(model.scholarNo || '')}) का वर्तमान सत्र ${session} का संपूर्ण शुल्क चुकता है।
+            </p>
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: #ffffff; border: 1px solid #6ee7b7; border-radius: 12px; font-size: 0.9rem; font-weight: 700; color: #065f46;">
+              <span>कार्यालयीन रिकॉर्ड अनुसार वर्तमान बकाया: ₹0 (निरंक)</span>
+            </div>
+          </div>
+        `;
+        card.style.display = 'block';
+        return;
+      }
+
+      card.innerHTML = `
+        <div class="fee-receipt-container" style="max-width: 1020px; margin: 0 auto;">
+          
+          <!-- Top Controls Bar -->
+          <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+            <button type="button" onclick="clearSearch()" class="btn btn-secondary" style="padding: 7px 14px; font-size: 0.88rem; font-weight: 700; border-radius: 10px; cursor: pointer;">
+              ← नई खोज / रीसेट
+            </button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" onclick="shareFeeOnWhatsApp()" class="btn" style="background: #25d366; color: #ffffff; border: none; font-weight: 700; padding: 7px 16px; font-size: 0.88rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(37,211,102,0.3);">
+                <span>💬</span> <span>WhatsApp भेजें</span>
+              </button>
+              <button type="button" onclick="window.print()" class="btn btn-primary" style="padding: 7px 16px; font-size: 0.88rem; font-weight: 700; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <span>🖨️</span> <span>रसीद प्रिंट करें</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 5 Key Metric Cards (Top Bar as in mdhsssresult.netlify.app) -->
+          <div class="no-print" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 1.25rem;">
+            <!-- 1. Total Due -->
+            <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 10px 12px; text-align: center;">
+              <span style="font-size: 0.72rem; font-weight: 800; color: #065f46; display: block; text-transform: uppercase;">कुल देय शुल्क (Total)</span>
+              <span style="font-size: 1.35rem; font-weight: 900; color: #064e3b; font-family: monospace;">₹${u.toLocaleString('en-IN')}</span>
+            </div>
+            <!-- 2. Prev Year Due -->
+            <div style="background: ${l > 0 ? '#fffbeb' : '#f8fafc'}; border: 1.5px solid ${l > 0 ? '#fde68a' : '#e2e8f0'}; border-radius: 12px; padding: 10px 12px; text-align: center; ${l === 0 ? 'opacity: 0.8;' : ''}">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <span style="font-size: 0.72rem; font-weight: 800; color: #78350f; text-transform: uppercase;">गत वर्ष बकाया</span>
+                ${l > 0 ? '<span style="font-size: 0.65rem; font-weight: 900; background: #fef08a; color: #713f12; padding: 1px 6px; border-radius: 4px;">देय</span>' : ''}
+              </div>
+              <span style="font-size: 1.35rem; font-weight: 900; color: #78350f; font-family: monospace;">₹${l.toLocaleString('en-IN')}</span>
+            </div>
+            <!-- 3. Renewal Fee -->
+            <div style="background: #eef2ff; border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 10px 12px; text-align: center;">
+              <span style="font-size: 0.72rem; font-weight: 800; color: #3730a3; display: block; text-transform: uppercase;">वार्षिक नवीनीकरण</span>
+              <span style="font-size: 1.35rem; font-weight: 900; color: #312e81; font-family: monospace;">₹${model.renewableFee.toLocaleString('en-IN')}</span>
+            </div>
+            <!-- 4. Tuition Fee -->
+            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 10px 12px; text-align: center;">
+              <span style="font-size: 0.72rem; font-weight: 800; color: #1e40af; display: block; text-transform: uppercase;">शिक्षण शुल्क (Tuition)</span>
+              <span style="font-size: 1.35rem; font-weight: 900; color: #1e3a8a; font-family: monospace;">₹${model.totalTuition.toLocaleString('en-IN')}</span>
+            </div>
+            <!-- 5. Bus/Van Fee -->
+            <div style="background: #faf5ff; border: 1.5px solid #e9d5ff; border-radius: 12px; padding: 10px 12px; text-align: center;">
+              <span style="font-size: 0.72rem; font-weight: 800; color: #6b21a8; display: block; text-transform: uppercase;">वाहन शुल्क (Bus/Van)</span>
+              <span style="font-size: 1.35rem; font-weight: 900; color: #581c87; font-family: monospace;">₹${model.totalConveyance.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+
+          <!-- 3 Switchable Filter Tabs as in mdhsssresult.netlify.app -->
+          <div class="no-print" style="background: #f1f5f9; padding: 6px; border-radius: 14px; margin-bottom: 1.25rem; border: 1px solid #cbd5e1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px;">
+            <button type="button" onclick="switchFeeTab('all')" style="padding: 10px 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 800; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s; ${tab === 'all' ? 'background: #0f766e; color: #ffffff; box-shadow: 0 3px 8px rgba(15,118,110,0.3);' : 'background: transparent; color: #334155;'}">
+              <span>1. सम्पूर्ण वार्षिक विवरण</span>
+              <span style="font-size: 0.72rem; font-family: monospace; font-weight: 800; margin-top: 2px; opacity: 0.9;">₹${u.toLocaleString('en-IN')}</span>
+            </button>
+            <button type="button" onclick="switchFeeTab('current')" style="padding: 10px 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 800; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s; ${tab === 'current' ? 'background: #2563eb; color: #ffffff; box-shadow: 0 3px 8px rgba(37,99,235,0.3);' : 'background: transparent; color: #334155;'}">
+              <span>2. वर्तमान सत्र शुल्क</span>
+              <span style="font-size: 0.72rem; font-family: monospace; font-weight: 800; margin-top: 2px; opacity: 0.9;">₹${d.toLocaleString('en-IN')}</span>
+            </button>
+            <button type="button" onclick="switchFeeTab('prev_year')" style="padding: 10px 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 800; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.2s; ${tab === 'prev_year' ? 'background: #d97706; color: #ffffff; box-shadow: 0 3px 8px rgba(217,119,6,0.3);' : (l > 0 ? 'background: #fef3c7; color: #78350f; border: 1px solid #fde68a;' : 'background: transparent; color: #334155;')}">
+              ${l > 0 ? '<span style="position: absolute; top: 4px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: #dc2626;"></span>' : ''}
+              <span>3. गत वर्ष का पुराना बकाया</span>
+              <span style="font-size: 0.72rem; font-family: monospace; font-weight: 800; margin-top: 2px; opacity: 0.9;">₹${l.toLocaleString('en-IN')}</span>
+            </button>
+          </div>
+
+          <!-- Official Fee Slip -->
+          <div id="printableFeeReceipt" style="background: #ffffff; border: 2px solid #334155; border-radius: 16px; padding: 1.5rem 1.75rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; overflow: hidden;">
+            
+            <!-- School Official Header -->
+            <div style="border-bottom: 2px solid #1e293b; padding-bottom: 12px; margin-bottom: 14px; text-align: center;">
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #475569; margin-bottom: 8px; flex-wrap: wrap; gap: 4px;">
+                <span>डाइस कोड: <strong style="color: #0f172a; font-family: monospace;">23140402055</strong></span>
+                <span style="background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; padding: 2px 10px; border-radius: 6px; font-weight: 800; font-size: 0.78rem;">
+                  सत्र: ${session}
+                </span>
+                <span>संस्था कोड: <strong style="color: #0f172a; font-family: monospace;">322517</strong></span>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;">
+                <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.src='https://placehold.co/90x90/0d9488/ffffff?text=MDHSS'" style="width: 62px; height: 62px; border-radius: 50%; border: 2px solid #f59e0b; padding: 2px; object-fit: cover;">
+                <div style="text-align: center;">
+                  <h1 style="font-size: 1.45rem; font-weight: 900; color: #d93025; margin: 0; line-height: 1.2;">
+                    माँ दुर्गा उच्च. माध्य. विद्यालय सेमरिया, जिला-रीवा (म.प्र.)
+                  </h1>
+                  <p style="font-size: 0.82rem; font-weight: 600; color: #475569; margin: 3px 0 0;">
+                    सेमरिया, रीवा (म.प्र.) | मान्यता प्राप्त शिक्षा संस्थान
+                  </p>
+                </div>
+              </div>
+
+              <div style="margin-top: 10px; display: inline-flex; flex-direction: column; align-items: center;">
+                <div style="background: linear-gradient(90deg, #065f46, #0f766e, #065f46); color: #ffffff; padding: 4px 18px; border-radius: 999px; font-weight: 900; font-size: 0.82rem; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                  DUE FEE REPORT AS ON ${escapeHtml(reportDate)}
+                </div>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #475569; margin-top: 4px;">
+                  ${tab === 'prev_year' ? 'गत वर्ष का पुराना बकाया शुल्क विवरण (Previous Year Dues Statement)' : (tab === 'current' ? `वर्तमान सत्र ${session} छात्र शुल्क विवरण (Current Session Fee)` : `वार्षिक छात्र शुल्क विवरण एवं देय रसीद (सत्र ${session})`)}
+                </span>
+              </div>
+            </div>
+
+            <!-- Student Profile Grid Bar -->
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.88rem;">
+                <div>
+                  <span style="font-size: 0.72rem; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">विद्यार्थी का नाम:</span>
+                  <strong style="color: #0f172a; font-size: 1.05rem; text-transform: uppercase;">${escapeHtml(model.studentName || '')}</strong>
+                </div>
+                <div>
+                  <span style="font-size: 0.72rem; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">पिता का नाम:</span>
+                  <strong style="color: #334155; font-size: 0.95rem; text-transform: uppercase;">${escapeHtml(model.fatherName || '-')}</strong>
+                </div>
+                <div>
+                  <span style="font-size: 0.72rem; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">स्कॉलर नं. / रोल नं.:</span>
+                  <strong style="color: #1d4ed8; font-family: monospace; font-size: 1.05rem;">${escapeHtml(model.scholarNo || '')} / ${escapeHtml(model.sNo || '-')}</strong>
+                </div>
+                <div>
+                  <span style="font-size: 0.72rem; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">कक्षा (Class):</span>
+                  <span style="display: inline-block; padding: 2px 10px; background: #dbeafe; color: #1e40af; font-weight: 900; border-radius: 6px; font-size: 0.88rem; margin-top: 2px;">
+                    ${escapeHtml(model.className || 'सामान्य')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Prev Year Due Warning Banner (if tab === 'prev_year' or if prev year dues exist) -->
+            ${tab === 'prev_year' ? `
+              <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.88rem; color: #78350f;">
+                <div style="font-weight: 900; color: #92400e; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                  <span>⚠️</span> <span>गत वर्ष (Previous Academic Session) का पुराना बकाया विवरण:</span>
+                </div>
+                ${l > 0 ? `
+                  <p style="margin: 0; font-weight: 600; line-height: 1.4;">
+                    विद्यार्थी <strong>${escapeHtml(model.studentName || '')}</strong> का पूर्व शैक्षणिक सत्र का कुल <strong>₹${l.toLocaleString('en-IN')}</strong> पुराना बकाया शेष है। कृपया इसे विद्यालय कार्यालय में संपर्क कर समय पर समाधान कराएं।
+                  </p>
+                ` : `
+                  <p style="margin: 0; font-weight: 700; color: #15803d;">
+                    ✓ विद्यार्थी का गत शैक्षणिक सत्र का कोई भी पुराना बकाया शेष नहीं है (₹0 - All Cleared)।
+                  </p>
+                `}
+              </div>
+            ` : ''}
+
+            <!-- Formal Fee Breakdown Table -->
+            <div style="border: 1.5px solid #475569; border-radius: 10px; overflow: hidden; margin-bottom: 14px;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                <thead>
+                  <tr style="background: #1e293b; color: #ffffff; font-weight: 800;">
+                    <th style="padding: 9px 12px; width: 44px; text-align: center; border-right: 1px solid #475569;">क्र.</th>
+                    <th style="padding: 9px 12px; border-right: 1px solid #475569;">शुल्क का मद (Fee Head Description)</th>
+                    <th style="padding: 9px 12px; width: 140px; border-right: 1px solid #475569;">श्रेणी</th>
+                    <th style="padding: 9px 12px; width: 140px; text-align: right;">देय राशि (Amount)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${displayItems.length > 0 ? displayItems.map((item, idx) => {
+                    const isDue = (item.category === 'Dues' || item.id === 'prev_year_due' || item.id === 'april_old_due');
+                    const isRenewal = (item.id === 'renewable_fee');
+                    const rowBg = isDue ? '#fffbeb' : (isRenewal ? '#eef2ff' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc'));
+                    const categoryHindi = isDue ? 'गत वर्ष पुराना बकाया' : (item.category === 'Admission' ? 'प्रवेश/नवीनीकरण' : (item.category === 'Tuition' ? 'शिक्षण शुल्क' : (item.category === 'Conveyance' ? 'वाहन शुल्क' : 'अन्य शुल्क')));
+
+                    return `
+                      <tr style="background: ${rowBg}; border-top: 1px solid #e2e8f0;">
+                        <td style="padding: 8px 12px; text-align: center; border-right: 1px solid #e2e8f0; font-family: monospace; color: #64748b;">
+                          ${idx + 1}
+                        </td>
+                        <td style="padding: 8px 12px; border-right: 1px solid #e2e8f0;">
+                          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-weight: 700; color: #0f172a;">${escapeHtml(item.nameHindi)}</span>
+                            ${isDue ? '<span style="font-size: 0.68rem; font-weight: 900; background: #fef08a; color: #713f12; padding: 1px 6px; border-radius: 4px; border: 1px solid #facc15;">गत वर्ष बकाया</span>' : ''}
+                            ${isRenewal ? '<span style="font-size: 0.68rem; font-weight: 800; background: #e0e7ff; color: #3730a3; padding: 1px 6px; border-radius: 4px;">वार्षिक नवीनीकरण</span>' : ''}
+                          </div>
+                          <span style="font-size: 0.72rem; color: #64748b; font-weight: 500; display: block; margin-top: 2px;">
+                            ${escapeHtml(item.nameEnglish)}
+                          </span>
+                        </td>
+                        <td style="padding: 8px 12px; border-right: 1px solid #e2e8f0; font-size: 0.8rem; color: ${isDue ? '#92400e; font-weight: 800;' : '#475569;'}">
+                          ${escapeHtml(categoryHindi)}
+                        </td>
+                        <td style="padding: 8px 12px; text-align: right; font-family: monospace; font-weight: 800; color: ${item.amount < 0 ? '#15803d' : '#0f172a'};">
+                          ${item.amount < 0 ? '-' : ''}₹${Math.abs(item.amount).toLocaleString('en-IN')}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('') : `
+                    <tr>
+                      <td colspan="4" style="text-align: center; padding: 20px; color: #64748b; font-weight: 700;">
+                        ${tab === 'prev_year' ? 'गत शैक्षणिक सत्र का कोई पुराना बकाया नहीं है (₹0 - No Dues Pending)' : 'कोई शुल्क मद उपलब्ध नहीं है।'}
+                      </td>
+                    </tr>
+                  `}
+
+                  <!-- Subtotal rows if viewing 'all' and prevYearTotal > 0 -->
+                  ${(tab === 'all' && l > 0) ? `
+                    <tr style="background: #fef3c7; font-weight: 800; border-top: 1.5px solid #cbd5e1;">
+                      <td colspan="2" style="padding: 8px 12px; text-align: right; border-right: 1px solid #cbd5e1; font-size: 0.82rem; color: #78350f;">
+                        (अ) गत वर्ष का कुल पुराना बकाया:
+                      </td>
+                      <td style="padding: 8px 12px; border-right: 1px solid #cbd5e1; font-size: 0.8rem; color: #92400e; font-weight: 800;">
+                        पूर्व सत्र बकाया
+                      </td>
+                      <td style="padding: 8px 12px; text-align: right; font-family: monospace; color: #78350f;">
+                        ₹${l.toLocaleString('en-IN')}
+                      </td>
+                    </tr>
+                    <tr style="background: #eff6ff; font-weight: 800; border-top: 1px solid #cbd5e1;">
+                      <td colspan="2" style="padding: 8px 12px; text-align: right; border-right: 1px solid #cbd5e1; font-size: 0.82rem; color: #1e3a8a;">
+                        (ब) वर्तमान सत्र ${session} शुल्क:
+                      </td>
+                      <td style="padding: 8px 12px; border-right: 1px solid #cbd5e1; font-size: 0.8rem; color: #1e40af; font-weight: 800;">
+                        वर्तमान सत्र देय
+                      </td>
+                      <td style="padding: 8px 12px; text-align: right; font-family: monospace; color: #1e3a8a;">
+                        ₹${d.toLocaleString('en-IN')}
+                      </td>
+                    </tr>
+                  ` : ''}
+
+                  <!-- Grand Total Row as in mdhsssresult.netlify.app -->
+                  <tr style="background: #ecfdf5; font-weight: 900; border-top: 2px solid #334155;">
+                    <td colspan="2" style="padding: 11px 14px; text-align: right; border-right: 1px solid #94a3b8; font-size: 0.92rem; color: #064e3b; text-transform: uppercase;">
+                      ${tab === 'prev_year' ? 'गत वर्ष का कुल देय बकाया (Total Previous Year Due):' : (tab === 'current' ? `वर्तमान सत्र (${session}) कुल देय शुल्क:` : 'कुल देय शुल्क योग (Total Demand):')}
+                    </td>
+                    <td style="padding: 11px 14px; border-right: 1px solid #94a3b8; font-size: 0.8rem; color: #065f46;">
+                      ${tab === 'prev_year' ? 'पूर्व सत्र' : `सत्र ${session}`}
+                    </td>
+                    <td style="padding: 11px 14px; text-align: right; font-family: monospace; font-size: 1.25rem; color: #064e3b;">
+                      ₹${totalAmountToDisplay.toLocaleString('en-IN')}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Important Office Notice Box as in mdhsssresult.netlify.app -->
+            <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 12px 16px; font-size: 0.84rem; color: #1e3a8a; margin-bottom: 16px; line-height: 1.5;">
+              <div style="font-weight: 900; color: #1e40af; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                <span>ℹ️</span> <span>महत्वपूर्ण कार्यालयीन सूचना:</span>
+              </div>
+              <p style="margin: 0 0 3px 0; font-weight: 700; color: #1e3a8a;">
+                • <strong>जमा की गई राशि का विवरण/अद्यतन (Paid Fee Update) बहुत जल्द उपलब्ध कराया जाएगा।</strong>
+              </p>
+              <p style="margin: 0 0 3px 0; font-weight: 600; color: #334155;">
+                • अधिक जानकारी एवं सही जानकारी के लिए कृपया <strong>विद्यालय कार्यालय में संपर्क करें</strong>।
+              </p>
+              <p style="margin: 0; font-weight: 600; color: #92400e;">
+                • <strong>महत्वपूर्ण सूचना:</strong> डेटा तुरंत अपडेट नहीं होता है। यदि आपने हाल ही में (आज अथवा कल) शुल्क जमा किया है, तो कृपया 1-2 दिन की प्रतीक्षा करें, डेटा स्वतः अपडेट हो जाएगा अथवा विद्यालय कार्यालय में संपर्क करें।
+              </p>
+            </div>
+
+            <!-- Signatures Row as in mdhsssresult.netlify.app -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 18px; border-top: 1px solid #cbd5e1; font-size: 0.82rem; font-weight: 700; color: #334155;">
+              <div style="text-align: center; width: 140px;">
+                <div style="height: 28px; display: flex; align-items: flex-end; justify-content: center; font-style: italic; font-size: 0.72rem; color: #94a3b8;">
+                  Accountant
+                </div>
+                <div style="border-top: 1px solid #475569; padding-top: 4px; color: #0f172a;">
+                  लेखापाल हस्ताक्षर
+                </div>
+              </div>
+              <div style="text-align: center; font-size: 0.72rem; color: #64748b;">
+                रिपोर्ट दिनांक: ${escapeHtml(reportDate)}
+              </div>
+              <div style="text-align: center; width: 150px;">
+                <div style="height: 28px; display: flex; align-items: flex-end; justify-content: center; font-style: italic; font-size: 0.72rem; color: #94a3b8;">
+                  Seal & Sign
+                </div>
+                <div style="border-top: 1px solid #475569; padding-top: 4px; color: #0f172a;">
+                  संस्था प्राचार्य
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      card.style.display = 'block';
+    }
+
+    function shareFeeOnWhatsApp() {
+      const s = window._currentFoundStudentFee;
+      if (!s) return;
+      const model = buildStudentFeeModel(s);
+      const reportDate = window._studentFeesReportDate || '23-Sep-2026';
+
+      let itemsText = '';
+      if (model.items && model.items.length > 0) {
+        itemsText = model.items.map(it => `• ${it.nameHindi}: ${it.amount < 0 ? '-' : ''}₹${Math.abs(it.amount).toLocaleString('en-IN')}`).join('\n');
+      } else {
+        itemsText = '• कोई बकाया नहीं (पूर्ण जमा)';
+      }
+
+      const text = `*माँ दुर्गा उच्च. माध्य. विद्यालय सेमरिया, जिला-रीवा (म.प्र.)*\n` +
+        `*आधिकारिक छात्र शुल्क विवरण एवं देय रसीद (सत्र 2026-27)*\n\n` +
+        `👤 *विद्यार्थी:* ${model.studentName}\n` +
+        `🔢 *स्कॉलर नं:* ${model.scholarNo}\n` +
+        `👨 *पिता का नाम:* ${model.fatherName}\n` +
+        `🏫 *कक्षा:* ${model.className}\n` +
+        `📅 *डेटा अपडेट दिनांक:* ${reportDate}\n\n` +
+        `💰 *देय शुल्क विवरण:*\n` +
+        `${itemsText}\n\n` +
+        `💵 *कुल देय शुल्क (Total Demand):* ₹${model.grandTotal.toLocaleString('en-IN')}\n\n` +
+        `📌 *कार्यालयीन सूचना:* जमा की गई राशि का विवरण/अद्यतन बहुत जल्द उपलब्ध कराया जाएगा। डेटा तुरंत अपडेट नहीं होता है, यदि आपने हाल ही में शुल्क जमा किया है तो कृपया 1-2 दिन प्रतीक्षा करें अथवा विद्यालय कार्यालय में संपर्क करें।\n` +
+        `📞 हेल्पलाइन: 9200178385, 9669527633`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
