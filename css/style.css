@@ -2819,4 +2819,189 @@
       from { transform: scale(0.92); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+
+    /* ==========================================================================
+       MOBILE OPTIMIZED STUDENT FEE SLIP & CARD (NO HORIZONTAL OVERFLOW)
+       ========================================================================== */
+    .fee-slip-card-container {
+      background: #ffffff;
+      border: 2px solid #0d9488;
+      border-radius: 18px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(13, 148, 136, 0.12);
+      font-family: system-ui, -apple-system, sans-serif;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    .fee-tabs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1.25rem;
+      background: #f8fafc;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+    }
+
+    .fee-summary-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    .fee-slip-inner-box {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .fee-table-wrap {
+      width: 100%;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .fee-table-main {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+      table-layout: auto;
+    }
+
+    .fee-category-col {
+      display: table-cell;
+    }
+    .fee-category-mobile-badge {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .fee-slip-card-container {
+        padding: 0.75rem 0.5rem !important;
+        border-radius: 14px !important;
+      }
+      .fee-tabs-grid {
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+      }
+      .fee-summary-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
+      }
+      .fee-summary-cards-grid > div:first-child {
+        grid-column: span 2 !important;
+      }
+      .fee-slip-inner-box {
+        padding: 0.75rem 0.5rem !important;
+        border-radius: 10px !important;
+      }
+      .fee-table-wrap {
+        overflow-x: visible !important;
+      }
+      .fee-table-main {
+        font-size: 0.82rem !important;
+      }
+      /* Hide dedicated category column on mobile to eliminate horizontal scrolling */
+      .fee-category-col {
+        display: none !important;
+      }
+      /* Show inline badge instead right below the fee head description */
+      .fee-category-mobile-badge {
+        display: inline-block !important;
+        margin-top: 3px !important;
+      }
+      .fee-col-sr {
+        width: 30px !important;
+        padding: 8px 4px !important;
+      }
+      .fee-col-desc {
+        padding: 8px 6px !important;
+      }
+      .fee-col-amt {
+        width: 88px !important;
+        padding: 8px 6px !important;
+        font-size: 0.92rem !important;
+      }
+      .fee-actions-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+      .fee-actions-buttons-group {
+        flex-direction: column !important;
+        width: 100% !important;
+      }
+      .fee-actions-buttons-group button,
+      .fee-actions-bar > button {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .teacher-fees-glass-card {
+        padding: 0.85rem 0.6rem !important;
+      }
+      .fee-footer-total-label {
+        font-size: 0.82rem !important;
+        padding: 8px 6px !important;
+      }
+    }
+
+    /* Admin Result Entry Window Control Styles */
+    .exam-window-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .exam-window-card.is-active {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    .exam-window-card.is-locked {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      opacity: 0.9;
+    }
+    .exam-window-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+    .exam-window-status-pill.active {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+    .exam-window-status-pill.upcoming {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+    .exam-window-status-pill.expired {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+    .exam-window-status-pill.locked {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
   

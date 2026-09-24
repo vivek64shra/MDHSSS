@@ -7,6 +7,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Connection verification document
+    match /test/{docId} {
+      allow read: if true;
+    }
+
     // 1. Admission Inquiries Collection (Public can submit, Admin can read/manage)
     match /admissions/{admId} {
       allow create: if request.resource.data.studentName is string

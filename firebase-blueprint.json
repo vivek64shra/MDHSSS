@@ -1,28 +1,30 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Maa Durga HSS Firebase Firestore Blueprint",
-  "description": "Schema definitions for school admissions, feedbacks, marks, announcements, and portal settings",
-  "collections": {
-    "admissions": {
+  "entities": {
+    "Admission": {
+      "title": "Admission",
       "description": "Student online admission applications submitted by parents/students",
-      "fields": {
+      "type": "object",
+      "properties": {
         "id": { "type": "string", "maxLength": 50 },
         "formType": { "type": "string", "maxLength": 30 },
         "date": { "type": "string", "maxLength": 50 },
         "studentName": { "type": "string", "minLength": 1, "maxLength": 100 },
         "fatherName": { "type": "string", "minLength": 1, "maxLength": 100 },
         "motherName": { "type": "string", "maxLength": 100 },
-        "phone": { "type": "string", "minLength": 10, "maxLength": 15 },
+        "phone": { "type": "string", "minLength": 10, "maxLength": 20 },
         "class": { "type": "string", "maxLength": 50 },
         "subject": { "type": "string", "maxLength": 100 },
         "address": { "type": "string", "maxLength": 300 },
-        "remarks": { "type": "string", "maxLength": 1000 }
+        "remarks": { "type": "string", "maxLength": 1000 },
+        "updatedAt": { "type": "string" }
       },
-      "required": ["studentName", "fatherName", "phone", "class", "address"]
+      "required": ["studentName", "phone"]
     },
-    "feedbacks": {
+    "Feedback": {
+      "title": "Feedback",
       "description": "Feedback, suggestions and queries submitted by parents, students, and visitors",
-      "fields": {
+      "type": "object",
+      "properties": {
         "id": { "type": "string", "maxLength": 50 },
         "formType": { "type": "string", "maxLength": 30 },
         "date": { "type": "string", "maxLength": 50 },
@@ -31,20 +33,25 @@
         "class": { "type": "string", "maxLength": 50 },
         "role": { "type": "string", "maxLength": 50 },
         "subject": { "type": "string", "maxLength": 100 },
-        "rating": { "type": "number", "minimum": 1, "maximum": 5 },
-        "message": { "type": "string", "minLength": 1, "maxLength": 2000 }
+        "message": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "updatedAt": { "type": "string" }
       },
-      "required": ["name", "phone", "message"]
+      "required": ["name", "message"]
     },
-    "settings": {
-      "description": "Portal wide configurations (result link, notice popups, gallery images, whatsapp groups, ticker marquee, webhook)",
-      "fields": {
+    "Setting": {
+      "title": "Setting",
+      "description": "Portal wide configurations (result link, notice popups, gallery images, whatsapp groups, ticker marquee)",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
         "updatedAt": { "type": "string" }
       }
     },
-    "marks_sheets": {
+    "MarksSheet": {
+      "title": "MarksSheet",
       "description": "Student examination marks submitted by teachers or admin",
-      "fields": {
+      "type": "object",
+      "properties": {
         "id": { "type": "string", "maxLength": 100 },
         "class": { "type": "string", "maxLength": 50 },
         "section": { "type": "string", "maxLength": 20 },
@@ -52,8 +59,27 @@
         "month": { "type": "string", "maxLength": 30 },
         "subject": { "type": "string", "maxLength": 50 },
         "maxMarks": { "type": "number" },
-        "records": { "type": "array" }
+        "records": { "type": "array" },
+        "updatedAt": { "type": "string" }
       }
+    }
+  },
+  "firestore": {
+    "/admissions/{admissionId}": {
+      "schema": "Admission",
+      "description": "Public admission forms"
+    },
+    "/feedbacks/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Public feedback entries"
+    },
+    "/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "Portal wide configurations"
+    },
+    "/marks_sheets/{sheetId}": {
+      "schema": "MarksSheet",
+      "description": "School exam marks sheets"
     }
   }
 }

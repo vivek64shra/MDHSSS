@@ -136,11 +136,28 @@
             </div>
             <div class="form-group">
               <label>परीक्षा प्रकार (Exam Type):</label>
-              <select id="marksExam" class="form-control">
+              <select id="marksExam" class="form-control" onchange="togglePacketMarksMonth()">
                 <option value="त्रैमासिक परीक्षा 2026-27">त्रैमासिक परीक्षा 2026-27</option>
                 <option value="अर्द्धवार्षिक परीक्षा 2026-27">अर्द्धवार्षिक परीक्षा 2026-27</option>
                 <option value="मासिक टेस्ट">मासिक टेस्ट</option>
                 <option value="वार्षिक मुख्य परीक्षा 2026-27">वार्षिक मुख्य परीक्षा 2026-27</option>
+              </select>
+            </div>
+            <div class="form-group" id="packetMarksMonthContainer" style="display: none;">
+              <label>🗓️ माह चुनें (Select Month):</label>
+              <select id="packetMarksMonth" class="form-control">
+                <option value="जनवरी">जनवरी</option>
+                <option value="फरवरी">फरवरी</option>
+                <option value="मार्च">मार्च</option>
+                <option value="अप्रैल">अप्रैल</option>
+                <option value="मई">मई</option>
+                <option value="जून">जून</option>
+                <option value="जुलाई" selected>जुलाई</option>
+                <option value="अगस्त">अगस्त</option>
+                <option value="सितम्बर">सितम्बर</option>
+                <option value="अक्टूबर">अक्टूबर</option>
+                <option value="नवम्बर">नवम्बर</option>
+                <option value="दिसम्बर">दिसम्बर</option>
               </select>
             </div>
             <div class="form-group">
@@ -1266,6 +1283,27 @@
         }
       }
     }
+
+    function togglePacketMarksMonth() {
+      const examEl = document.getElementById('marksExam');
+      const monthContainer = document.getElementById('packetMarksMonthContainer');
+      const val = examEl ? (examEl.value || '').trim() : '';
+      if (monthContainer) {
+        if (val.includes('मासिक')) {
+          monthContainer.style.display = 'block';
+        } else {
+          monthContainer.style.display = 'none';
+        }
+      }
+    }
+    window.togglePacketMarksMonth = togglePacketMarksMonth;
+
+    // Browser back button handler to go back to main school portal instead of closing
+    window.addEventListener('popstate', function() {
+      if (window.history.length <= 1) {
+        window.location.href = '../index.html';
+      }
+    });
 
     function updateStats() {
       let ent = 0, p = 0, f = 0, ab = 0;

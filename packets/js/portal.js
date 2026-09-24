@@ -788,7 +788,7 @@
     window.FEES_GOOGLE_SHEETS_XLSX_URL = FEES_GOOGLE_SHEETS_XLSX_URL;
     window._cachedStudentFeesRecords = null;
     window._currentFoundStudentFee = null;
-    window._studentFeesReportDate = '23-Sep-2026';
+    window._studentFeesReportDate = '22-Sep-2026';
     window._isFetchingFeesLive = false;
 
     // Helper: Parse numerical fee amount
@@ -1404,7 +1404,7 @@
       const model = buildTeacherFeeModel(student);
       window._currentFoundStudentFee = model;
 
-      const reportDate = window._studentFeesReportDate || '23-Sep-2026';
+      const reportDate = window._studentFeesReportDate || '22-Sep-2026';
       const session = '2026-27';
 
       const l = model.prevYearTotal;
@@ -1736,7 +1736,7 @@
       if (!student) return;
 
       const model = buildTeacherFeeModel(student);
-      const reportDate = window._studentFeesReportDate || '23-Sep-2026';
+      const reportDate = window._studentFeesReportDate || '22-Sep-2026';
 
       let itemsText = '';
       if (model.items && model.items.length > 0) {
@@ -1767,7 +1767,7 @@
       if (!student) return;
 
       const model = buildTeacherFeeModel(student);
-      const reportDate = window._studentFeesReportDate || '23-Sep-2026';
+      const reportDate = window._studentFeesReportDate || '22-Sep-2026';
       const session = '2026-27';
 
       const printWindow = window.open('', '_blank', 'width=850,height=750');

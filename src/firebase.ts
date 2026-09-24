@@ -1,15 +1,15 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import {
-  initializeFirestore,
   getFirestore,
   collection,
   doc,
   setDoc,
   getDocs,
   getDoc,
+  getDocFromServer,
   deleteDoc,
   onSnapshot,
-  query,
   Firestore,
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
@@ -25,29 +25,49 @@ export enum OperationType {
 
 export interface FirestoreErrorInfo {
   error: string;
-  operation: OperationType;
+  operationType: OperationType;
   path: string | null;
   authInfo: {
-    userId: string | null;
-    email: string | null;
-    emailVerified: boolean | null;
-    isAnonymous: boolean | null;
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+    tenantId?: string | null;
+    providerInfo?: {
+      providerId?: string | null;
+      email?: string | null;
+    }[];
   };
 }
 
-export function handleFirestoreError(error: unknown, operation: OperationType, path: string | null) {
+// Initialize Firebase App
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+export const auth = getAuth(app);
+export const db: Firestore = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
   const errMsg = error instanceof Error ? error.message : String(error);
-  const isOfflineNotice = errMsg.includes('Could not reach Cloud Firestore') || errMsg.includes('offline mode') || errMsg.includes('unavailable') || errMsg.includes('Backend didn\'t respond');
+  const isOfflineNotice =
+    errMsg.includes('Could not reach Cloud Firestore') ||
+    errMsg.includes('offline mode') ||
+    errMsg.includes('unavailable') ||
+    errMsg.includes('Backend didn\'t respond') ||
+    errMsg.includes('the client is offline');
   
   const errInfo: FirestoreErrorInfo = {
     error: errMsg,
-    operation,
+    operationType,
     path,
     authInfo: {
-      userId: null,
-      email: null,
-      emailVerified: null,
-      isAnonymous: null,
+      userId: auth.currentUser?.uid || null,
+      email: auth.currentUser?.email || null,
+      emailVerified: auth.currentUser?.emailVerified || null,
+      isAnonymous: auth.currentUser?.isAnonymous || null,
+      tenantId: auth.currentUser?.tenantId || null,
+      providerInfo: auth.currentUser?.providerData?.map((p) => ({
+        providerId: p.providerId,
+        email: p.email,
+      })) || [],
     },
   };
   
@@ -59,25 +79,20 @@ export function handleFirestoreError(error: unknown, operation: OperationType, p
   return errInfo;
 }
 
-// Initialize Firebase App
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-
-// Explicitly bind the configured Firestore Database ID with force long-polling for iframe/sandbox compatibility
-function createFirestoreInstance(): Firestore {
+// Validate connection to Firestore as specified in Firebase skill
+export async function testConnection(): Promise<boolean> {
   try {
-    return initializeFirestore(
-      app,
-      {
-        experimentalForceLongPolling: true,
-      },
-      firebaseConfig.firestoreDatabaseId
-    );
-  } catch {
-    return getFirestore(app, firebaseConfig.firestoreDatabaseId);
+    await getDocFromServer(doc(db, 'test', 'connection'));
+    console.log('✅ Firestore connection verified with backend.');
+    return true;
+  } catch (error) {
+    if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('Could not reach Cloud Firestore'))) {
+      console.info('ℹ️ Firestore operates in offline cache mode.');
+    }
+    return false;
   }
 }
-
-export const db: Firestore = createFirestoreInstance();
+testConnection();
 
 // ==========================================
 // 1. ADMISSION INQUIRIES
@@ -461,6 +476,27 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     console.warn('Realtime whatsapp groups listener warning:', err);
   }
 
+  // Realtime Teacher Exam Window Config Listener
+  try {
+    onSnapshot(
+      doc(db, 'settings', 'exam_window_config'),
+      (snap) => {
+        if (snap.exists() && snap.data()?.data) {
+          const cfg = snap.data().data;
+          localStorage.setItem('mdhss_exam_window_config', JSON.stringify(cfg));
+          if (typeof (window as any).applyExamWindowConfigToUI === 'function') {
+            (window as any).applyExamWindowConfigToUI(cfg);
+          }
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, 'settings/exam_window_config');
+      }
+    );
+  } catch (err) {
+    console.warn('Realtime exam window config listener warning:', err);
+  }
+
   // Realtime Marks Sheets Listener
   try {
     onSnapshot(
@@ -543,6 +579,9 @@ const mdhssCloud = {
 
       const waGroups = JSON.parse(localStorage.getItem('mdhss_whatsapp_groups') || 'null');
       if (waGroups && Array.isArray(waGroups)) await saveSettingToCloud('whatsapp_groups', waGroups);
+
+      const examWindow = JSON.parse(localStorage.getItem('mdhss_exam_window_config') || 'null');
+      if (examWindow) await saveSettingToCloud('exam_window_config', examWindow);
 
       return { success: true, admissions: admCount, feedbacks: fbCount, marks: msCount };
     } catch (e) {

@@ -171,6 +171,11 @@
         renderPublicWhatsAppGroups();
       }
 
+      // Initialize Exam Window & Result Time Limit Access Control
+      if (typeof applyExamWindowConfigToUI === 'function') {
+        applyExamWindowConfigToUI();
+      }
+
       // Initialize Professional SPA History & Back Button Controller
       initBrowserHistoryRouting();
     });
@@ -317,7 +322,7 @@
         document.querySelectorAll('.nav-link-btn').forEach(btn => btn.classList.remove('active-tab'));
         if (navHomeBtn) navHomeBtn.classList.add('active-tab');
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo(0, 0);
         return;
       }
 
@@ -366,21 +371,47 @@
       if (breadcrumbTitle) breadcrumbTitle.textContent = pageMeta.title;
       if (headerPill) headerPill.textContent = pageMeta.pill;
 
-      // Scroll to page top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to page top instantly without lag
+      window.scrollTo(0, 0);
     }
 
     function initBrowserHistoryRouting() {
       // Determine initial requested page from URL hash
+      let _lastHomeBackPressTime = 0;
+      let _exitToastTimer = null;
+
+      function showHomeExitNoticeToast() {
+        let toast = document.getElementById('homeExitNoticeToast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'homeExitNoticeToast';
+          toast.style.cssText = 'position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #ffffff; padding: 11px 22px; border-radius: 999px; font-size: 0.88rem; font-weight: 700; z-index: 9999999; box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1.5px solid #38bdf8; text-align: center; pointer-events: none; transition: all 0.25s ease; opacity: 0;';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = 'ℹ️ आप मुख्य पृष्ठ पर हैं। वेबसाइट से बाहर जाने के लिए तुरंत (2 सेकंड में) दोबारा बैक दबाएं।';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        clearTimeout(_exitToastTimer);
+        _exitToastTimer = setTimeout(() => {
+          if (toast) {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-50%) translateY(10px)';
+          }
+        }, 2200);
+      }
+      window.showHomeExitNoticeToast = showHomeExitNoticeToast;
+
       const initialHash = (window.location.hash || '').replace(/^#/, '').trim();
       
       if (initialHash && initialHash !== 'home' && (PAGE_TITLES[initialHash] || initialHash === 'teacher' || initialHash === 'admin')) {
         // Base state is home, then subpage
-        window.history.replaceState({ page: 'home' }, '', window.location.pathname + window.location.search);
+        window.history.replaceState({ page: 'home', root: true }, '', '#home');
         window.history.pushState({ page: initialHash }, '', '#' + initialHash);
         navigateToPage(initialHash, false);
       } else {
-        window.history.replaceState({ page: 'home' }, '', window.location.pathname + window.location.search);
+        // Ensure double-buffer so back button lands on home first without closing site
+        window.history.replaceState({ page: 'home', root: true }, '', '#home');
+        window.history.pushState({ page: 'home' }, '', '#home');
         window._currentAppPage = 'home';
       }
 
@@ -400,51 +431,65 @@
           return;
         }
 
-        // 3. Dismiss Admin Marks Modal if open
+        // 3. Dismiss Submit Confirm / Verification Modal if open
+        const confirmModal = document.getElementById('marksSubmitConfirmModal');
+        if (confirmModal && (confirmModal.style.display === 'flex' || getComputedStyle(confirmModal).display === 'flex')) {
+          closeMarksConfirmModal(true);
+          return;
+        }
+
+        // 4. Dismiss Admin Marks Modal if open
         const marksModal = document.getElementById('adminMarksDetailModal');
-        if (marksModal && marksModal.style.display !== 'none') {
-          closeAdminMarksModal();
+        if (marksModal && marksModal.style.display !== 'none' && getComputedStyle(marksModal).display !== 'none') {
+          closeAdminMarksModal(true);
           return;
         }
 
-        // 4. Dismiss Add Image Modal if open
+        // 5. Dismiss Add Image Modal if open
         const addImgModal = document.getElementById('addImageModal');
-        if (addImgModal && addImgModal.style.display !== 'none') {
-          closeAddImageModal();
+        if (addImgModal && addImgModal.style.display !== 'none' && getComputedStyle(addImgModal).display !== 'none') {
+          closeAddImageModal(true);
           return;
         }
 
-        // 5. Dismiss First Time Notice Modal if open
+        // 6. Dismiss First Time Notice Modal if open
         const firstNoticeModal = document.getElementById('firstTimeNoticeModal');
-        if (firstNoticeModal && firstNoticeModal.style.display !== 'none') {
-          closeFirstTimeNotice();
+        if (firstNoticeModal && firstNoticeModal.style.display !== 'none' && getComputedStyle(firstNoticeModal).display !== 'none') {
+          closeFirstTimeNotice(true);
           return;
         }
 
-        // 6. Dismiss Teacher Fee Result Card if open
+        // 7. Dismiss Roll Number List if open (keep teacher page, hide roll list)
+        const rollSec = document.getElementById('marksRollNumberSection');
+        if (rollSec && rollSec.style.display !== 'none' && getComputedStyle(rollSec).display !== 'none') {
+          hideMarksRollNumberList();
+          return;
+        }
+
+        // 8. If viewing a single student fee card and class roster was opened, go back to class roster
         const feeResultContainer = document.getElementById('teacherFeeResultContainer');
-        if (feeResultContainer && feeResultContainer.style.display === 'block') {
-          clearTeacherFeeSearch();
-          // If the previous state in history was teacher page itself, stay on teacher
-          if (e.state && e.state.page === 'teacher') {
-            return;
-          }
+        if (feeResultContainer && feeResultContainer.style.display === 'block' && window._lastFeeRosterClass) {
+          backToClassRoster();
+          return;
         }
 
-        // 7. Route to target page safely
-        let targetPage = 'home';
-        if (e.state && e.state.page) {
-          targetPage = e.state.page;
+        // 9. If on a subpage (e.g. teacher, admission, feedback, whatsapp, admin, etc.), navigate back to Home!
+        const currentAppPage = window._currentAppPage || 'home';
+        if (currentAppPage !== 'home') {
+          navigateToPage('home', false);
+          return;
+        }
+
+        // 10. If already on Home: Double-back to exit safeguard prevents accidental closing of website!
+        const now = Date.now();
+        if (now - _lastHomeBackPressTime < 2200) {
+          // User deliberately pressed back twice within 2.2 seconds: allow default browser exit
+          return;
         } else {
-          const hash = (window.location.hash || '').replace(/^#/, '').trim();
-          if (hash && (PAGE_TITLES[hash] || hash === 'teacher' || hash === 'admin')) {
-            targetPage = hash;
-          } else {
-            targetPage = 'home';
-          }
+          _lastHomeBackPressTime = now;
+          window.history.pushState({ page: 'home', root: true }, '', '#home');
+          showHomeExitNoticeToast();
         }
-
-        navigateToPage(targetPage, false);
       });
     }
 
@@ -798,9 +843,18 @@
       const btnFees = document.getElementById('tabTeacherFeesBtn');
 
       if (tabName === 'marks') {
+        if (typeof applyExamWindowConfigToUI === 'function') {
+          applyExamWindowConfigToUI();
+        }
+        if (typeof hideMarksRollNumberList === 'function') {
+          hideMarksRollNumberList();
+        }
+        if (typeof onMarksExamTypeChange === 'function') {
+          onMarksExamTypeChange();
+        }
         if (secMarks) {
           secMarks.style.display = 'block';
-          secMarks.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          secMarks.scrollIntoView({ behavior: 'auto', block: 'start' });
         }
         if (secAbsent) secAbsent.style.display = 'none';
         if (secFees) secFees.style.display = 'none';
@@ -827,7 +881,7 @@
         if (secMarks) secMarks.style.display = 'none';
         if (secAbsent) {
           secAbsent.style.display = 'block';
-          secAbsent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          secAbsent.scrollIntoView({ behavior: 'auto', block: 'start' });
         }
         if (secFees) secFees.style.display = 'none';
 
@@ -854,11 +908,11 @@
         if (secAbsent) secAbsent.style.display = 'none';
         if (secFees) {
           secFees.style.display = 'block';
-          secFees.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          secFees.scrollIntoView({ behavior: 'auto', block: 'start' });
           setTimeout(() => {
             const inp = document.getElementById('teacherFeeScholarInput');
             if (inp) inp.focus();
-          }, 200);
+          }, 50);
         }
 
         if (btnFees) {
@@ -905,6 +959,35 @@
     window._cachedStudentFeesRecords = null;
     window._currentFoundStudentFee = null;
     window._activeTeacherFeeTab = 'all';
+    window._studentFeesReportDate = '22-Sep-2026';
+
+    function cleanReportDateStr(raw) {
+      if (!raw) return '22-Sep-2026';
+      const str = String(raw).trim();
+      const match = str.match(/AS\s+ON\s+([A-Za-z0-9\-\.\/ ]+)/i);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+      return str.replace(/^["']|["']$/g, '').trim() || '22-Sep-2026';
+    }
+    window.cleanReportDateStr = cleanReportDateStr;
+
+    function getFeeReportDate() {
+      // 1. Live/in-memory date extracted from Excel/CSV sheet
+      if (window._studentFeesReportDate && typeof window._studentFeesReportDate === 'string' && window._studentFeesReportDate.trim()) {
+        return cleanReportDateStr(window._studentFeesReportDate);
+      }
+      // 2. Saved in localStorage
+      try {
+        const saved = localStorage.getItem('mdhss_fees_report_date');
+        if (saved && saved.trim()) {
+          return cleanReportDateStr(saved);
+        }
+      } catch (e) {}
+      // 3. Fallback: Exact date from the school's Excel fee sheet (22-Sep-2026, never current date!)
+      return '22-Sep-2026';
+    }
+    window.getFeeReportDate = getFeeReportDate;
 
     async function fetchStudentFeesSheetIfNeeded() {
       // 0. Instant offline packet access via window.MDHSS_STUDENT_FEES (works everywhere offline, netlify, github)
@@ -1050,6 +1133,18 @@
       const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
       const records = [];
 
+      // Extract update date from Excel row 1 / header line (e.g. "DUE FEE REPORT AS ON 22-Sep-2026")
+      if (lines.length > 0) {
+        const firstLine = lines[0];
+        const cols0 = parseCSVLine(firstLine);
+        const titleCol = (cols0[0] || '').trim();
+        if (titleCol && /AS\s+ON/i.test(titleCol)) {
+          const extractedDate = cleanReportDateStr(titleCol);
+          window._studentFeesReportDate = extractedDate;
+          try { localStorage.setItem('mdhss_fees_report_date', extractedDate); } catch (e) {}
+        }
+      }
+
       for (let i = 0; i < lines.length; i++) {
         const cols = parseCSVLine(lines[i]);
         if (cols.length < 5) continue;
@@ -1150,6 +1245,10 @@
           if (loadingEl) loadingEl.style.display = 'none';
           if (searchBtn) searchBtn.disabled = false;
           window._currentFoundStudentFee = exactScholarMatches[0];
+          const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+          if (classRosterContainer) classRosterContainer.style.display = 'none';
+          const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+          if (multiMatchContainer) multiMatchContainer.style.display = 'none';
           renderStudentFeeResult(exactScholarMatches[0]);
           return;
         } else if (exactScholarMatches.length > 1) {
@@ -1165,6 +1264,10 @@
           if (loadingEl) loadingEl.style.display = 'none';
           if (searchBtn) searchBtn.disabled = false;
           window._currentFoundStudentFee = scholarMatches[0];
+          const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+          if (classRosterContainer) classRosterContainer.style.display = 'none';
+          const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+          if (multiMatchContainer) multiMatchContainer.style.display = 'none';
           renderStudentFeeResult(scholarMatches[0]);
           return;
         } else if (scholarMatches.length > 1) {
@@ -1188,6 +1291,10 @@
 
         if (nameMatches.length === 1) {
           window._currentFoundStudentFee = nameMatches[0];
+          const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+          if (classRosterContainer) classRosterContainer.style.display = 'none';
+          const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+          if (multiMatchContainer) multiMatchContainer.style.display = 'none';
           renderStudentFeeResult(nameMatches[0]);
         } else if (nameMatches.length > 1) {
           renderMultiStudentMatches(nameMatches, rawQuery);
@@ -1259,6 +1366,7 @@
     // Handle Class Dropdown selection to view all students in that class
     async function handleClassFeeFilterChange(className) {
       const classVal = (className || '').trim();
+      window._lastFeeRosterClass = classVal;
       const emptyEl = document.getElementById('teacherFeeEmptyState');
       const errorEl = document.getElementById('teacherFeeError');
       const resultContainer = document.getElementById('teacherFeeResultContainer');
@@ -1347,6 +1455,18 @@
       }
     }
 
+    // Return back to Class Roster from Single Student Fee View
+    function backToClassRoster() {
+      const resultContainer = document.getElementById('teacherFeeResultContainer');
+      const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+      if (resultContainer) resultContainer.style.display = 'none';
+      if (classRosterContainer) {
+        classRosterContainer.style.display = 'block';
+        classRosterContainer.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+    }
+    window.backToClassRoster = backToClassRoster;
+
     // Select a student from Roster or Multi-match to view full fee slip
     async function selectStudentForFeeView(scholarNo) {
       if (!scholarNo) return;
@@ -1355,10 +1475,18 @@
         const student = records.find(r => r.scholarNo && r.scholarNo.trim() === scholarNo.trim());
         if (student) {
           window._currentFoundStudentFee = student;
+
+          // As requested by user: hide the class roster list and multi-match list so only this particular student's fee card is shown
+          const classRosterContainer = document.getElementById('teacherFeeClassRosterContainer');
+          if (classRosterContainer) classRosterContainer.style.display = 'none';
+          const multiMatchContainer = document.getElementById('teacherFeeMultiMatchContainer');
+          if (multiMatchContainer) multiMatchContainer.style.display = 'none';
+
           renderStudentFeeResult(student);
           const resContainer = document.getElementById('teacherFeeResultContainer');
           if (resContainer) {
-            resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            resContainer.style.display = 'block';
+            resContainer.scrollIntoView({ behavior: 'auto', block: 'start' });
           }
         } else {
           showTeacherFeeError('त्रुटि', 'छात्र रिकॉर्ड प्राप्त नहीं हुआ।');
@@ -1536,9 +1664,7 @@
       const model = buildTeacherFeeModel(student);
       const activeTab = window._activeTeacherFeeTab || 'all';
 
-      const now = new Date();
-      const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const reportDate = `${String(now.getDate()).padStart(2, '0')}-${monthsShort[now.getMonth()]}-${now.getFullYear()}`;
+      const reportDate = getFeeReportDate();
       const session = '2026-27';
 
       // Items filtered by activeTab
@@ -1574,17 +1700,20 @@
 
         return `
           <tr style="${rowBg} border-bottom: 1px solid #e2e8f0; transition: background 0.15s ease;">
-            <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: #64748b; font-family: monospace; width: 44px; border-right: 1px solid #e2e8f0;">${idx + 1}</td>
-            <td style="padding: 10px 14px; border-right: 1px solid #e2e8f0;">
-              <div style="font-weight: 800; color: #0f172a; font-size: 0.92rem;">${escapeHtml(item.nameHindi)}</div>
+            <td class="fee-col-sr" style="padding: 9px 8px; text-align: center; font-weight: 700; color: #64748b; font-family: monospace; width: 44px; border-right: 1px solid #e2e8f0;">${idx + 1}</td>
+            <td class="fee-col-desc" style="padding: 9px 12px; border-right: 1px solid #e2e8f0;">
+              <div style="font-weight: 800; color: #0f172a; font-size: 0.92rem; line-height: 1.3;">${escapeHtml(item.nameHindi)}</div>
               <div style="font-size: 0.78rem; color: #64748b; margin-top: 1px;">${escapeHtml(item.nameEnglish)}</div>
+              <span class="fee-category-mobile-badge" style="background: ${categoryBg}; color: ${categoryBadge}; padding: 2px 7px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">
+                ${escapeHtml(categoryHindi)}
+              </span>
             </td>
-            <td style="padding: 10px 14px; border-right: 1px solid #e2e8f0; width: 140px;">
+            <td class="fee-category-col" style="padding: 9px 12px; border-right: 1px solid #e2e8f0; width: 140px;">
               <span style="display: inline-block; background: ${categoryBg}; color: ${categoryBadge}; padding: 3px 8px; border-radius: 6px; font-size: 0.76rem; font-weight: 800;">
                 ${escapeHtml(categoryHindi)}
               </span>
             </td>
-            <td style="padding: 10px 14px; text-align: right; font-weight: 800; font-family: monospace; font-size: 1rem; color: ${amountColor}; width: 130px;">
+            <td class="fee-col-amt" style="padding: 9px 12px; text-align: right; font-weight: 800; font-family: monospace; font-size: 0.98rem; color: ${amountColor}; width: 130px;">
               ${item.amount < 0 ? '-' : ''}₹${Math.abs(item.amount).toLocaleString('en-IN')}
             </td>
           </tr>
@@ -1598,19 +1727,27 @@
       `;
 
       container.innerHTML = `
-        <div style="background: #ffffff; border: 2px solid #0d9488; border-radius: 18px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(13, 148, 136, 0.12); font-family: system-ui, -apple-system, sans-serif;">
+        <div class="fee-slip-card-container">
           
+          ${window._lastFeeRosterClass ? `
+          <div style="margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <button type="button" onclick="backToClassRoster()" class="btn-hero-sec" style="background: #f0fdfa; color: #0f766e; border: 1.5px solid #99f6e4; padding: 6px 14px; font-size: 0.88rem; font-weight: 800; cursor: pointer; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+              ⬅️ वापस कक्षा (${escapeHtml(window._lastFeeRosterClass)}) सूची देखें
+            </button>
+            <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">(कक्षा के अन्य विद्यार्थियों की सूची खोलने हेतु क्लिक करें)</span>
+          </div>` : ''}
+
           <!-- Netlify-style Top Segmented Filter Tabs -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 1.25rem; background: #f8fafc; padding: 6px; border-radius: 12px; border: 1.5px solid #e2e8f0;">
-            <button type="button" onclick="setTeacherFeeTab('all')" style="padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.2s ease; ${activeTab === 'all' ? 'background: #0d9488; color: #ffffff; box-shadow: 0 4px 12px rgba(13,148,136,0.3);' : 'background: transparent; color: #334155;'}">
+          <div class="fee-tabs-grid">
+            <button type="button" onclick="setTeacherFeeTab('all')" style="padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.2s ease; ${activeTab === 'all' ? 'background: #0d9488; color: #ffffff; box-shadow: 0 4px 12px rgba(13,148,136,0.3);' : 'background: transparent; color: #334155;'}">
               <span>📋 1. संपूर्ण शुल्क विवरण</span>
               <span style="font-size: 0.72rem; opacity: 0.9; font-weight: 700;">(कुल ₹${totalOutstanding.toLocaleString('en-IN')})</span>
             </button>
-            <button type="button" onclick="setTeacherFeeTab('current')" style="padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.2s ease; ${activeTab === 'current' ? 'background: #0d9488; color: #ffffff; box-shadow: 0 4px 12px rgba(13,148,136,0.3);' : 'background: transparent; color: #334155;'}">
+            <button type="button" onclick="setTeacherFeeTab('current')" style="padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.2s ease; ${activeTab === 'current' ? 'background: #0d9488; color: #ffffff; box-shadow: 0 4px 12px rgba(13,148,136,0.3);' : 'background: transparent; color: #334155;'}">
               <span>📅 2. वर्तमान सत्र (${session})</span>
               <span style="font-size: 0.72rem; opacity: 0.9; font-weight: 700;">(सत्र देय ₹${currentYearTotal.toLocaleString('en-IN')})</span>
             </button>
-            <button type="button" onclick="setTeacherFeeTab('prev_year')" style="padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; transition: all 0.2s ease; ${activeTab === 'prev_year' ? 'background: #d97706; color: #ffffff; box-shadow: 0 4px 12px rgba(217,119,6,0.3);' : prevYearTotal > 0 ? 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;' : 'background: transparent; color: #334155;'}">
+            <button type="button" onclick="setTeacherFeeTab('prev_year')" style="padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; transition: all 0.2s ease; ${activeTab === 'prev_year' ? 'background: #d97706; color: #ffffff; box-shadow: 0 4px 12px rgba(217,119,6,0.3);' : prevYearTotal > 0 ? 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;' : 'background: transparent; color: #334155;'}">
               ${prevYearTotal > 0 ? '<span style="position: absolute; top: -5px; right: -5px; background: #dc2626; color: #ffffff; border-radius: 999px; font-size: 0.65rem; padding: 2px 6px; font-weight: 900;">देय</span>' : ''}
               <span>⚠️ 3. गत वर्ष का पुराना बकाया</span>
               <span style="font-size: 0.72rem; opacity: 0.9; font-weight: 700;">(पुराना ₹${prevYearTotal.toLocaleString('en-IN')})</span>
@@ -1618,7 +1755,7 @@
           </div>
 
           <!-- Netlify-style 5 Key Summary Cards -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.25rem;">
+          <div class="fee-summary-cards-grid">
             <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 10px 12px; text-align: center;">
               <span style="font-size: 0.72rem; font-weight: 800; color: #065f46; display: block; text-transform: uppercase;">कुल देय शुल्क</span>
               <span style="font-size: 1.25rem; font-weight: 900; color: #047857; font-family: monospace; display: block; margin-top: 2px;">₹${totalOutstanding.toLocaleString('en-IN')}</span>
@@ -1655,7 +1792,7 @@
           ` : ''}
 
           <!-- Official School Due Fee Slip Box -->
-          <div id="officialFeeSlipPrintArea" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
+          <div id="officialFeeSlipPrintArea" class="fee-slip-inner-box">
             
             <!-- School Header with Codes -->
             <div style="border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 12px; text-align: center;">
@@ -1664,7 +1801,7 @@
                 <span style="background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4; padding: 2px 10px; border-radius: 999px; font-weight: 800;">सत्र: ${session}</span>
                 <span>संस्था कोड: <strong style="color: #0f172a; font-family: monospace;">322517</strong></span>
               </div>
-              <h3 style="margin: 4px 0 2px; color: #d93025; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.2px;">
+              <h3 style="margin: 4px 0 2px; color: #d93025; font-size: 1.3rem; font-weight: 900; letter-spacing: -0.2px;">
                 माँ दुर्गा उच्च. माध्य. विद्यालय सेमरिया, जिला-रीवा (म.प्र.)
               </h3>
               <div style="font-size: 0.78rem; color: #475569; font-weight: 600;">
@@ -1678,7 +1815,7 @@
             </div>
 
             <!-- Student 4-Field Info Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.85rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.85rem;">
               <div>
                 <span style="display: block; font-size: 0.72rem; color: #64748b; font-weight: 700;">विद्यार्थी का नाम:</span>
                 <strong style="color: #0f172a; font-size: 0.95rem; text-transform: uppercase;">${escapeHtml(model.studentName)}</strong>
@@ -1699,15 +1836,15 @@
               </div>
             </div>
 
-            <!-- Fee Head Items Table -->
-            <div style="overflow-x: auto; border: 1.5px solid #cbd5e1; border-radius: 10px;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+            <!-- Fee Head Items Table (Responsive - Zero Side Scrolling on Phones) -->
+            <div class="fee-table-wrap">
+              <table class="fee-table-main">
                 <thead>
                   <tr style="background: #1e293b; color: #ffffff; font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">
-                    <th style="padding: 10px 14px; width: 44px; text-align: center; border-right: 1px solid #334155;">क्र.</th>
-                    <th style="padding: 10px 14px; border-right: 1px solid #334155;">शुल्क का मद (Fee Head Description)</th>
-                    <th style="padding: 10px 14px; width: 140px; border-right: 1px solid #334155;">श्रेणी</th>
-                    <th style="padding: 10px 14px; width: 130px; text-align: right;">देय राशि (Due Amount)</th>
+                    <th class="fee-col-sr" style="padding: 10px 8px; width: 44px; text-align: center; border-right: 1px solid #334155;">क्र.</th>
+                    <th class="fee-col-desc" style="padding: 10px 12px; border-right: 1px solid #334155;">शुल्क का मद (Fee Particulars)</th>
+                    <th class="fee-category-col" style="padding: 10px 12px; width: 140px; border-right: 1px solid #334155;">श्रेणी</th>
+                    <th class="fee-col-amt" style="padding: 10px 12px; width: 120px; text-align: right;">देय राशि (₹)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1715,10 +1852,12 @@
                 </tbody>
                 <tfoot>
                   <tr style="background: #f0fdfa; border-top: 2px solid #0d9488; font-weight: 900;">
-                    <td colspan="3" style="padding: 12px 16px; text-align: right; color: #0f766e; font-size: 0.95rem;">
+                    <td class="fee-col-sr" style="padding: 10px 8px; text-align: center; color: #0f766e; border-right: 1px solid #ccfbf1;">★</td>
+                    <td class="fee-col-desc fee-footer-total-label" style="padding: 10px 12px; color: #0f766e; font-size: 0.92rem; border-right: 1px solid #ccfbf1;">
                       ${activeTab === 'all' ? 'कुल देय शुल्क (Total Outstanding Due):' : activeTab === 'current' ? 'वर्तमान सत्र देय शुल्क (Current Session Due):' : 'गत वर्ष कुल बकाया (Previous Year Dues):'}
                     </td>
-                    <td style="padding: 12px 16px; text-align: right; color: #0f766e; font-size: 1.2rem; font-family: monospace;">
+                    <td class="fee-category-col" style="padding: 10px 12px; border-right: 1px solid #ccfbf1;"></td>
+                    <td class="fee-col-amt" style="padding: 10px 12px; text-align: right; color: #0f766e; font-size: 1.15rem; font-family: monospace; font-weight: 900; white-space: nowrap;">
                       ₹${(activeTab === 'all' ? totalOutstanding : displayedSum).toLocaleString('en-IN')}
                     </td>
                   </tr>
@@ -1741,20 +1880,23 @@
             </div>
           </div>
 
-          <!-- Bottom Action Buttons -->
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <!-- Bottom Action Buttons (Mobile Optimized Full Width & Touch Friendly) -->
+          <div class="fee-actions-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
             <button type="button" class="btn-hero-sec" onclick="clearTeacherFeeSearch()" style="background: #f8fafc; color: #475569; border: 1.5px solid #cbd5e1; font-weight: 700; cursor: pointer; padding: 0.65rem 1.15rem; font-size: 0.9rem; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
               <span>✕</span> <span>बंद करें / नई खोज</span>
             </button>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button type="button" class="btn-hero-sec" onclick="copyStudentFeeDetails()" style="background: #f8fafc; color: #0f172a; border: 1.5px solid #cbd5e1; font-weight: 800; cursor: pointer; padding: 0.65rem 1.1rem; font-size: 0.9rem; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
-                <span>📋</span> <span>विवरण कॉपी करें</span>
+            <div class="fee-actions-buttons-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-hero-sec" onclick="copyStudentFeeDetails()" style="background: #f8fafc; color: #0f172a; border: 1.5px solid #cbd5e1; font-weight: 800; cursor: pointer; padding: 0.65rem 1rem; font-size: 0.88rem; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>📋</span> <span>विवरण कॉपी</span>
               </button>
-              <button type="button" class="btn-hero-sec" onclick="shareStudentFeeOnWhatsApp()" style="background: #25d366; color: #ffffff; border: none; font-weight: 800; cursor: pointer; padding: 0.65rem 1.25rem; font-size: 0.9rem; border-radius: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,211,102,0.3);">
-                <span>💬</span> <span>अभिभावक को WhatsApp पर भेजें</span>
+              <button type="button" class="btn-hero-sec" onclick="shareStudentFeeOnWhatsApp()" style="background: #25d366; color: #ffffff; border: none; font-weight: 800; cursor: pointer; padding: 0.65rem 1.15rem; font-size: 0.88rem; border-radius: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,211,102,0.3);">
+                <span>💬</span> <span>WhatsApp भेजें</span>
               </button>
-              <button type="button" class="btn-hero-sec" onclick="printStudentFeeSlip()" style="background: #0f766e; color: #ffffff; border: none; font-weight: 800; cursor: pointer; padding: 0.65rem 1.25rem; font-size: 0.9rem; border-radius: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(15,118,110,0.3);">
-                <span>🖨️</span> <span>शुल्क विवरण प्रिंट करें</span>
+              <button type="button" class="btn-hero-pri" onclick="downloadStudentFeeReceiptJpg()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; font-weight: 800; cursor: pointer; padding: 0.7rem 1.25rem; font-size: 0.92rem; border-radius: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(2,132,199,0.35);" title="मोबाइल गैलरी में सेव करने हेतु A4 साइज JPG इमेज डाउनलोड करें">
+                <span>📥</span> <span>रसीद JPG डाउनलोड (A4)</span>
+              </button>
+              <button type="button" class="btn-hero-sec" onclick="printStudentFeeSlip()" style="background: #0f766e; color: #ffffff; border: none; font-weight: 800; cursor: pointer; padding: 0.65rem 1.1rem; font-size: 0.88rem; border-radius: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(15,118,110,0.25);">
+                <span>🖨️</span> <span>प्रिंट करें</span>
               </button>
             </div>
           </div>
@@ -1771,9 +1913,7 @@
     function buildDetailedFeeWhatsAppText(student) {
       if (!student) return '';
       const model = buildTeacherFeeModel(student);
-      const now = new Date();
-      const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const reportDate = `${String(now.getDate()).padStart(2, '0')}-${monthsShort[now.getMonth()]}-${now.getFullYear()}`;
+      const reportDate = getFeeReportDate();
 
       // Build itemized breakdown lines
       const breakdownLines = [];
@@ -1893,19 +2033,217 @@
       }, 2500);
     }
 
+    async function downloadStudentFeeReceiptJpg(student) {
+      student = student || window._currentFoundStudentFee;
+      if (!student) {
+        alert('कृपया पहले किसी छात्र का शुल्क रिकॉर्ड खोजें!');
+        return;
+      }
+
+      if (typeof window.html2canvas !== 'function') {
+        const script = document.createElement('script');
+        script.src = 'js/html2canvas.min.js';
+        document.head.appendChild(script);
+        await new Promise((resolve) => { script.onload = resolve; setTimeout(resolve, 1000); });
+      }
+
+      if (typeof window.html2canvas !== 'function') {
+        alert('JPG रसीद जनरेटर लोड हो रहा है, कृपया 2 सेकंड बाद पुनः प्रयास करें अथवा प्रिंट विकल्प चुनें।');
+        return;
+      }
+
+      const model = buildTeacherFeeModel(student);
+      const reportDate = getFeeReportDate();
+      const session = '2026-27';
+
+      // Create an offscreen, pristine A4 canvas container (Width: 794px, proportional to A4 print standard)
+      const a4Box = document.createElement('div');
+      a4Box.id = 'tempA4FeeSlipCanvasContainer';
+      a4Box.style.cssText = 'position: fixed; left: -9999px; top: 0; width: 794px; min-height: 1123px; background: #ffffff; color: #0f172a; font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif; padding: 32px 36px; box-sizing: border-box; z-index: -9999;';
+
+      const itemsRowsHtml = model.items.map((item, idx) => {
+        const isDue = item.category === 'Dues' || item.id === 'prev_year_due' || item.id === 'april_old_due';
+        const isRenewal = item.id === 'renewable_fee' || item.id === 'admission_fee';
+        const bg = isDue ? '#fffbeb' : isRenewal ? '#f0fdf4' : idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+        const color = item.amount < 0 ? '#15803d' : isDue ? '#b45309' : '#0f172a';
+        return `
+          <tr style="background: ${bg}; border-bottom: 1px solid #cbd5e1;">
+            <td style="padding: 9px 12px; text-align: center; font-weight: 700; color: #64748b; font-family: monospace; border-right: 1px solid #cbd5e1; width: 44px;">${idx + 1}</td>
+            <td style="padding: 9px 14px; border-right: 1px solid #cbd5e1;">
+              <div style="font-weight: 800; color: #0f172a; font-size: 14px;">${escapeHtml(item.nameHindi)}</div>
+              <div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">${escapeHtml(item.nameEnglish)}</div>
+            </td>
+            <td style="padding: 9px 12px; border-right: 1px solid #cbd5e1; width: 140px;">
+              <span style="display: inline-block; background: #f1f5f9; color: #334155; padding: 2px 8px; border-radius: 4px; font-size: 11.5px; font-weight: 700;">
+                ${escapeHtml(item.category)}
+              </span>
+            </td>
+            <td style="padding: 9px 14px; text-align: right; font-weight: 800; font-family: monospace; font-size: 15px; color: ${color}; width: 130px;">
+              ${item.amount < 0 ? '-' : ''}₹${Math.abs(item.amount).toLocaleString('en-IN')}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      a4Box.innerHTML = `
+        <div style="border: 2px solid #0f766e; border-radius: 12px; padding: 24px; background: #ffffff;">
+          
+          <!-- Top Header Meta -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 14px;">
+            <div style="font-size: 12px; font-weight: 700; color: #334155;">
+              डाइस कोड (UDISE): <span style="font-family: monospace; color: #0f172a; font-weight: 900;">23140402055</span>
+            </div>
+            <div style="background: #0f766e; color: #ffffff; padding: 3px 14px; border-radius: 999px; font-size: 12px; font-weight: 900; letter-spacing: 0.5px;">
+              शैक्षणिक सत्र: ${session}
+            </div>
+            <div style="font-size: 12px; font-weight: 700; color: #334155;">
+              संस्था कोड (School Code): <span style="font-family: monospace; color: #0f172a; font-weight: 900;">322517</span>
+            </div>
+          </div>
+
+          <!-- School Name & Title -->
+          <div style="text-align: center; margin-bottom: 16px;">
+            <h1 style="margin: 0 0 4px 0; color: #b91c1c; font-size: 24px; font-weight: 900; letter-spacing: -0.3px;">
+              माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया
+            </h1>
+            <div style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">
+              Maa Durga Higher Secondary School, Semariya, District Rewa (M.P.) - 486445
+            </div>
+            <div style="font-size: 12px; color: #475569; font-weight: 600;">
+              मध्य प्रदेश शासन स्कूल शिक्षा विभाग द्वारा मान्यता प्राप्त • नर्सरी से 12वीं (कला, विज्ञान, वाणिज्य, कृषि)
+            </div>
+            <div style="margin-top: 10px;">
+              <span style="display: inline-block; background: #0f172a; color: #ffffff; padding: 5px 18px; border-radius: 999px; font-size: 12px; font-weight: 900; letter-spacing: 0.8px;">
+                OFFICIAL STUDENT DUE FEE RECEIPT (A4 FORMAT) • AS ON ${reportDate}
+              </span>
+            </div>
+          </div>
+
+          <!-- Student 4-Card Info Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+            <div>
+              <span style="font-size: 11.5px; color: #64748b; font-weight: 700; display: block;">विद्यार्थी का नाम (Student Name):</span>
+              <strong style="color: #0f172a; font-size: 15px; text-transform: uppercase;">${escapeHtml(model.studentName)}</strong>
+            </div>
+            <div>
+              <span style="font-size: 11.5px; color: #64748b; font-weight: 700; display: block;">पिता का नाम (Father's Name):</span>
+              <strong style="color: #334155; font-size: 14px; text-transform: uppercase;">${escapeHtml(model.fatherName)}</strong>
+            </div>
+            <div>
+              <span style="font-size: 11.5px; color: #64748b; font-weight: 700; display: block;">स्कॉलर नंबर (Scholar No):</span>
+              <strong style="color: #0284c7; font-family: monospace; font-size: 16px;">${escapeHtml(model.scholarNo)}</strong>
+            </div>
+            <div>
+              <span style="font-size: 11.5px; color: #64748b; font-weight: 700; display: block;">कक्षा (Class & Section):</span>
+              <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 10px; border-radius: 6px; font-size: 13px; font-weight: 800;">
+                ${escapeHtml(model.className)}
+              </span>
+            </div>
+          </div>
+
+          <!-- Particulars Table -->
+          <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #0f172a; margin-bottom: 14px;">
+            <thead>
+              <tr style="background: #1e293b; color: #ffffff; font-size: 12.5px; font-weight: 800; text-transform: uppercase;">
+                <th style="padding: 10px 12px; width: 44px; text-align: center; border-right: 1px solid #334155;">क्र.</th>
+                <th style="padding: 10px 14px; border-right: 1px solid #334155; text-align: left;">शुल्क का मद विवरण (Fee Particulars)</th>
+                <th style="padding: 10px 12px; width: 140px; border-right: 1px solid #334155; text-align: left;">श्रेणी</th>
+                <th style="padding: 10px 14px; width: 130px; text-align: right;">देय राशि (Due ₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsRowsHtml}
+            </tbody>
+            <tfoot>
+              <tr style="background: #0f766e; color: #ffffff; font-weight: 900; border-top: 2px solid #0f172a;">
+                <td style="padding: 12px 14px; text-align: center; font-size: 16px;">★</td>
+                <td colspan="2" style="padding: 12px 14px; font-size: 14.5px; letter-spacing: 0.3px;">
+                  कुल देय शुल्क (Total Outstanding Due Amount)
+                </td>
+                <td style="padding: 12px 14px; text-align: right; font-size: 18px; font-family: monospace;">
+                  ₹${model.grandTotal.toLocaleString('en-IN')}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Important Note -->
+          <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin-bottom: 18px; font-size: 11.5px; color: #92400e; line-height: 1.5;">
+            <strong>📌 महत्वपूर्ण सूचना:</strong> डेटा तुरंत अपडेट नहीं होता है। यदि आपने हाल ही में (आज अथवा कल) शुल्क जमा किया है, तो कृपया 1-2 दिन की प्रतीक्षा करें, डेटा स्वतः अपडेट हो जाएगा अथवा विद्यालय कार्यालय में संपर्क करें।
+          </div>
+
+          <!-- Signatures & Official Stamp Footer -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 18px; border-top: 1px dashed #cbd5e1; font-size: 11.5px; color: #475569;">
+            <div>
+              <div style="font-weight: 700; color: #0f172a;">माँ दुर्गा उ.मा. विद्यालय सेमरिया (रीवा म.प्र.)</div>
+              <div>कम्प्यूटर जनरेटेड अधिकृत देय रसीद | दिनांक: ${reportDate}</div>
+              <div style="color: #0369a1; font-weight: 700; margin-top: 2px;">हेल्पलाइन: 9200178385, 9669527633, 9516234519</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="border-bottom: 1px solid #94a3b8; width: 170px; margin-bottom: 6px;"></div>
+              <div style="font-weight: 800; color: #0f172a;">अधिकृत हस्ताक्षर / सील</div>
+              <div style="font-size: 10.5px; color: #64748b;">(Authorized Signatory)</div>
+            </div>
+          </div>
+
+        </div>
+      `;
+
+      document.body.appendChild(a4Box);
+      showCopyFeeToast('⏳ A4 साइज JPG रसीद तैयार की जा रही है...');
+
+      try {
+        const canvas = await window.html2canvas(a4Box, {
+          scale: 2, // 2x scale for sharp crystal clear 300 DPI text
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          windowWidth: 794
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const cleanName = (model.studentName || 'Student').trim().replace(/[^a-zA-Z0-9_\u0900-\u097F]/g, '_');
+        const fileName = `MaaDurga_FeeReceipt_${model.scholarNo}_${cleanName}_A4.jpg`;
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imgData;
+        downloadLink.download = fileName;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        showCopyFeeToast('✅ A4 साइज JPG शुल्क रसीद सफलतापूर्वक डाउनलोड हो गई!');
+      } catch (err) {
+        console.error('Error rendering A4 JPG slip:', err);
+        alert('JPG रसीद डाउनलोड करने में त्रुटि हुई। कृपया प्रिंट बटन का उपयोग करें।');
+      } finally {
+        if (a4Box.parentNode) {
+          a4Box.parentNode.removeChild(a4Box);
+        }
+      }
+    }
+    window.downloadStudentFeeReceiptJpg = downloadStudentFeeReceiptJpg;
+
     function printStudentFeeSlip() {
       const student = window._currentFoundStudentFee;
       if (!student) return;
 
+      const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        // Mobile users directly get high-quality A4 JPG download as requested!
+        downloadStudentFeeReceiptJpg(student);
+        return;
+      }
+
       const model = buildTeacherFeeModel(student);
-      const now = new Date();
-      const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const reportDate = `${String(now.getDate()).padStart(2, '0')}-${monthsShort[now.getMonth()]}-${now.getFullYear()}`;
+      const reportDate = getFeeReportDate();
       const session = '2026-27';
 
       const printWindow = window.open('', '_blank', 'width=850,height=750');
       if (!printWindow) {
-        alert('कृपया ब्राउज़र में पॉप-अप अनुमति दें ताकि शुल्क रसीद प्रिंट हो सके।');
+        // If popup blocked, fallback to A4 JPG download
+        downloadStudentFeeReceiptJpg(student);
         return;
       }
 
@@ -2118,21 +2456,496 @@
       }
     }
 
-    // Dynamic Monthly Test Month toggle and auto-fetch triggers
+    // ==========================================================================
+    // TEACHER EXAM RESULT ENTRY WINDOW & TIME LIMIT CONTROL
+    // ==========================================================================
+    const DEFAULT_EXAM_WINDOW_CONFIG = {
+      masterOpen: true,
+      onlyShowActiveExams: true,
+      exams: {
+        traimasik: {
+          id: 'traimasik',
+          name: 'त्रैमासिक परीक्षा 2026',
+          label: 'त्रैमासिक परीक्षा (Quarterly Exam)',
+          enabled: true,
+          startDate: '2026-09-22',
+          endDate: '2026-10-15',
+          note: 'त्रैमासिक परीक्षा 2026 अंक प्रविष्टि विंडो'
+        },
+        ardhvarshik: {
+          id: 'ardhvarshik',
+          name: 'अर्धवार्षिक परीक्षा 2026',
+          label: 'अर्धवार्षिक परीक्षा (Half-Yearly)',
+          enabled: false,
+          startDate: '2026-11-15',
+          endDate: '2026-12-10',
+          note: 'अर्धवार्षिक परीक्षा 2026 अंक प्रविष्टि विंडो'
+        },
+        monthly: {
+          id: 'monthly',
+          name: 'मासिक यूनिट टेस्ट',
+          label: 'मासिक यूनिट टेस्ट (Monthly Test)',
+          enabled: false,
+          startDate: '2026-08-01',
+          endDate: '2026-08-20',
+          note: 'मासिक टेस्ट अंक प्रविष्टि विंडो'
+        },
+        preboard: {
+          id: 'preboard',
+          name: 'प्री-बोर्ड परीक्षा 2027',
+          label: 'प्री-बोर्ड परीक्षा (Pre-Board)',
+          enabled: false,
+          startDate: '2027-01-05',
+          endDate: '2027-01-25',
+          note: 'प्री-बोर्ड 2027 अंक प्रविष्टि विंडो'
+        },
+        varshik: {
+          id: 'varshik',
+          name: 'वार्षिक मुख्य परीक्षा 2027',
+          label: 'वार्षिक मुख्य परीक्षा (Annual Exam)',
+          enabled: false,
+          startDate: '2027-02-20',
+          endDate: '2027-03-25',
+          note: 'वार्षिक मुख्य परीक्षा 2027 अंक प्रविष्टि विंडो'
+        }
+      },
+      lastUpdated: new Date().toISOString()
+    };
+
+    function getExamWindowConfig() {
+      try {
+        const stored = localStorage.getItem('mdhss_exam_window_config');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.exams) {
+            return {
+              ...DEFAULT_EXAM_WINDOW_CONFIG,
+              ...parsed,
+              exams: { ...DEFAULT_EXAM_WINDOW_CONFIG.exams, ...parsed.exams }
+            };
+          }
+        }
+      } catch (e) {}
+      return DEFAULT_EXAM_WINDOW_CONFIG;
+    }
+    window.getExamWindowConfig = getExamWindowConfig;
+
+    function calculateExamStatus(examCfg, masterOpen) {
+      if (!masterOpen) {
+        return { status: 'locked', label: '🔒 मास्टर लॉक (बंद)', isOpen: false, class: 'locked' };
+      }
+      if (!examCfg.enabled) {
+        return { status: 'disabled', label: '🔒 व्यवस्थापक द्वारा बंद / फ्रीज', isOpen: false, class: 'locked' };
+      }
+
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+      if (examCfg.startDate && todayStr < examCfg.startDate) {
+        return {
+          status: 'upcoming',
+          label: `⏳ आगामी (${formatDateHi(examCfg.startDate)} से)`,
+          isOpen: false,
+          class: 'upcoming'
+        };
+      }
+      if (examCfg.endDate && todayStr > examCfg.endDate) {
+        return {
+          status: 'expired',
+          label: `🛑 समय समाप्त (${formatDateHi(examCfg.endDate)} को बंद)`,
+          isOpen: false,
+          class: 'expired'
+        };
+      }
+      return {
+        status: 'active',
+        label: `🟢 सक्रिय (वैध: ${formatDateHi(examCfg.endDate)} तक)`,
+        isOpen: true,
+        class: 'active'
+      };
+    }
+    window.calculateExamStatus = calculateExamStatus;
+
+    function formatDateHi(dateStr) {
+      if (!dateStr) return '';
+      try {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const monthsHi = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+          const mIdx = parseInt(parts[1], 10) - 1;
+          return `${parseInt(parts[2], 10)} ${monthsHi[mIdx] || parts[1]} ${parts[0]}`;
+        }
+      } catch (e) {}
+      return dateStr;
+    }
+
+    function applyExamWindowConfigToUI(config) {
+      config = config || getExamWindowConfig();
+      const masterOpen = config.masterOpen !== false;
+      const onlyShowActive = config.onlyShowActiveExams !== false;
+
+      const examSelect = document.getElementById('marksExamTypeSelect');
+      const banner = document.getElementById('teacherMarksWindowBanner');
+      const lockedNotice = document.getElementById('teacherMarksLockedNotice');
+      const lockedText = document.getElementById('teacherMarksLockedNoticeText');
+      const btnSaveMarks = document.getElementById('btnSaveMarksUpload');
+
+      const examEntries = Object.values(config.exams || {});
+      const activeExams = [];
+      const allStatuses = {};
+
+      examEntries.forEach(ex => {
+        const st = calculateExamStatus(ex, masterOpen);
+        allStatuses[ex.id] = st;
+        if (st.isOpen) {
+          activeExams.push(ex);
+        }
+      });
+
+      // Update dropdown options
+      if (examSelect) {
+        const prevValue = examSelect.value;
+        examSelect.innerHTML = '';
+
+        if (!masterOpen || activeExams.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.disabled = true;
+          opt.selected = true;
+          opt.textContent = '⚠️ वर्तमान में कोई परीक्षा प्रविष्टि सक्रिय नहीं है (All Closed)';
+          examSelect.appendChild(opt);
+        } else {
+          // If onlyShowActive is true: ONLY append active exams (User requested: "saath hi jiska option open karoo usi bass ka open ho baki hide rahe")
+          const examsToShow = onlyShowActive ? activeExams : examEntries;
+          examsToShow.forEach(ex => {
+            const st = allStatuses[ex.id];
+            const opt = document.createElement('option');
+            opt.value = ex.name;
+            opt.textContent = ex.label + (st.isOpen ? '' : ' (🔒 बंद)');
+            if (!st.isOpen) opt.disabled = true;
+            examSelect.appendChild(opt);
+          });
+
+          if (activeExams.some(e => e.name === prevValue)) {
+            examSelect.value = prevValue;
+          } else if (activeExams.length > 0) {
+            examSelect.value = activeExams[0].name;
+          }
+        }
+      }
+
+      // Update banner & locked notice
+      if (!masterOpen || activeExams.length === 0) {
+        if (banner) banner.innerHTML = '';
+        if (lockedNotice) {
+          lockedNotice.style.display = 'block';
+          const detailsList = examEntries.map(e => `• <strong>${escapeHtml(e.label)}:</strong> ${e.startDate ? formatDateHi(e.startDate) : '-'} से ${e.endDate ? formatDateHi(e.endDate) : '-'}`).join('<br>');
+          if (lockedText) {
+            lockedText.innerHTML = `व्यवस्थापक द्वारा वर्तमान में अंक प्रविष्टि बंद / फ्रीज है अथवा निर्धारित समय-सीमा समाप्त हो चुकी है।<br><div style="margin-top:6px; font-weight:700;">निर्धारित परीक्षा तिथियां:</div><div style="font-size:0.84rem; margin-top:2px; line-height: 1.6;">${detailsList}</div>`;
+          }
+        }
+        if (btnSaveMarks) {
+          btnSaveMarks.disabled = true;
+          btnSaveMarks.style.opacity = '0.5';
+          btnSaveMarks.style.cursor = 'not-allowed';
+          btnSaveMarks.title = 'अंक प्रविष्टि विंडो बंद है';
+        }
+      } else {
+        if (lockedNotice) lockedNotice.style.display = 'none';
+        if (btnSaveMarks) {
+          btnSaveMarks.disabled = false;
+          btnSaveMarks.style.opacity = '1';
+          btnSaveMarks.style.cursor = 'pointer';
+          btnSaveMarks.title = '';
+        }
+
+        if (banner) {
+          const activeListText = activeExams.map(e => `<strong>${escapeHtml(e.label)}</strong> (${formatDateHi(e.startDate)} से ${formatDateHi(e.endDate)})`).join(', ');
+          banner.innerHTML = `
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: #15803d;">
+                <span style="font-size: 1.2rem;">🟢</span>
+                <span><strong>सक्रिय अंक प्रविष्टि:</strong> ${activeListText}</span>
+              </div>
+              <span style="background: #dcfce7; color: #166534; padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; border: 1px solid #bbf7d0;">
+                ✓ प्रविष्टि खुली है
+              </span>
+            </div>
+          `;
+        }
+      }
+
+      if (typeof onMarksExamTypeChange === 'function') {
+        onMarksExamTypeChange();
+      }
+    }
+    window.applyExamWindowConfigToUI = applyExamWindowConfigToUI;
+
+    function checkExamEntryAllowed(examTypeName) {
+      const config = getExamWindowConfig();
+      if (config.masterOpen === false) {
+        return { allowed: false, reason: 'मास्टर नियंत्रण द्वारा सभी परीक्षाओं में अंक प्रविष्टि वर्तमान में बंद / फ्रीज है।' };
+      }
+      const examEntries = Object.values(config.exams || {});
+      const matchedExam = examEntries.find(e => e.name === examTypeName || (examTypeName && examTypeName.includes(e.name)) || (examTypeName && e.name.includes(examTypeName)));
+      if (!matchedExam) {
+        return { allowed: true };
+      }
+      const st = calculateExamStatus(matchedExam, true);
+      if (!st.isOpen) {
+        return {
+          allowed: false,
+          reason: `⚠️ ${matchedExam.label} में अंक प्रविष्टि की अनुमति नहीं है।\nस्थिति: ${st.label}`
+        };
+      }
+      return { allowed: true };
+    }
+    window.checkExamEntryAllowed = checkExamEntryAllowed;
+
+    function renderAdminExamWindowConfig() {
+      const container = document.getElementById('adminExamWindowsContainer');
+      if (!container) return;
+
+      const config = getExamWindowConfig();
+      const masterOpen = config.masterOpen !== false;
+      const masterEl = document.getElementById('examWindowMasterOpen');
+      if (masterEl) masterEl.checked = masterOpen;
+      const onlyActiveEl = document.getElementById('examWindowOnlyActive');
+      if (onlyActiveEl) onlyActiveEl.checked = config.onlyShowActiveExams !== false;
+
+      const examEntries = Object.values(config.exams || {});
+
+      container.innerHTML = examEntries.map(ex => {
+        const st = calculateExamStatus(ex, masterOpen);
+        const isActiveClass = st.isOpen ? 'is-active' : 'is-locked';
+
+        return `
+          <div class="exam-window-card ${isActiveClass}" id="examCard_${ex.id}">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <h4 style="margin: 0; font-size: 1.12rem; font-weight: 800; color: #0f172a;">
+                    ${escapeHtml(ex.label)}
+                  </h4>
+                  <span class="exam-window-status-pill ${st.class}">
+                    ${escapeHtml(st.label)}
+                  </span>
+                </div>
+                <div style="font-size: 0.82rem; color: #64748b; margin-top: 3px;">
+                  आधिकारिक नाम: <span style="font-family: monospace; font-weight: 700; color: #0284c7;">${escapeHtml(ex.name)}</span>
+                </div>
+              </div>
+
+              <!-- Switch Toggle -->
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #ffffff; padding: 6px 12px; border-radius: 8px; border: 1.5px solid ${ex.enabled ? '#86efac' : '#cbd5e1'};">
+                <input type="checkbox" id="examToggle_${ex.id}" ${ex.enabled ? 'checked' : ''} onchange="updateExamCardState('${ex.id}')" style="width: 17px; height: 17px; cursor: pointer; accent-color: #10b981;" />
+                <span id="examToggleLabel_${ex.id}" style="font-size: 0.88rem; font-weight: 800; color: ${ex.enabled ? '#15803d' : '#64748b'};">
+                  ${ex.enabled ? '🟢 विकल्प चालू (Open)' : '🔒 विकल्प फ्रीज (Closed)'}
+                </span>
+              </label>
+            </div>
+
+            <!-- Date Range Inputs -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">
+                  📅 प्रारंभ तिथि (Start Date):
+                </label>
+                <input type="date" id="examStart_${ex.id}" value="${ex.startDate || ''}" onchange="updateExamCardState('${ex.id}')" class="form-input-custom" style="padding: 0.5rem 0.75rem; font-weight: 700; font-size: 0.88rem;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">
+                  🏁 अंतिम तिथि (End Date):
+                </label>
+                <input type="date" id="examEnd_${ex.id}" value="${ex.endDate || ''}" onchange="updateExamCardState('${ex.id}')" class="form-input-custom" style="padding: 0.5rem 0.75rem; font-weight: 700; font-size: 0.88rem;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">
+                  📝 विवरण / टिप्पणी (Note for Teachers):
+                </label>
+                <input type="text" id="examNote_${ex.id}" value="${escapeHtml(ex.note || '')}" placeholder="उदा. कक्षा 1 से 12वीं तक अंक प्रविष्टि" class="form-input-custom" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;" />
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    window.renderAdminExamWindowConfig = renderAdminExamWindowConfig;
+
+    function updateExamCardState(examId) {
+      const toggle = document.getElementById(`examToggle_${examId}`);
+      const label = document.getElementById(`examToggleLabel_${examId}`);
+      const card = document.getElementById(`examCard_${examId}`);
+      if (toggle && label) {
+        label.textContent = toggle.checked ? '🟢 विकल्प चालू (Open)' : '🔒 विकल्प फ्रीज (Closed)';
+        label.style.color = toggle.checked ? '#15803d' : '#64748b';
+      }
+      if (card && toggle) {
+        if (toggle.checked) {
+          card.classList.add('is-active');
+          card.classList.remove('is-locked');
+        } else {
+          card.classList.remove('is-active');
+          card.classList.add('is-locked');
+        }
+      }
+    }
+    window.updateExamCardState = updateExamCardState;
+
+    function toggleExamMasterSwitch(checked) {
+      const config = getExamWindowConfig();
+      config.masterOpen = checked;
+      renderAdminExamWindowConfig();
+    }
+    window.toggleExamMasterSwitch = toggleExamMasterSwitch;
+
+    function onExamWindowOptionChange() {
+      // live toggle update
+    }
+    window.onExamWindowOptionChange = onExamWindowOptionChange;
+
+    async function saveExamWindowSettings() {
+      const config = getExamWindowConfig();
+      const masterEl = document.getElementById('examWindowMasterOpen');
+      const onlyActiveEl = document.getElementById('examWindowOnlyActive');
+
+      config.masterOpen = masterEl ? masterEl.checked : true;
+      config.onlyShowActiveExams = onlyActiveEl ? onlyActiveEl.checked : true;
+
+      const examKeys = Object.keys(config.exams || {});
+      examKeys.forEach(key => {
+        const toggleEl = document.getElementById(`examToggle_${key}`);
+        const startEl = document.getElementById(`examStart_${key}`);
+        const endEl = document.getElementById(`examEnd_${key}`);
+        const noteEl = document.getElementById(`examNote_${key}`);
+
+        if (toggleEl) config.exams[key].enabled = toggleEl.checked;
+        if (startEl) config.exams[key].startDate = startEl.value;
+        if (endEl) config.exams[key].endDate = endEl.value;
+        if (noteEl) config.exams[key].note = noteEl.value.trim();
+      });
+
+      config.lastUpdated = new Date().toISOString();
+
+      localStorage.setItem('mdhss_exam_window_config', JSON.stringify(config));
+
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        try {
+          await window.mdhssCloud.saveSetting('exam_window_config', config);
+        } catch (e) {
+          console.warn('Cloud save exam window warning:', e);
+        }
+      }
+
+      applyExamWindowConfigToUI(config);
+      renderAdminExamWindowConfig();
+
+      const badge = document.getElementById('examWindowSaveBadge');
+      if (badge) {
+        badge.style.display = 'inline-block';
+        setTimeout(() => { badge.style.display = 'none'; }, 4000);
+      }
+    }
+    window.saveExamWindowSettings = saveExamWindowSettings;
+
+    function applyExamWindowPreset(presetKey) {
+      const config = getExamWindowConfig();
+      config.masterOpen = true;
+      config.onlyShowActiveExams = true;
+
+      if (presetKey === 'traimasik_2026') {
+        // User requested: "man lo mai traimasik ka result chadhane me daal doo ki 22 September 2026 se 15 October 2026 tak option open rahe to tabhi tak teacher result chadha sake baki option freeze rahe saath hi jiska option open karoo usi bass ka open ho baki hide rahe"
+        Object.keys(config.exams).forEach(k => {
+          if (k === 'traimasik') {
+            config.exams[k].enabled = true;
+            config.exams[k].startDate = '2026-09-22';
+            config.exams[k].endDate = '2026-10-15';
+          } else {
+            config.exams[k].enabled = false;
+          }
+        });
+      } else if (presetKey === 'ardhvarshik') {
+        Object.keys(config.exams).forEach(k => {
+          if (k === 'ardhvarshik') {
+            config.exams[k].enabled = true;
+            config.exams[k].startDate = '2026-11-15';
+            config.exams[k].endDate = '2026-12-10';
+          } else {
+            config.exams[k].enabled = false;
+          }
+        });
+      } else if (presetKey === 'varshik') {
+        Object.keys(config.exams).forEach(k => {
+          if (k === 'varshik') {
+            config.exams[k].enabled = true;
+            config.exams[k].startDate = '2027-02-20';
+            config.exams[k].endDate = '2027-03-25';
+          } else {
+            config.exams[k].enabled = false;
+          }
+        });
+      } else if (presetKey === 'freeze_all') {
+        config.masterOpen = false;
+        Object.keys(config.exams).forEach(k => {
+          config.exams[k].enabled = false;
+        });
+      }
+
+      localStorage.setItem('mdhss_exam_window_config', JSON.stringify(config));
+      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+        window.mdhssCloud.saveSetting('exam_window_config', config);
+      }
+
+      applyExamWindowConfigToUI(config);
+      renderAdminExamWindowConfig();
+
+      const badge = document.getElementById('examWindowSaveBadge');
+      if (badge) {
+        badge.textContent = '⚡ प्रीसेट तुरंत लागू हो गया!';
+        badge.style.display = 'inline-block';
+        setTimeout(() => {
+          badge.style.display = 'none';
+          badge.textContent = '✅ परीक्षा समय-सीमा सेटिंग्स सुरक्षित हो गईं व तुरंत लागू हो गईं!';
+        }, 3500);
+      }
+    }
+    window.applyExamWindowPreset = applyExamWindowPreset;
+
+    function resetDefaultExamWindows() {
+      if (confirm('क्या आप परीक्षा समय-सीमा को मूल डिफ़ॉल्ट सेटिंग्स (त्रैमासिक परीक्षा 2026 खुली) पर रीसेट करना चाहते हैं?')) {
+        const config = JSON.parse(JSON.stringify(DEFAULT_EXAM_WINDOW_CONFIG));
+        localStorage.setItem('mdhss_exam_window_config', JSON.stringify(config));
+        if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+          window.mdhssCloud.saveSetting('exam_window_config', config);
+        }
+        applyExamWindowConfigToUI(config);
+        renderAdminExamWindowConfig();
+        alert('✅ डिफ़ॉल्ट सेटिंग्स बहाल कर दी गईं!');
+      }
+    }
+    window.resetDefaultExamWindows = resetDefaultExamWindows;
+
+    // Dynamic Monthly Test Month toggle and auto-fetch triggers (Strictly ONLY for Monthly Test)
     function onMarksExamTypeChange() {
       const examSelect = document.getElementById('marksExamTypeSelect');
       const monthContainer = document.getElementById('marksMonthContainer');
-      const val = examSelect ? examSelect.value : '';
+      const val = examSelect ? (examSelect.value || '').trim() : '';
 
-      if (val.includes('मासिक') || val.includes('Monthly')) {
-        if (monthContainer) monthContainer.style.display = 'block';
-      } else {
-        if (monthContainer) monthContainer.style.display = 'none';
+      // User requirement: "माह चुनें (Select Month) yah kebal jab masik test kare tab Bass aae baki exam result chadhane me n aae"
+      const isMonthly = val !== '' && (val.includes('मासिक') || val.includes('Monthly') || val.toLowerCase().includes('unit test'));
+
+      if (monthContainer) {
+        if (isMonthly) {
+          monthContainer.style.setProperty('display', 'block', 'important');
+        } else {
+          monthContainer.style.setProperty('display', 'none', 'important');
+        }
       }
 
       updateMarksSeriesInfo();
       checkAndAutoFetchExistingMarks();
     }
+    window.onMarksExamTypeChange = onMarksExamTypeChange;
 
     function onMarksMonthChange() {
       updateMarksSeriesInfo();
@@ -2264,7 +3077,7 @@
               if (input) {
                 const savedVal = studentMap.has(i) ? studentMap.get(i) : (studentMap.has(rollNo) ? studentMap.get(rollNo) : '');
                 input.value = (savedVal !== undefined && savedVal !== null) ? savedVal : '';
-                handleMarksInputChanged(i);
+                handleMarksInputChanged(i, true);
               }
             }
           }
@@ -2295,6 +3108,53 @@
         console.warn('Auto fetch marks notice:', err);
       }
     }
+
+    // Toggle / Show / Hide Roll Number List (User Request: Roll list hidden by default until Subject & Class filled, opened by button)
+    function toggleMarksRollNumberList() {
+      const rollSec = document.getElementById('marksRollNumberSection');
+      if (!rollSec) return;
+      const isHidden = (rollSec.style.display === 'none' || getComputedStyle(rollSec).display === 'none');
+      if (isHidden) {
+        const subject = (document.getElementById('marksSubjectInput')?.value || '').trim();
+        if (!subject) {
+          alert('⚠️ कृपया पहले विषय का नाम (Subject Name) भरें!');
+          const subjInput = document.getElementById('marksSubjectInput');
+          if (subjInput) subjInput.focus();
+          return;
+        }
+        showMarksRollNumberList();
+      } else {
+        hideMarksRollNumberList();
+      }
+    }
+    window.toggleMarksRollNumberList = toggleMarksRollNumberList;
+
+    function showMarksRollNumberList() {
+      const rollSec = document.getElementById('marksRollNumberSection');
+      const btn = document.getElementById('btnToggleMarksRollList');
+      if (rollSec) {
+        rollSec.style.display = 'block';
+        rollSec.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+      if (btn) {
+        btn.innerHTML = '🔒 रोल नंबर लिस्ट छिपाएं (Hide Roll List)';
+        btn.style.background = '#475569';
+      }
+    }
+    window.showMarksRollNumberList = showMarksRollNumberList;
+
+    function hideMarksRollNumberList() {
+      const rollSec = document.getElementById('marksRollNumberSection');
+      const btn = document.getElementById('btnToggleMarksRollList');
+      if (rollSec) {
+        rollSec.style.display = 'none';
+      }
+      if (btn) {
+        btn.innerHTML = '📂 रोल नंबर लिस्ट खोलें (Open Roll Number List)';
+        btn.style.background = '#0284c7';
+      }
+    }
+    window.hideMarksRollNumberList = hideMarksRollNumberList;
 
     function generateMarksGrid() {
       const tbody = document.getElementById('marksGridTableBody');
@@ -2336,7 +3196,7 @@
           nextInput.select();
           const nextRow = document.getElementById(`marks-row-${nextIndex}`);
           if (nextRow) {
-            nextRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            nextRow.scrollIntoView({ behavior: 'auto', block: 'nearest' });
           }
         }
       } else if (e.key === 'ArrowDown') {
@@ -2360,7 +3220,16 @@
       }
     }
 
-    function handleMarksInputChanged(index) {
+    let _marksStatsRaf = null;
+    function scheduleMarksStatsUpdate() {
+      if (_marksStatsRaf) return;
+      _marksStatsRaf = requestAnimationFrame(() => {
+        _marksStatsRaf = null;
+        updateMarksStatsDisplay();
+      });
+    }
+
+    function handleMarksInputChanged(index, skipStats = false) {
       const input = document.getElementById(`grid-marks-${index}`);
       const statusCell = document.getElementById(`grid-status-cell-${index}`);
       if (!input || !statusCell) return;
@@ -2385,7 +3254,9 @@
           }
         }
       }
-      updateMarksStatsDisplay();
+      if (!skipStats) {
+        scheduleMarksStatsUpdate();
+      }
     }
 
     function setRowAsAbsent(index) {
@@ -2449,8 +3320,9 @@
 
     function recalculateAllMarksRowStats() {
       for (let i = 1; i <= 99; i++) {
-        handleMarksInputChanged(i);
+        handleMarksInputChanged(i, true);
       }
+      updateMarksStatsDisplay();
     }
 
     function jumpToStudentRow() {
@@ -2464,7 +3336,7 @@
       const targetInput = document.getElementById(`grid-marks-${rollNum}`);
       const targetRow = document.getElementById(`marks-row-${rollNum}`);
       if (targetRow && targetInput) {
-        targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetRow.scrollIntoView({ behavior: 'auto', block: 'center' });
         targetInput.focus();
         targetInput.select();
       }
@@ -2494,7 +3366,7 @@
       if (autoFetchNotice) autoFetchNotice.style.display = 'none';
     }
 
-    // Submit Complete Marks Sheet Handler
+    // Submit Complete Marks Sheet Handler - Opens Mobile Preview / Verification Modal First
     function submitFullMarksSheet() {
       const sessionData = sessionStorage.getItem('mdhss_teacher_session');
       let teacherName = 'शिक्षक (Staff)';
@@ -2508,6 +3380,13 @@
       }
 
       const examType = document.getElementById('marksExamTypeSelect')?.value || 'त्रैमासिक परीक्षा 2026';
+      if (typeof checkExamEntryAllowed === 'function') {
+        const check = checkExamEntryAllowed(examType);
+        if (!check.allowed) {
+          alert(check.reason || '⚠️ इस परीक्षा का परिणाम दर्ज करने की समय-सीमा समाप्त अथवा व्यवस्थापक द्वारा बंद है!');
+          return;
+        }
+      }
       const isMonthly = examType.includes('मासिक') || examType.includes('Monthly');
       const monthVal = isMonthly ? (document.getElementById('marksMonthSelect')?.value || '') : '';
       const clsInfo = getSelectedClassInfo();
@@ -2524,7 +3403,7 @@
         return;
       }
 
-      // Collect all 99 student entries
+      // Collect all 99 student entries & calculate statistics
       const students = [];
       let enteredCount = 0;
       let passCount = 0;
@@ -2535,7 +3414,7 @@
         const rollNo = computeRollNumber(i);
         let marksVal = (document.getElementById(`grid-marks-${i}`)?.value || '').trim();
 
-        // If blank, automatically record as Absent (AB) as requested
+        // If blank, automatically record as Absent (AB)
         if (marksVal === '') {
           marksVal = 'AB';
         }
@@ -2569,6 +3448,77 @@
           status: status
         });
       }
+
+      // Store pending payload for final submission
+      window._pendingMarksPayload = {
+        examType,
+        monthVal,
+        isMonthly,
+        clsInfo,
+        secInfo,
+        className,
+        section,
+        subject,
+        maxMarks,
+        passMarks,
+        teacherName,
+        teacherPhone,
+        enteredCount,
+        passCount,
+        failCount,
+        absentCount,
+        students
+      };
+
+      // Populate Mobile Verification & Preview Modal fields
+      const modal = document.getElementById('marksSubmitConfirmModal');
+      const prevClass = document.getElementById('prevModalClassSec');
+      const prevSub = document.getElementById('prevModalSubject');
+      const prevExam = document.getElementById('prevModalExam');
+      const prevMaxPass = document.getElementById('prevModalMaxPass');
+      const prevPass = document.getElementById('prevModalPass');
+      const prevFail = document.getElementById('prevModalFail');
+      const prevAbsent = document.getElementById('prevModalAbsent');
+
+      if (prevClass) prevClass.textContent = `${className} (${section})`;
+      if (prevSub) prevSub.textContent = subject;
+      if (prevExam) prevExam.textContent = isMonthly && monthVal ? `${examType} - ${monthVal}` : examType;
+      if (prevMaxPass) prevMaxPass.textContent = `पूर्णांक: ${maxMarks} | उत्तीर्णांक: ${passMarks}`;
+      if (prevPass) prevPass.textContent = passCount;
+      if (prevFail) prevFail.textContent = failCount;
+      if (prevAbsent) prevAbsent.textContent = absentCount;
+
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        if (confirm(`क्या आप ${className} (${section}) विषय: ${subject} के अंक अंतिम रूप से सबमिट करना चाहते हैं?`)) {
+          executeFinalMarksSubmission();
+        }
+      }
+    }
+    window.submitFullMarksSheet = submitFullMarksSheet;
+
+    function closeMarksConfirmModal(fromPopState = false) {
+      const modal = document.getElementById('marksSubmitConfirmModal');
+      if (modal) modal.style.display = 'none';
+      if (!fromPopState && window.history.state && window.history.state.modal === 'marksSubmitConfirm') {
+        window.history.back();
+      }
+    }
+    window.closeMarksConfirmModal = closeMarksConfirmModal;
+
+    // Final Save Execution after teacher confirms in preview modal
+    function executeFinalMarksSubmission() {
+      closeMarksConfirmModal();
+      const payload = window._pendingMarksPayload;
+      if (!payload) return;
+
+      const {
+        examType, monthVal, isMonthly, clsInfo, secInfo,
+        className, section, subject, maxMarks, passMarks,
+        teacherName, teacherPhone, enteredCount, passCount,
+        failCount, absentCount, students
+      } = payload;
 
       // Check if we matched an existing sheet during auto-fetch or in local storage
       let existingId = window._currentActiveMarksSheetId;
@@ -2654,22 +3604,18 @@
         setTimeout(() => { alertBox.style.display = 'none'; }, 6000);
       }
 
-      // 4. Automatically blank out all 6 sections on the page after save as requested:
-      // (1) Subject input blanked
+      // 5. Automatically blank out all sections on the page after save as requested
       const subjInput = document.getElementById('marksSubjectInput');
       if (subjInput) subjInput.value = '';
 
-      // (2) Exam Type reset to first option
       const examSelect = document.getElementById('marksExamTypeSelect');
       if (examSelect) examSelect.selectedIndex = 0;
       const monthContainer = document.getElementById('marksMonthContainer');
       if (monthContainer) monthContainer.style.display = 'none';
 
-      // (3) Max Marks and Pass Marks reset to defaults
       if (document.getElementById('marksMaxInput')) document.getElementById('marksMaxInput').value = '100';
       if (document.getElementById('marksPassInput')) document.getElementById('marksPassInput').value = '33';
 
-      // (4) All 99 Student inputs reset to blank
       for (let i = 1; i <= 99; i++) {
         const marksInput = document.getElementById(`grid-marks-${i}`);
         if (marksInput) marksInput.value = '';
@@ -2677,16 +3623,18 @@
         if (statusCell) statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
       }
 
-      // (5) Reset Stats display to 0
       updateMarksStatsDisplay();
 
-      // (6) Hide auto fetch notice
       const autoFetchNotice = document.getElementById('marksAutoFetchNotice');
       if (autoFetchNotice) autoFetchNotice.style.display = 'none';
+
+      // 6. User Request: "phir ohi sab roll number list hide ho jae" -> Hide the roll number list again!
+      hideMarksRollNumberList();
 
       // Refresh Admin Tables if rendered
       renderAdminTables();
     }
+    window.executeFinalMarksSubmission = executeFinalMarksSubmission;
 
     // =========================================================================
     // 5. GOOGLE SHEETS / DRIVE CLOUD INTEGRATION & ADMIN PORTAL
@@ -3061,6 +4009,7 @@
       const tickerContent = document.getElementById('adminTabContentTicker');
       const galleryContent = document.getElementById('adminTabContentGallery');
       const resultLinkContent = document.getElementById('adminTabContentResultLink');
+      const examWindowContent = document.getElementById('adminTabContentExamWindow');
 
       const btnAdm = document.getElementById('adminTabBtnAdm');
       const btnWa = document.getElementById('adminTabBtnWhatsApp');
@@ -3070,9 +4019,10 @@
       const btnTicker = document.getElementById('adminTabBtnTicker');
       const btnGallery = document.getElementById('adminTabBtnGallery');
       const btnResultLink = document.getElementById('adminTabBtnResultLink');
+      const btnExamWindow = document.getElementById('adminTabBtnExamWindow');
 
-      [admContent, waContent, marksContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent].forEach(c => { if (c) c.style.display = 'none'; });
-      [btnAdm, btnWa, btnMarks, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink].forEach(b => { 
+      [admContent, waContent, marksContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent, examWindowContent].forEach(c => { if (c) c.style.display = 'none'; });
+      [btnAdm, btnWa, btnMarks, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink, btnExamWindow].forEach(b => { 
         if (b) {
           b.style.background = '#f8fafc';
           b.style.color = '#334155';
@@ -3136,6 +4086,15 @@
         btnResultLink.style.border = '1px solid #be123c';
         btnResultLink.style.boxShadow = '0 2px 8px rgba(190,18,60,0.25)';
         loadAdminResultLinkConfig();
+      } else if (tab === 'examwindow' && examWindowContent && btnExamWindow) {
+        examWindowContent.style.display = 'block';
+        btnExamWindow.style.background = '#7c3aed';
+        btnExamWindow.style.color = '#ffffff';
+        btnExamWindow.style.border = '1px solid #7c3aed';
+        btnExamWindow.style.boxShadow = '0 2px 8px rgba(124,58,237,0.25)';
+        if (typeof renderAdminExamWindowConfig === 'function') {
+          renderAdminExamWindowConfig();
+        }
       }
     }
 
