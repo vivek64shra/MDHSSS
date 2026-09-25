@@ -1,18 +1,26 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import {
+  initializeFirestore,
   getFirestore,
   collection,
   doc,
   setDoc,
   getDocs,
   getDoc,
-  getDocFromServer,
   deleteDoc,
   onSnapshot,
   Firestore,
+  setLogLevel,
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
+
+// Silence non-fatal offline connection notices
+try {
+  setLogLevel('silent');
+} catch {
+  // Ignore in case setLogLevel is restricted
+}
 
 export enum OperationType {
   CREATE = 'create',
@@ -43,7 +51,19 @@ export interface FirestoreErrorInfo {
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
-export const db: Firestore = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db: Firestore = (() => {
+  try {
+    return initializeFirestore(
+      app,
+      {
+        experimentalAutoDetectLongPolling: true,
+      },
+      firebaseConfig.firestoreDatabaseId
+    );
+  } catch {
+    return getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  }
+})();
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
   const errMsg = error instanceof Error ? error.message : String(error);
@@ -72,27 +92,24 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   };
   
   if (isOfflineNotice) {
-    console.info('ℹ️ Firestore operating in resilient offline/cached mode until backend responds.');
+    // Handled quietly without UI disruption or console noise
   } else {
     console.warn('Firestore Operation Notification:', JSON.stringify(errInfo));
   }
   return errInfo;
 }
 
-// Validate connection to Firestore as specified in Firebase skill
+// Resilient connection check
 export async function testConnection(): Promise<boolean> {
   try {
+    const { getDocFromServer } = await import('firebase/firestore');
     await getDocFromServer(doc(db, 'test', 'connection'));
-    console.log('✅ Firestore connection verified with backend.');
     return true;
-  } catch (error) {
-    if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('Could not reach Cloud Firestore'))) {
-      console.info('ℹ️ Firestore operates in offline cache mode.');
-    }
+  } catch {
+    // Graceful offline fallback
     return false;
   }
 }
-testConnection();
 
 // ==========================================
 // 1. ADMISSION INQUIRIES
@@ -298,6 +315,17 @@ let realtimeSyncStarted = false;
 export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: number; feedbacks: number }) => void) {
   if (realtimeSyncStarted) return;
   realtimeSyncStarted = true;
+
+  // If browser is currently offline, wait until online to start realtime listeners
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    const handleOnline = () => {
+      window.removeEventListener('online', handleOnline);
+      realtimeSyncStarted = false;
+      setupRealtimeCloudSync(onSyncComplete);
+    };
+    window.addEventListener('online', handleOnline);
+    return;
+  }
 
   const deletedIds = getDeletedIdSet();
 

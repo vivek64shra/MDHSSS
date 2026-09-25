@@ -805,12 +805,6 @@ export const StudentAnalyticsDashboard: React.FC<StudentAnalyticsProps> = ({
                 सत्र 2026-27 के आधार पर शिक्षक एवं परीक्षा समिति का आधिकारिक परामर्श
               </p>
             </div>
-            <button
-              onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white hover:bg-sky-700 transition-all cursor-pointer shadow-xs"
-            >
-              🖨️ प्रिंट करें
-            </button>
           </div>
 
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
