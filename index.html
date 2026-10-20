@@ -1438,9 +1438,9 @@
                       <option value="10" data-code="10">Class 10th Board (कक्षा 10वीं)</option>
                       <option value="11" data-code="11">Class 11th (कक्षा 11वीं)</option>
                       <option value="12" data-code="12">Class 12th Board (कक्षा 12वीं)</option>
-                      <option value="Nursery" data-code="0">Nursery (नर्सरी)</option>
-                      <option value="LKG" data-code="01">L.K.G.</option>
-                      <option value="UKG" data-code="02">U.K.G.</option>
+                      <option value="Nursery" data-code="N">Nursery (नर्सरी)</option>
+                      <option value="LKG" data-code="L">L.K.G.</option>
+                      <option value="UKG" data-code="U">U.K.G.</option>
                     </select>
                   </div>
 
@@ -2122,9 +2122,9 @@
                       <option value="3">Class 3rd (कक्षा 3री)</option>
                       <option value="2">Class 2nd (कक्षा 2री)</option>
                       <option value="1">Class 1st (कक्षा 1ली)</option>
-                      <option value="UKG">U.K.G.</option>
-                      <option value="LKG">L.K.G.</option>
-                      <option value="Nursery">Nursery (नर्सरी)</option>
+                      <option value="UKG" data-code="U">U.K.G.</option>
+                      <option value="LKG" data-code="L">L.K.G.</option>
+                      <option value="Nursery" data-code="N">Nursery (नर्सरी)</option>
                     </select>
                   </div>
 
@@ -2156,6 +2156,9 @@
                     </button>
                     <button type="button" class="btn-hero-sec" style="background: #eff6ff; color: #0284c7; border: 1px solid #bae6fd; cursor: pointer; padding: 0.6rem 0.9rem; font-size: 0.85rem; font-weight: 700;" onclick="printConsolidatedClassMarks()">
                       🖨️ प्रिंट
+                    </button>
+                    <button type="button" class="btn-hero-sec" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; cursor: pointer; padding: 0.6rem 0.9rem; font-size: 0.85rem; font-weight: 700;" onclick="copyCleanConsolidatedMarksTable()" title="Excel में सीधे पेस्ट करने हेतु केवल नंबर कॉपी करें">
+                      📋 केवल प्राप्तांक कॉपी करें
                     </button>
                   </div>
 
@@ -2206,7 +2209,7 @@
                       <th style="padding: 12px 14px;">परीक्षा प्रकार</th>
                       <th style="padding: 12px 14px;">कक्षा एवं सेक्शन</th>
                       <th style="padding: 12px 14px;">विषय (Subject)</th>
-                      <th style="padding: 12px 14px; text-align: center;">प्रविष्ट छात्र (01-99)</th>
+                      <th style="padding: 12px 14px; text-align: center;">प्रविष्ट छात्र संख्या</th>
                       <th style="padding: 12px 14px;">अपलोडर शिक्षक (ID/Mobile)</th>
                       <th style="padding: 12px 14px; text-align: center;">कार्रवाई (Actions)</th>
                     </tr>

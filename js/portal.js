@@ -2385,8 +2385,20 @@
       '1': '1', '2': '2', '3': '3', '4': '4', '5': '5',
       '6': '6', '7': '7', '8': '8', '9': '9', '10': '10',
       '11': '11', '12': '12',
-      'Nursery': '0', 'LKG': '01', 'UKG': '02'
+      'Nursery': 'N', 'LKG': 'L', 'UKG': 'U',
+      'N': 'N', 'L': 'L', 'U': 'U',
+      'nursery': 'N', 'lkg': 'L', 'ukg': 'U',
+      '0': 'N', '01': 'L', '02': 'U'
     };
+
+    function normalizeClassKey(cls) {
+      if (!cls) return '';
+      const c = String(cls).toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (c === 'NURSERY' || c === 'N' || c === '0') return 'N';
+      if (c === 'LKG' || c === 'L' || c === '01') return 'L';
+      if (c === 'UKG' || c === 'U' || c === '02') return 'U';
+      return c;
+    }
 
     const SECTION_CODE_MAP = {
       'A': '1',
@@ -2952,9 +2964,14 @@
       checkAndAutoFetchExistingMarks();
     }
 
+    let _subjectInputTimer = null;
     function onMarksSubjectInputChanged() {
       updateMarksSeriesInfo();
-      checkAndAutoFetchExistingMarks();
+      if (_subjectInputTimer) clearTimeout(_subjectInputTimer);
+      _subjectInputTimer = setTimeout(() => {
+        _subjectInputTimer = null;
+        checkAndAutoFetchExistingMarks();
+      }, 350);
     }
 
     function onMarksClassChange() {
@@ -3038,9 +3055,11 @@
 
         // Find existing record matching this exact set
         const matchedSheet = storedSheets.find(s => {
-          const matchCls = (s.classCode === clsInfo.code || 
+          const sClsNorm = normalizeClassKey(s.classCode) || normalizeClassKey(s.className);
+          const tClsNorm = normalizeClassKey(clsInfo.code);
+          const matchCls = (sClsNorm === tClsNorm) || (s.classCode === clsInfo.code) || 
                            (s.className && s.className.toLowerCase().includes(clsInfo.code.toLowerCase())) || 
-                           (s.className && s.className.toLowerCase() === clsInfo.text.toLowerCase()));
+                           (s.className && s.className.toLowerCase() === clsInfo.text.toLowerCase());
           const matchSec = (s.sectionCode === secInfo.code || 
                            (s.section && s.section.toLowerCase() === secInfo.text.toLowerCase()));
           const sheetSubNorm = s.subject ? s.subject.trim().toLowerCase().replace(/\s+/g, '') : '';
@@ -4381,13 +4400,17 @@
       const storedSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
 
       // Filter sheets matching selected class, section (if not ALL), and exam (if not ALL)
+      const targetNormCls = normalizeClassKey(selClass);
       const matchingSheets = storedSheets.filter(sheet => {
-        const matchCls = (sheet.classCode === selClass || 
+        const sheetNormCls = normalizeClassKey(sheet.classCode) || normalizeClassKey(sheet.className);
+        const matchCls = (targetNormCls === sheetNormCls) || 
+                          (sheet.classCode === selClass) || 
+                          (sheet.className && normalizeClassKey(sheet.className).includes(targetNormCls)) ||
                           (sheet.className && sheet.className.toLowerCase().includes(selClass.toLowerCase())) ||
                           (selClass === '9' && sheet.className && sheet.className.includes('9')) ||
                           (selClass === '10' && sheet.className && sheet.className.includes('10')) ||
                           (selClass === '11' && sheet.className && sheet.className.includes('11')) ||
-                          (selClass === '12' && sheet.className && sheet.className.includes('12')));
+                          (selClass === '12' && sheet.className && sheet.className.includes('12'));
         if (!matchCls) return false;
 
         if (selSection !== 'ALL') {
@@ -4419,26 +4442,36 @@
         }
       });
 
-      // Pedagogical Academic Subject Sequence:
-      // 1. First Language: Hindi
-      // 2. Second Language: English
-      // 3. Third Language: Sanskrit / Urdu
-      // 4. Mathematics
-      // 5. Science
-      // 6. Social Science
+      // Educational Academic Subject Sequence:
+      // 1. First / Main Language: Hindi (हिन्दी)
+      // 2. Second Language: English (अंग्रेजी)
+      // 3. Third Language: Sanskrit / Urdu (संस्कृत)
+      // 4. Mathematics (गणित)
+      // 5. Science (विज्ञान)
+      // 6. Social Science (सामाजिक विज्ञान)
       // 7. Other Subjects
       function getSubjectSortWeight(subjectName) {
         if (!subjectName) return 999;
         const s = subjectName.trim().toLowerCase();
-        if (s.includes('हिंदी') || s.includes('हिन्दी') || s.includes('hindi')) return 10;
-        if (s.includes('इंग्लिश') || s.includes('अंग्रेजी') || s.includes('अंग्रेज़ी') || s.includes('english')) return 20;
-        if (s.includes('संस्कृत') || s.includes('sanskrit') || s.includes('उर्दू') || s.includes('urdu')) return 30;
-        if (s.includes('गणित') || s.includes('math') || s.includes('ganit')) return 40;
-        if (s.includes('विज्ञान') || s.includes('science') || s.includes('भौतिक') || s.includes('physics') || s.includes('रसायन') || s.includes('chemistry') || s.includes('जीव') || s.includes('biology')) return 50;
-        if (s.includes('सामाजिक') || s.includes('social') || s.includes('sst') || s.includes('इतिहास') || s.includes('भूगोल') || s.includes('नागरिक')) return 60;
-        if (s.includes('कंप्यूटर') || s.includes('computer')) return 70;
+        // 1. Main / First Language: Hindi
+        if (s.includes('हिंदी') || s.includes('हिन्दी') || s.includes('hindi') || s.includes('hin') || s.includes('प्रथम भाषा') || s.includes('1st lang') || s.includes('main lang')) return 10;
+        // 2. Second Language: English
+        if (s.includes('इंग्लिश') || s.includes('अंग्रेजी') || s.includes('अंग्रेज़ी') || s.includes('english') || s.includes('eng') || s.includes('द्वितीय भाषा') || s.includes('2nd lang')) return 20;
+        // 3. Third Language: Sanskrit / Urdu
+        if (s.includes('संस्कृत') || s.includes('sanskrit') || s.includes('sans') || s.includes('तृतीय भाषा') || s.includes('3rd lang') || s.includes('उर्दू') || s.includes('urdu')) return 30;
+        // 4. Mathematics
+        if (s.includes('गणित') || s.includes('math') || s.includes('ganit') || s.includes('maths')) return 40;
+        // 5. Science
+        if (s.includes('विज्ञान') || s.includes('science') || s.includes('vigyan') || s.includes('sci') || s.includes('भौतिक') || s.includes('physics') || s.includes('रसायन') || s.includes('chemistry') || s.includes('जीव') || s.includes('biology')) return 50;
+        // 6. Social Science
+        if (s.includes('सामाजिक') || s.includes('social') || s.includes('sst') || s.includes('s.st') || s.includes('samajik') || s.includes('इतिहास') || s.includes('भूगोल') || s.includes('नागरिक')) return 60;
+        // 7. Computer / IT
+        if (s.includes('कंप्यूटर') || s.includes('computer') || s.includes('आईटी') || s.includes('it')) return 70;
+        // 8. Commerce / Accounts
         if (s.includes('वाणिज्य') || s.includes('commerce') || s.includes('लेखा') || s.includes('accounts')) return 80;
+        // 9. Economics
         if (s.includes('अर्थशास्त्र') || s.includes('economics')) return 85;
+        // 10. Arts / Drawing
         if (s.includes('कला') || s.includes('art') || s.includes('drawing')) return 90;
         return 100;
       }
@@ -4668,8 +4701,13 @@
       const selExam = examSelect ? examSelect.value : 'ALL';
 
       const storedSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+      const targetNormCls = normalizeClassKey(selClass);
       const matchingSheets = storedSheets.filter(sheet => {
-        const matchCls = (sheet.classCode === selClass || (sheet.className && sheet.className.includes(selClass)));
+        const sheetNormCls = normalizeClassKey(sheet.classCode) || normalizeClassKey(sheet.className);
+        const matchCls = (targetNormCls === sheetNormCls) || 
+                          (sheet.classCode === selClass) || 
+                          (sheet.className && normalizeClassKey(sheet.className).includes(targetNormCls)) ||
+                          (sheet.className && sheet.className.toLowerCase().includes(selClass.toLowerCase()));
         if (!matchCls) return false;
         if (selSection !== 'ALL') {
           const matchSec = (sheet.sectionCode === selSection || sheet.section === selSection || (sheet.section && sheet.section.includes(selSection)));
@@ -4696,13 +4734,13 @@
       function getSubjectSortWeight(subjectName) {
         if (!subjectName) return 999;
         const s = subjectName.trim().toLowerCase();
-        if (s.includes('हिंदी') || s.includes('हिन्दी') || s.includes('hindi')) return 10;
-        if (s.includes('इंग्लिश') || s.includes('अंग्रेजी') || s.includes('अंग्रेज़ी') || s.includes('english')) return 20;
-        if (s.includes('संस्कृत') || s.includes('sanskrit') || s.includes('उर्दू') || s.includes('urdu')) return 30;
-        if (s.includes('गणित') || s.includes('math') || s.includes('ganit')) return 40;
-        if (s.includes('विज्ञान') || s.includes('science') || s.includes('भौतिक') || s.includes('physics') || s.includes('रसायन') || s.includes('chemistry') || s.includes('जीव') || s.includes('biology')) return 50;
-        if (s.includes('सामाजिक') || s.includes('social') || s.includes('sst') || s.includes('इतिहास') || s.includes('भूगोल') || s.includes('नागरिक')) return 60;
-        if (s.includes('कंप्यूटर') || s.includes('computer')) return 70;
+        if (s.includes('हिंदी') || s.includes('हिन्दी') || s.includes('hindi') || s.includes('hin') || s.includes('प्रथम भाषा') || s.includes('1st lang') || s.includes('main lang')) return 10;
+        if (s.includes('इंग्लिश') || s.includes('अंग्रेजी') || s.includes('अंग्रेज़ी') || s.includes('english') || s.includes('eng') || s.includes('द्वितीय भाषा') || s.includes('2nd lang')) return 20;
+        if (s.includes('संस्कृत') || s.includes('sanskrit') || s.includes('sans') || s.includes('तृतीय भाषा') || s.includes('3rd lang') || s.includes('उर्दू') || s.includes('urdu')) return 30;
+        if (s.includes('गणित') || s.includes('math') || s.includes('ganit') || s.includes('maths')) return 40;
+        if (s.includes('विज्ञान') || s.includes('science') || s.includes('vigyan') || s.includes('sci') || s.includes('भौतिक') || s.includes('physics') || s.includes('रसायन') || s.includes('chemistry') || s.includes('जीव') || s.includes('biology')) return 50;
+        if (s.includes('सामाजिक') || s.includes('social') || s.includes('sst') || s.includes('s.st') || s.includes('samajik') || s.includes('इतिहास') || s.includes('भूगोल') || s.includes('नागरिक')) return 60;
+        if (s.includes('कंप्यूटर') || s.includes('computer') || s.includes('आईटी') || s.includes('it')) return 70;
         if (s.includes('वाणिज्य') || s.includes('commerce') || s.includes('लेखा') || s.includes('accounts')) return 80;
         if (s.includes('अर्थशास्त्र') || s.includes('economics')) return 85;
         if (s.includes('कला') || s.includes('art') || s.includes('drawing')) return 90;
@@ -4735,7 +4773,7 @@
       csvContent += `Maa Durga Higher Secondary School Semariya - Consolidated Class Marksheet\n`;
       csvContent += `Class,Class ${selClass},Section,${selSection},Exam,${selExam},Generated,${new Date().toLocaleString('en-IN')}\n\n`;
       
-      // Header
+      // Header (Clean, Pure Marks Format)
       csvContent += `S_No,Roll_No,` + subjects.map(s => `"${s} (Max ${subjectMap.get(s).maxMarks||100})"`).join(',') + `,Total_Obtained,Total_Max,Percentage,Result_Status\n`;
 
       let totalMaxMarks = 0;
@@ -4770,12 +4808,14 @@
             if (mVal === 'A' || mVal === 'AB' || mVal === 'ABS' || mVal === 'ABSENT') {
               markCols.push(`"ABS"`);
             } else {
-              markCols.push(`"${studentMark}"`);
               const num = parseFloat(studentMark);
               if (!isNaN(num)) {
                 isAllAbsent = false;
                 totalObtained += num;
                 if (num < passMarks) isAnyFail = true;
+                markCols.push(`"${num}"`);
+              } else {
+                markCols.push(`"${studentMark}"`);
               }
             }
           } else {
@@ -4804,6 +4844,56 @@
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
+
+    // 1-Click Clipboard Copy of Pure Marks (Numbers & ABS Only, NO brackets, NO (Fail) notes)
+    function copyCleanConsolidatedMarksTable() {
+      const tbl = document.getElementById('consolidatedClassMarksTable');
+      if (!tbl) return;
+      const rows = tbl.querySelectorAll('tr');
+      if (!rows || rows.length <= 1) {
+        alert('कॉपी करने के लिए कोई अंक डेटा उपलब्ध नहीं है!');
+        return;
+      }
+
+      let clipboardText = '';
+      rows.forEach((row, rIdx) => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        const rowVals = cells.map(c => {
+          let t = c.innerText.trim();
+          t = t.replace(/\n+/g, ' ');
+          t = t.replace(/\s*\([^)]*\)/g, ''); // strip any brackets like (Fail) or (पूर्णांक: 100)
+          return t.trim();
+        });
+        clipboardText += rowVals.join('\t') + '\n';
+      });
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(clipboardText).then(() => {
+          alert('✅ केवल प्राप्तांक (Pure Numbers & ABS) क्लिपबोर्ड में कॉपी हो गए हैं!\n\nअब आप सीधे Excel या Google Sheets में Ctrl+V (Paste) कर सकते हैं। कोई भी (Fail) कोष्ठक नोट नहीं आएगा।');
+        }).catch(() => {
+          fallbackClipboardCopy(clipboardText);
+        });
+      } else {
+        fallbackClipboardCopy(clipboardText);
+      }
+    }
+
+    function fallbackClipboardCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        alert('✅ केवल प्राप्तांक (Pure Numbers & ABS) क्लिपबोर्ड में कॉपी हो गए हैं!\n\nअब आप सीधे Excel या Google Sheets में Ctrl+V (Paste) कर सकते हैं।');
+      } catch (e) {
+        alert('कॉपी करने में असमर्थ।');
+      }
+      document.body.removeChild(ta);
+    }
+    window.copyCleanConsolidatedMarksTable = copyCleanConsolidatedMarksTable;
 
     // Print Consolidated Class Marks View
     function printConsolidatedClassMarks() {
@@ -5113,6 +5203,27 @@
       navigateToPage('admin');
     }
 
+    function prepareForNextSubjectEntry() {
+      const subjInput = document.getElementById('marksSubjectInput');
+      if (subjInput) {
+        subjInput.value = '';
+        subjInput.placeholder = 'अगला विषय यहाँ लिखें (जैसे: विज्ञान, अंग्रेजी, गणित...)...';
+        try { subjInput.focus(); } catch (e) {}
+      }
+      for (let i = 1; i <= 99; i++) {
+        const marksInput = document.getElementById(`grid-marks-${i}`);
+        if (marksInput) marksInput.value = '';
+        const statusCell = document.getElementById(`grid-status-cell-${i}`);
+        if (statusCell) statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
+      }
+      updateMarksStatsDisplay();
+      hideMarksRollNumberList();
+      const formContainer = document.getElementById('teacherMarksFormContainer');
+      if (formContainer) {
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
     // Expose functions globally on window object
     window.switchUnifiedLoginTab = switchUnifiedLoginTab;
     window.handleAdminLogin = handleAdminLogin;
@@ -5125,6 +5236,7 @@
     window.exportSingleMarksSheetExcel = exportSingleMarksSheetExcel;
     window.exportCurrentMarksSheetToExcel = exportCurrentMarksSheetToExcel;
     window.openAdminMarksPortal = openAdminMarksPortal;
+    window.prepareForNextSubjectEntry = prepareForNextSubjectEntry;
     window.copyAbsentMsgTemplate = copyAbsentMsgTemplate;
     window.switchTeacherSectionTab = switchTeacherSectionTab;
     window.exportAllMarksConsolidatedExcel = exportAllMarksConsolidatedExcel;

@@ -2385,8 +2385,20 @@
       '1': '1', '2': '2', '3': '3', '4': '4', '5': '5',
       '6': '6', '7': '7', '8': '8', '9': '9', '10': '10',
       '11': '11', '12': '12',
-      'Nursery': '0', 'LKG': '01', 'UKG': '02'
+      'Nursery': 'N', 'LKG': 'L', 'UKG': 'U',
+      'N': 'N', 'L': 'L', 'U': 'U',
+      'nursery': 'N', 'lkg': 'L', 'ukg': 'U',
+      '0': 'N', '01': 'L', '02': 'U'
     };
+
+    function normalizeClassKey(cls) {
+      if (!cls) return '';
+      const c = String(cls).toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (c === 'NURSERY' || c === 'N' || c === '0') return 'N';
+      if (c === 'LKG' || c === 'L' || c === '01') return 'L';
+      if (c === 'UKG' || c === 'U' || c === '02') return 'U';
+      return c;
+    }
 
     const SECTION_CODE_MAP = {
       'A': '1',
@@ -2461,51 +2473,51 @@
     // ==========================================================================
     const DEFAULT_EXAM_WINDOW_CONFIG = {
       masterOpen: true,
-      onlyShowActiveExams: true,
+      onlyShowActiveExams: false,
       exams: {
         traimasik: {
           id: 'traimasik',
           name: 'त्रैमासिक परीक्षा 2026',
-          label: 'त्रैमासिक परीक्षा (Quarterly Exam)',
+          label: 'त्रैमासिक परीक्षा 2026 (Quarterly Exam)',
           enabled: true,
-          startDate: '2026-09-22',
-          endDate: '2026-10-15',
+          startDate: '2026-06-01',
+          endDate: '2027-04-30',
           note: 'त्रैमासिक परीक्षा 2026 अंक प्रविष्टि विंडो'
         },
         ardhvarshik: {
           id: 'ardhvarshik',
           name: 'अर्धवार्षिक परीक्षा 2026',
-          label: 'अर्धवार्षिक परीक्षा (Half-Yearly)',
-          enabled: false,
-          startDate: '2026-11-15',
-          endDate: '2026-12-10',
+          label: 'अर्धवार्षिक परीक्षा 2026 (Half-Yearly)',
+          enabled: true,
+          startDate: '2026-06-01',
+          endDate: '2027-04-30',
           note: 'अर्धवार्षिक परीक्षा 2026 अंक प्रविष्टि विंडो'
         },
         monthly: {
           id: 'monthly',
-          name: 'मासिक यूनिट टेस्ट',
-          label: 'मासिक यूनिट टेस्ट (Monthly Test)',
-          enabled: false,
-          startDate: '2026-08-01',
-          endDate: '2026-08-20',
-          note: 'मासिक टेस्ट अंक प्रविष्टि विंडो'
+          name: 'मासिक टेस्ट',
+          label: 'मासिक टेस्ट (Monthly Test)',
+          enabled: true,
+          startDate: '2026-06-01',
+          endDate: '2027-04-30',
+          note: 'मासिक टेस्ट अंक प्रविष्टि विंडो (सभी माह)'
         },
         preboard: {
           id: 'preboard',
           name: 'प्री-बोर्ड परीक्षा 2027',
-          label: 'प्री-बोर्ड परीक्षा (Pre-Board)',
-          enabled: false,
-          startDate: '2027-01-05',
-          endDate: '2027-01-25',
+          label: 'प्री-बोर्ड परीक्षा 2027 (Pre-Board)',
+          enabled: true,
+          startDate: '2026-06-01',
+          endDate: '2027-04-30',
           note: 'प्री-बोर्ड 2027 अंक प्रविष्टि विंडो'
         },
         varshik: {
           id: 'varshik',
           name: 'वार्षिक मुख्य परीक्षा 2027',
-          label: 'वार्षिक मुख्य परीक्षा (Annual Exam)',
-          enabled: false,
-          startDate: '2027-02-20',
-          endDate: '2027-03-25',
+          label: 'वार्षिक मुख्य परीक्षा 2027 (Annual Exam)',
+          enabled: true,
+          startDate: '2026-06-01',
+          endDate: '2027-04-30',
           note: 'वार्षिक मुख्य परीक्षा 2027 अंक प्रविष्टि विंडो'
         }
       },
@@ -2518,6 +2530,11 @@
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed && parsed.exams) {
+            if (parsed.exams.monthly) {
+              parsed.exams.monthly.name = 'मासिक टेस्ट';
+              parsed.exams.monthly.label = 'मासिक टेस्ट (Monthly Test)';
+              parsed.exams.monthly.enabled = true;
+            }
             return {
               ...DEFAULT_EXAM_WINDOW_CONFIG,
               ...parsed,
@@ -2925,21 +2942,16 @@
     }
     window.resetDefaultExamWindows = resetDefaultExamWindows;
 
-    // Dynamic Monthly Test Month toggle and auto-fetch triggers (Strictly ONLY for Monthly Test)
+    // Dynamic Exam Type change and auto-fetch triggers (Month container shown ONLY for Masik/Monthly test)
     function onMarksExamTypeChange() {
       const examSelect = document.getElementById('marksExamTypeSelect');
       const monthContainer = document.getElementById('marksMonthContainer');
-      const val = examSelect ? (examSelect.value || '').trim() : '';
+      const examVal = (examSelect ? examSelect.value : '').toLowerCase();
 
-      // User requirement: "माह चुनें (Select Month) yah kebal jab masik test kare tab Bass aae baki exam result chadhane me n aae"
-      const isMonthly = val !== '' && (val.includes('मासिक') || val.includes('Monthly') || val.toLowerCase().includes('unit test'));
-
+      // "Are jab masik test kare tab poore mahine ka naam aae kebal masik test me baki option me n aae"
+      const isMonthly = examVal.includes('मासिक') || examVal.includes('monthly') || examVal.includes('masik');
       if (monthContainer) {
-        if (isMonthly) {
-          monthContainer.style.setProperty('display', 'block', 'important');
-        } else {
-          monthContainer.style.setProperty('display', 'none', 'important');
-        }
+        monthContainer.style.display = isMonthly ? 'block' : 'none';
       }
 
       updateMarksSeriesInfo();
@@ -2952,9 +2964,14 @@
       checkAndAutoFetchExistingMarks();
     }
 
+    let _subjectInputTimer = null;
     function onMarksSubjectInputChanged() {
       updateMarksSeriesInfo();
-      checkAndAutoFetchExistingMarks();
+      if (_subjectInputTimer) clearTimeout(_subjectInputTimer);
+      _subjectInputTimer = setTimeout(() => {
+        _subjectInputTimer = null;
+        checkAndAutoFetchExistingMarks();
+      }, 350);
     }
 
     function onMarksClassChange() {
@@ -3038,9 +3055,11 @@
 
         // Find existing record matching this exact set
         const matchedSheet = storedSheets.find(s => {
-          const matchCls = (s.classCode === clsInfo.code || 
+          const sClsNorm = normalizeClassKey(s.classCode) || normalizeClassKey(s.className);
+          const tClsNorm = normalizeClassKey(clsInfo.code);
+          const matchCls = (sClsNorm === tClsNorm) || (s.classCode === clsInfo.code) || 
                            (s.className && s.className.toLowerCase().includes(clsInfo.code.toLowerCase())) || 
-                           (s.className && s.className.toLowerCase() === clsInfo.text.toLowerCase()));
+                           (s.className && s.className.toLowerCase() === clsInfo.text.toLowerCase());
           const matchSec = (s.sectionCode === secInfo.code || 
                            (s.section && s.section.toLowerCase() === secInfo.text.toLowerCase()));
           const sheetSubNorm = s.subject ? s.subject.trim().toLowerCase().replace(/\s+/g, '') : '';
@@ -3156,6 +3175,21 @@
     }
     window.hideMarksRollNumberList = hideMarksRollNumberList;
 
+    let _maxMarksNoticeTimer = null;
+    function flashMaxMarksNotice(maxMarks) {
+      const banner = document.getElementById('maxMarksNoticeBar');
+      if (!banner) return;
+      banner.textContent = `⚠️ पूर्णांक (Max Marks) ${maxMarks} है! प्राप्तांक ${maxMarks} से अधिक दर्ज नहीं हो सकता।`;
+      banner.style.display = 'block';
+      if (_maxMarksNoticeTimer) clearTimeout(_maxMarksNoticeTimer);
+      _maxMarksNoticeTimer = setTimeout(() => {
+        banner.style.display = 'none';
+      }, 2500);
+    }
+
+    let _cachedGridInputs = null;
+    let _cachedStatusCells = null;
+
     function generateMarksGrid() {
       const tbody = document.getElementById('marksGridTableBody');
       if (!tbody) return;
@@ -3164,24 +3198,25 @@
       for (let i = 1; i <= 99; i++) {
         const rollNo = computeRollNumber(i);
         html += `
-          <tr id="marks-row-${i}" style="border-bottom: 1px solid #f1f5f9; ${i % 2 === 0 ? 'background:#f8fafc;' : ''}">
-            <td style="padding: 10px 12px; font-weight: 700; color: #64748b; text-align: center;">${i}</td>
-            <td style="padding: 10px 14px; font-family: monospace; font-weight: 800; color: #0284c7;" id="grid-roll-cell-${i}">${rollNo}</td>
-            <td style="padding: 8px 12px; text-align: center;">
-              <input type="text" id="grid-marks-${i}" inputmode="numeric" class="form-input-custom marks-grid-input" placeholder="अंक या AB" maxlength="4" style="padding: 0.45rem 0.75rem; font-size: 1rem; font-weight: 700; text-align: center; width: 120px; border: 1.5px solid #94a3b8; display: inline-block;" onkeydown="handleGridKeyDown(event, ${i})" oninput="handleMarksInputChanged(${i})" />
+          <tr id="marks-row-${i}" style="border-bottom: 1px solid #f1f5f9; ${i % 2 === 0 ? 'background:#f8fafc;' : 'background:#ffffff;'}">
+            <td style="padding: 5px 4px; text-align: center; font-weight: 700; color: #64748b; font-size: 0.82rem;">${i}</td>
+            <td style="padding: 5px 6px; font-family: monospace; font-weight: 800; color: #0284c7; font-size: 0.88rem;" id="grid-roll-cell-${i}">${rollNo}</td>
+            <td style="padding: 4px 4px; text-align: center;">
+              <input type="text" id="grid-marks-${i}" inputmode="numeric" class="form-input-custom marks-grid-input" placeholder="अंक / ABS" style="padding: 0.25rem 0.2rem; font-size: 0.95rem; font-weight: 800; text-align: center; width: 62px; height: 34px; border: 1.5px solid #94a3b8; border-radius: 5px; display: inline-block; margin: 0 auto;" onkeydown="handleGridKeyDown(event, ${i})" oninput="handleMarksInputChanged(${i})" onblur="handleMarksInputBlur(${i})" />
             </td>
-            <td style="padding: 8px 12px; text-align: center;" id="grid-status-cell-${i}">
-              <span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>
-            </td>
-            <td style="padding: 8px 12px; text-align: center;">
-              <button type="button" class="btn-hero-sec" style="font-size: 0.75rem; font-weight:700; padding: 0.35rem 0.7rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; cursor: pointer; border-radius: 4px;" onclick="setRowAsAbsent(${i})" title="इस छात्र को अनुपस्थित (AB) मार्क करें">
-                AB
-              </button>
+            <td style="padding: 4px 6px; text-align: center;" id="grid-status-cell-${i}">
+              <span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem; padding: 2px 6px;">-</span>
             </td>
           </tr>
         `;
       }
       tbody.innerHTML = html;
+      _cachedGridInputs = [];
+      _cachedStatusCells = [];
+      for (let i = 1; i <= 99; i++) {
+        _cachedGridInputs[i] = document.getElementById(`grid-marks-${i}`);
+        _cachedStatusCells[i] = document.getElementById(`grid-status-cell-${i}`);
+      }
       updateMarksStatsDisplay();
       updateMarksSeriesInfo();
     }
@@ -3190,7 +3225,7 @@
       if (e.key === 'Enter') {
         e.preventDefault();
         const nextIndex = index < 99 ? index + 1 : 1;
-        const nextInput = document.getElementById(`grid-marks-${nextIndex}`);
+        const nextInput = (_cachedGridInputs && _cachedGridInputs[nextIndex]) || document.getElementById(`grid-marks-${nextIndex}`);
         if (nextInput) {
           nextInput.focus();
           nextInput.select();
@@ -3202,56 +3237,83 @@
       } else if (e.key === 'ArrowDown') {
         if (index < 99) {
           e.preventDefault();
-          const target = document.getElementById(`grid-marks-${index + 1}`);
+          const target = (_cachedGridInputs && _cachedGridInputs[index + 1]) || document.getElementById(`grid-marks-${index + 1}`);
           if (target) {
             target.focus();
             target.select();
+            const nextRow = document.getElementById(`marks-row-${index + 1}`);
+            if (nextRow) {
+              nextRow.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+            }
           }
         }
       } else if (e.key === 'ArrowUp') {
         if (index > 1) {
           e.preventDefault();
-          const target = document.getElementById(`grid-marks-${index - 1}`);
+          const target = (_cachedGridInputs && _cachedGridInputs[index - 1]) || document.getElementById(`grid-marks-${index - 1}`);
           if (target) {
             target.focus();
             target.select();
+            const prevRow = document.getElementById(`marks-row-${index - 1}`);
+            if (prevRow) {
+              prevRow.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+            }
           }
         }
       }
     }
 
-    let _marksStatsRaf = null;
+    let _marksStatsTimer = null;
     function scheduleMarksStatsUpdate() {
-      if (_marksStatsRaf) return;
-      _marksStatsRaf = requestAnimationFrame(() => {
-        _marksStatsRaf = null;
+      if (_marksStatsTimer) clearTimeout(_marksStatsTimer);
+      _marksStatsTimer = setTimeout(() => {
+        _marksStatsTimer = null;
         updateMarksStatsDisplay();
-      });
+      }, 180);
     }
 
     function handleMarksInputChanged(index, skipStats = false) {
-      const input = document.getElementById(`grid-marks-${index}`);
-      const statusCell = document.getElementById(`grid-status-cell-${index}`);
+      const input = (_cachedGridInputs && _cachedGridInputs[index]) || document.getElementById(`grid-marks-${index}`);
+      const statusCell = (_cachedStatusCells && _cachedStatusCells[index]) || document.getElementById(`grid-status-cell-${index}`);
       if (!input || !statusCell) return;
 
-      const rawVal = input.value.trim().toUpperCase();
+      let rawVal = input.value.trim().toUpperCase();
+      const maxMarks = parseFloat(document.getElementById('marksMaxInput')?.value) || 100;
       const passMarks = parseFloat(document.getElementById('marksPassInput')?.value) || 33;
 
-      if (rawVal === 'AB' || rawVal === 'A' || rawVal === 'ABSENT') {
-        input.value = 'AB';
-        statusCell.innerHTML = `<span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-size:0.75rem; font-weight:700;">अनुपस्थित (AB)</span>`;
+      if (rawVal === 'A' || rawVal === 'AB' || rawVal === 'ABS' || rawVal === 'ABSENT') {
+        input.value = 'ABS';
+        input.style.borderColor = '#94a3b8';
+        statusCell.innerHTML = `<span class="page-badge-pill" style="background:#fffbeb; color:#92400e; font-size:0.75rem; font-weight:700; padding:2px 6px;">ABS</span>`;
       } else if (rawVal === '') {
-        statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
+        input.style.borderColor = '#94a3b8';
+        statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem; padding:2px 6px;">-</span>`;
       } else {
-        const num = parseFloat(rawVal);
-        if (isNaN(num)) {
-          statusCell.innerHTML = `<span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-size:0.75rem;">अमान्य</span>`;
-        } else {
-          if (num >= passMarks) {
-            statusCell.innerHTML = `<span class="page-badge-pill" style="background:#dcfce7; color:#15803d; font-size:0.75rem; font-weight:700;">उत्तीर्ण (Pass)</span>`;
+        const cleanVal = rawVal.replace(/[^0-9.]/g, '');
+        if (cleanVal !== rawVal) {
+          input.value = cleanVal;
+          rawVal = cleanVal;
+        }
+
+        let num = parseFloat(rawVal);
+        if (!isNaN(num)) {
+          // STRICT RULE: If entered mark > maxMarks, clamp to maxMarks and warn!
+          if (num > maxMarks) {
+            input.value = String(maxMarks);
+            num = maxMarks;
+            input.style.borderColor = '#ef4444';
+            flashMaxMarksNotice(maxMarks);
           } else {
-            statusCell.innerHTML = `<span class="page-badge-pill" style="background:#fef2f2; color:#b91c1c; font-size:0.75rem; font-weight:700;">अनुत्तीर्ण (Fail)</span>`;
+            input.style.borderColor = '#94a3b8';
           }
+
+          if (num >= passMarks) {
+            statusCell.innerHTML = `<span class="page-badge-pill" style="background:#dcfce7; color:#15803d; font-size:0.75rem; font-weight:700; padding:2px 6px;">उत्तीर्ण</span>`;
+          } else {
+            statusCell.innerHTML = `<span class="page-badge-pill" style="background:#fee2e2; color:#b91c1c; font-size:0.75rem; font-weight:700; padding:2px 6px;">अनुत्तीर्ण</span>`;
+          }
+        } else {
+          statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem; padding:2px 6px;">-</span>`;
         }
       }
       if (!skipStats) {
@@ -3259,41 +3321,55 @@
       }
     }
 
+    function handleMarksInputBlur(index) {
+      const input = (_cachedGridInputs && _cachedGridInputs[index]) || document.getElementById(`grid-marks-${index}`);
+      if (!input) return;
+      const rawVal = input.value.trim().toUpperCase();
+      if (rawVal === 'A' || rawVal === 'AB' || rawVal === 'ABS' || rawVal === 'ABSENT') {
+        input.value = 'ABS';
+      }
+      handleMarksInputChanged(index);
+    }
+    window.handleMarksInputBlur = handleMarksInputBlur;
+
     function setRowAsAbsent(index) {
-      const input = document.getElementById(`grid-marks-${index}`);
+      const input = (_cachedGridInputs && _cachedGridInputs[index]) || document.getElementById(`grid-marks-${index}`);
       if (input) {
-        input.value = 'AB';
+        input.value = 'ABS';
         handleMarksInputChanged(index);
       }
     }
 
     function updateMarksStatsDisplay() {
+      let lastEnteredIndex = 0;
+      const passMarks = parseFloat(document.getElementById('marksPassInput')?.value) || 33;
       let entered = 0;
       let passed = 0;
       let failed = 0;
       let absent = 0;
       let marksList = [];
 
-      const passMarks = parseFloat(document.getElementById('marksPassInput')?.value) || 33;
-
       for (let i = 1; i <= 99; i++) {
-        const input = document.getElementById(`grid-marks-${i}`);
-        if (input && input.value.trim() !== '') {
-          entered++;
-          const val = input.value.trim().toUpperCase();
-          if (val === 'AB') {
+        const input = (_cachedGridInputs && _cachedGridInputs[i]) || document.getElementById(`grid-marks-${i}`);
+        const rawVal = input ? input.value.trim().toUpperCase() : '';
+        if (rawVal !== '') {
+          lastEnteredIndex = i;
+          if (rawVal === 'A' || rawVal === 'AB' || rawVal === 'ABS' || rawVal === 'ABSENT') {
             absent++;
           } else {
-            const num = parseFloat(val);
+            const num = parseFloat(rawVal);
             if (!isNaN(num)) {
               marksList.push(num);
               if (num >= passMarks) passed++;
               else failed++;
+            } else {
+              absent++;
             }
           }
         }
       }
 
+      entered = lastEnteredIndex;
       const countEl = document.getElementById('statEnteredCount');
       const passEl = document.getElementById('statPassCount');
       const failEl = document.getElementById('statFailCount');
@@ -3301,7 +3377,7 @@
       const maxEl = document.getElementById('statHighestMarks');
       const avgEl = document.getElementById('statAverageMarks');
 
-      if (countEl) countEl.textContent = `${entered} / 99`;
+      if (countEl) countEl.textContent = `${entered} छात्र`;
       if (passEl) passEl.textContent = passed;
       if (failEl) failEl.textContent = failed;
       if (absentEl) absentEl.textContent = absent;
@@ -3319,7 +3395,15 @@
     }
 
     function recalculateAllMarksRowStats() {
+      const maxMarks = parseFloat(document.getElementById('marksMaxInput')?.value) || 100;
       for (let i = 1; i <= 99; i++) {
+        const inp = (_cachedGridInputs && _cachedGridInputs[i]) || document.getElementById(`grid-marks-${i}`);
+        if (inp) {
+          const val = parseFloat(inp.value);
+          if (!isNaN(val) && val > maxMarks) {
+            inp.value = String(maxMarks);
+          }
+        }
         handleMarksInputChanged(i, true);
       }
       updateMarksStatsDisplay();
@@ -3333,32 +3417,33 @@
         alert('कृपया 1 से 99 के बीच रोल नंबर दर्ज करें!');
         return;
       }
-      const targetInput = document.getElementById(`grid-marks-${rollNum}`);
+      const targetInput = (_cachedGridInputs && _cachedGridInputs[rollNum]) || document.getElementById(`grid-marks-${rollNum}`);
       const targetRow = document.getElementById(`marks-row-${rollNum}`);
       if (targetRow && targetInput) {
-        targetRow.scrollIntoView({ behavior: 'auto', block: 'center' });
+        targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         targetInput.focus();
         targetInput.select();
       }
     }
 
     function fillEmptyRowsAsAbsent() {
-      if (!confirm('क्या आप शेष सभी खाली (Empty) रोल नंबर्स को "AB" (अनुपस्थित) के रूप में भरना चाहते हैं?')) return;
+      if (!confirm('क्या आप शेष सभी खाली (Empty) रोल नंबर्स को "ABS" (अनुपस्थित) के रूप में भरना चाहते हैं?')) return;
       for (let i = 1; i <= 99; i++) {
-        const input = document.getElementById(`grid-marks-${i}`);
+        const input = (_cachedGridInputs && _cachedGridInputs[i]) || document.getElementById(`grid-marks-${i}`);
         if (input && input.value.trim() === '') {
-          input.value = 'AB';
-          handleMarksInputChanged(i);
+          input.value = 'ABS';
+          handleMarksInputChanged(i, true);
         }
       }
+      updateMarksStatsDisplay();
     }
 
     function resetAllMarksGridInputs() {
       if (!confirm('क्या आप इस शीट के सभी प्रविष्ट अंक डेटा को रीसेट (साफ़) करना चाहते हैं?')) return;
       for (let i = 1; i <= 99; i++) {
-        const marksInput = document.getElementById(`grid-marks-${i}`);
+        const marksInput = (_cachedGridInputs && _cachedGridInputs[i]) || document.getElementById(`grid-marks-${i}`);
         if (marksInput) marksInput.value = '';
-        const statusCell = document.getElementById(`grid-status-cell-${i}`);
+        const statusCell = (_cachedStatusCells && _cachedStatusCells[i]) || document.getElementById(`grid-status-cell-${i}`);
         if (statusCell) statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
       }
       updateMarksStatsDisplay();
@@ -3366,275 +3451,293 @@
       if (autoFetchNotice) autoFetchNotice.style.display = 'none';
     }
 
-    // Submit Complete Marks Sheet Handler - Opens Mobile Preview / Verification Modal First
+    // Direct Marks Submission Handler - Directly saves data up to last entered roll number with 100% solid feedback
     function submitFullMarksSheet() {
-      const sessionData = sessionStorage.getItem('mdhss_teacher_session');
-      let teacherName = 'शिक्षक (Staff)';
-      let teacherPhone = '-';
-      if (sessionData) {
-        try {
-          const t = JSON.parse(sessionData);
-          teacherName = t.name || teacherName;
-          teacherPhone = t.phone || teacherPhone;
-        } catch (e) {}
-      }
+      const submitBtn = document.getElementById('btnSubmitMarksSheet');
+      try {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⏳ सुरक्षित हो रहा है...';
+        }
 
-      const examType = document.getElementById('marksExamTypeSelect')?.value || 'त्रैमासिक परीक्षा 2026';
-      if (typeof checkExamEntryAllowed === 'function') {
-        const check = checkExamEntryAllowed(examType);
-        if (!check.allowed) {
-          alert(check.reason || '⚠️ इस परीक्षा का परिणाम दर्ज करने की समय-सीमा समाप्त अथवा व्यवस्थापक द्वारा बंद है!');
+        const sessionData = sessionStorage.getItem('mdhss_teacher_session');
+        let teacherName = 'शिक्षक (Staff)';
+        let teacherPhone = '-';
+        if (sessionData) {
+          try {
+            const t = JSON.parse(sessionData);
+            teacherName = t.name || teacherName;
+            teacherPhone = t.phone || teacherPhone;
+          } catch (e) {}
+        }
+
+        const examSelect = document.getElementById('marksExamTypeSelect');
+        const examType = examSelect?.value || 'त्रैमासिक परीक्षा 2026';
+        const isMonthly = examType.includes('मासिक') || examType.includes('Monthly') || examType.includes('Masik');
+        const monthVal = isMonthly ? (document.getElementById('marksMonthSelect')?.value || 'जुलाई (July)') : '';
+        const displayExamName = (isMonthly && monthVal) ? `${examType} (${monthVal})` : examType;
+
+        const clsInfo = getSelectedClassInfo();
+        const secInfo = getSelectedSectionInfo();
+        const className = clsInfo.text.split('(')[0].trim() || 'Class 9th';
+        const section = secInfo.text;
+        const subjInput = document.getElementById('marksSubjectInput');
+        const subject = (subjInput?.value || '').trim();
+        const maxMarks = parseFloat(document.getElementById('marksMaxInput')?.value) || 100;
+        const passMarks = parseFloat(document.getElementById('marksPassInput')?.value) || 33;
+
+        if (!subject) {
+          alert('⚠️ कृपया पहले विषय का नाम (Subject Name) भरें!');
+          if (subjInput) {
+            subjInput.focus();
+            subjInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '💾 अंक सुरक्षित करें (Submit Marks)';
+          }
           return;
         }
-      }
-      const isMonthly = examType.includes('मासिक') || examType.includes('Monthly');
-      const monthVal = isMonthly ? (document.getElementById('marksMonthSelect')?.value || '') : '';
-      const clsInfo = getSelectedClassInfo();
-      const secInfo = getSelectedSectionInfo();
-      const className = clsInfo.text.split('(')[0].trim() || 'Class 9th';
-      const section = secInfo.text;
-      const subject = (document.getElementById('marksSubjectInput')?.value || '').trim();
-      const maxMarks = parseFloat(document.getElementById('marksMaxInput')?.value) || 100;
-      const passMarks = parseFloat(document.getElementById('marksPassInput')?.value) || 33;
 
-      if (!subject) {
-        alert('कृपया विषय का नाम दर्ज करें!');
-        document.getElementById('marksSubjectInput')?.focus();
-        return;
-      }
-
-      // Collect all 99 student entries & calculate statistics
-      const students = [];
-      let enteredCount = 0;
-      let passCount = 0;
-      let failCount = 0;
-      let absentCount = 0;
-
-      for (let i = 1; i <= 99; i++) {
-        const rollNo = computeRollNumber(i);
-        let marksVal = (document.getElementById(`grid-marks-${i}`)?.value || '').trim();
-
-        // If blank, automatically record as Absent (AB)
-        if (marksVal === '') {
-          marksVal = 'AB';
-        }
-
-        enteredCount++;
-        let status = 'Pass';
-        if (marksVal.toUpperCase() === 'AB') {
-          status = 'Absent';
-          absentCount++;
-        } else {
-          const num = parseFloat(marksVal);
-          if (!isNaN(num)) {
-            if (num >= passMarks) {
-              status = 'Pass';
-              passCount++;
-            } else {
-              status = 'Fail';
-              failCount++;
-            }
-          } else {
-            status = 'Absent';
-            marksVal = 'AB';
-            absentCount++;
+        // Find the last row index that has an entry (User requirement: Only save up to last entered roll number, drop trailing blanks)
+        let lastEnteredIndex = 0;
+        for (let i = 1; i <= 99; i++) {
+          const val = (document.getElementById(`grid-marks-${i}`)?.value || '').trim();
+          if (val !== '') {
+            lastEnteredIndex = i;
           }
         }
 
-        students.push({
-          serial: i,
-          rollNo: rollNo,
-          marks: marksVal.toUpperCase(),
-          status: status
-        });
-      }
+        if (lastEnteredIndex === 0) {
+          alert('⚠️ आपने अभी तक किसी भी छात्र का प्राप्तांक दर्ज नहीं किया है!\nकृपया पहले रोल नंबर सूची में प्राप्तांक दर्ज करें।');
+          showMarksRollNumberList();
+          const firstInp = document.getElementById('grid-marks-1');
+          if (firstInp) {
+            firstInp.focus();
+            firstInp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '💾 अंक सुरक्षित करें (Submit Marks)';
+          }
+          return;
+        }
 
-      // Store pending payload for final submission
-      window._pendingMarksPayload = {
-        examType,
-        monthVal,
-        isMonthly,
-        clsInfo,
-        secInfo,
-        className,
-        section,
-        subject,
-        maxMarks,
-        passMarks,
-        teacherName,
-        teacherPhone,
-        enteredCount,
-        passCount,
-        failCount,
-        absentCount,
-        students
-      };
+        // Collect student records strictly up to lastEnteredIndex (drop all trailing blank rows beyond that)
+        const students = [];
+        let passCount = 0;
+        let failCount = 0;
+        let absentCount = 0;
 
-      // Populate Mobile Verification & Preview Modal fields
-      const modal = document.getElementById('marksSubmitConfirmModal');
-      const prevClass = document.getElementById('prevModalClassSec');
-      const prevSub = document.getElementById('prevModalSubject');
-      const prevExam = document.getElementById('prevModalExam');
-      const prevMaxPass = document.getElementById('prevModalMaxPass');
-      const prevPass = document.getElementById('prevModalPass');
-      const prevFail = document.getElementById('prevModalFail');
-      const prevAbsent = document.getElementById('prevModalAbsent');
+        for (let i = 1; i <= lastEnteredIndex; i++) {
+          const rollNo = computeRollNumber(i);
+          let marksVal = (document.getElementById(`grid-marks-${i}`)?.value || '').trim().toUpperCase();
 
-      if (prevClass) prevClass.textContent = `${className} (${section})`;
-      if (prevSub) prevSub.textContent = subject;
-      if (prevExam) prevExam.textContent = isMonthly && monthVal ? `${examType} - ${monthVal}` : examType;
-      if (prevMaxPass) prevMaxPass.textContent = `पूर्णांक: ${maxMarks} | उत्तीर्णांक: ${passMarks}`;
-      if (prevPass) prevPass.textContent = passCount;
-      if (prevFail) prevFail.textContent = failCount;
-      if (prevAbsent) prevAbsent.textContent = absentCount;
+          let status = 'Pass';
+          if (marksVal === '' || marksVal === 'A' || marksVal === 'AB' || marksVal === 'ABS' || marksVal === 'ABSENT') {
+            marksVal = 'ABS';
+            status = 'Absent';
+            absentCount++;
+          } else {
+            let num = parseFloat(marksVal);
+            if (isNaN(num)) {
+              status = 'Absent';
+              marksVal = 'ABS';
+              absentCount++;
+            } else {
+              // Strict rule: Clamping to maximum marks
+              if (num > maxMarks) {
+                num = maxMarks;
+                marksVal = String(maxMarks);
+              }
+              if (num >= passMarks) {
+                status = 'Pass';
+                passCount++;
+              } else {
+                status = 'Fail';
+                failCount++;
+              }
+            }
+          }
 
-      if (modal) {
-        modal.style.display = 'flex';
-      } else {
-        if (confirm(`क्या आप ${className} (${section}) विषय: ${subject} के अंक अंतिम रूप से सबमिट करना चाहते हैं?`)) {
-          executeFinalMarksSubmission();
+          students.push({
+            serial: i,
+            rollNo: rollNo,
+            marks: marksVal,
+            status: status
+          });
+        }
+
+        let existingId = window._currentActiveMarksSheetId;
+        if (!existingId) {
+          try {
+            const existingSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+            const normSub = subject.toLowerCase().replace(/\s+/g, '');
+            const found = existingSheets.find(s => {
+              const mCls = (s.classCode === clsInfo.code);
+              const mSec = (s.sectionCode === secInfo.code);
+              const sSubNorm = s.subject ? s.subject.trim().toLowerCase().replace(/\s+/g, '') : '';
+              const mSub = sSubNorm === normSub;
+              const mExam = s.rawExamType ? (s.rawExamType.trim() === examType.trim()) : (s.examType && s.examType.trim().startsWith(examType.trim()));
+              const mMonth = isMonthly ? (s.month === monthVal || (s.examType && s.examType.includes(monthVal))) : true;
+              return mCls && mSec && mSub && mExam && mMonth;
+            });
+            if (found && found.id) {
+              existingId = found.id;
+            }
+          } catch (e) {}
+        }
+
+        const sheetIdToUse = existingId || ('MS-' + clsInfo.code + '-' + secInfo.code + '-' + Date.now().toString().slice(-6));
+
+        const newSheetRecord = {
+          formType: 'ExamMarks',
+          id: sheetIdToUse,
+          date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
+          examType: displayExamName,
+          rawExamType: examType,
+          month: monthVal || '',
+          className: className,
+          classCode: clsInfo.code,
+          section: section,
+          sectionCode: secInfo.code,
+          subject: subject,
+          maxMarks: maxMarks,
+          passMarks: passMarks,
+          teacherName: teacherName,
+          teacherPhone: teacherPhone,
+          enteredCount: lastEnteredIndex,
+          passCount: passCount,
+          failCount: failCount,
+          absentCount: absentCount,
+          students: students
+        };
+
+        // 1. Save to Local Storage
+        try {
+          let existingSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+          const normSub = subject.toLowerCase().replace(/\s+/g, '');
+          existingSheets = existingSheets.filter(s => {
+            if (s.id === sheetIdToUse) return false;
+            const matchCls = (s.classCode === clsInfo.code);
+            const matchSec = (s.sectionCode === secInfo.code);
+            const sSubNorm = s.subject ? s.subject.trim().toLowerCase().replace(/\s+/g, '') : '';
+            const matchSub = sSubNorm === normSub;
+            const matchExam = s.rawExamType ? (s.rawExamType === examType) : (s.examType === examType || s.examType.startsWith(examType));
+            return !(matchCls && matchSec && matchSub && matchExam);
+          });
+          existingSheets.unshift(newSheetRecord);
+          localStorage.setItem('mdhss_marks_sheets', JSON.stringify(existingSheets));
+          window._currentActiveMarksSheetId = sheetIdToUse;
+        } catch (e) {
+          console.error('LocalStorage marks save error:', e);
+        }
+
+        // 2. Dispatch to Firebase Cloud Database for Live Sync
+        try {
+          if (window.mdhssCloud && typeof window.mdhssCloud.saveMarksSheet === 'function') {
+            window.mdhssCloud.saveMarksSheet(newSheetRecord);
+          }
+        } catch (e) {
+          console.error('Firebase marks save error:', e);
+        }
+
+        // 3. Dispatch to Google Sheets Webhook
+        try {
+          postToGoogleSheetsWebhook(newSheetRecord);
+        } catch (e) {
+          console.error('Google Sheets webhook dispatch warning:', e);
+        }
+
+        // 4. Update UI Success Alert Banner with summary of saved record
+        const alertBox = document.getElementById('marksSuccessAlert');
+        const detailsBox = document.getElementById('marksSuccessDetails');
+        if (detailsBox) {
+          detailsBox.innerHTML = `कक्षा: <strong>${className} (${section})</strong> | विषय: <strong>${subject}</strong> | परीक्षा: <strong>${displayExamName}</strong><br>कुल दर्ज छात्र: <strong>${lastEnteredIndex}</strong> (🟢 उत्तीर्ण: ${passCount} | 🔴 अनुत्तीर्ण: ${failCount} | ⚪ अनुपस्थित: ${absentCount}) | एडमिन पैनल में सुरक्षित: ✅`;
+        }
+        if (alertBox) {
+          alertBox.style.display = 'block';
+        }
+
+        // 5. Instantly Update & Refresh Admin Tables
+        if (typeof renderAdminTables === 'function') {
+          renderAdminTables();
+        }
+
+        // 6. Reset all input fields cleanly for next entry (सब साफ़ हो जाए)
+        if (subjInput) {
+          subjInput.value = '';
+          subjInput.placeholder = 'अगला विषय यहाँ लिखें (जैसे: विज्ञान, अंग्रेजी, गणित...)...';
+        }
+
+        for (let i = 1; i <= 99; i++) {
+          const marksInput = document.getElementById(`grid-marks-${i}`);
+          if (marksInput) marksInput.value = '';
+          const statusCell = document.getElementById(`grid-status-cell-${i}`);
+          if (statusCell) statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
+        }
+        updateMarksStatsDisplay();
+
+        const autoNotice = document.getElementById('marksAutoFetchNotice');
+        if (autoNotice) autoNotice.style.display = 'none';
+
+        // 7. Hide roll number list cleanly
+        hideMarksRollNumberList();
+
+        // 8. Reset button state
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '💾 अंक सुरक्षित करें (Submit Marks)';
+          submitBtn.style.background = '#16a34a';
+        }
+
+        // 9. Smoothly scroll up to the subject container so teacher can easily fill next subject
+        const formContainer = document.getElementById('teacherMarksFormContainer');
+        if (formContainer) {
+          formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (subjInput && typeof subjInput.focus === 'function') {
+          setTimeout(() => {
+            try { subjInput.focus(); } catch (e) {}
+          }, 300);
+        }
+
+        // 10. Simple, clean, crystal clear alert
+        alert(`✅ अंक सफलतापूर्वक सुरक्षित हो गए हैं!\n\n📋 कक्षा: ${className} (${section})\n📖 विषय: ${subject}\n🎯 कुल छात्र: ${lastEnteredIndex}\n\nडेटा सुरक्षित हो गया है और एडमिन पैनल में दर्ज हो चुका है। अब आप अगला विषय भर सकते हैं।`);
+
+      } catch (err) {
+        console.error('Error saving marks directly:', err);
+        alert('अंक सुरक्षित करने में त्रुटि: ' + err.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '💾 अंक सुरक्षित करें (Submit Marks)';
         }
       }
     }
     window.submitFullMarksSheet = submitFullMarksSheet;
+    window.executeFinalMarksSubmission = submitFullMarksSheet;
+    window.exitMarksPreviewAndEdit = function() {};
+    window.closeMarksConfirmModal = function() {};
 
-    function closeMarksConfirmModal(fromPopState = false) {
-      const modal = document.getElementById('marksSubmitConfirmModal');
-      if (modal) modal.style.display = 'none';
-      if (!fromPopState && window.history.state && window.history.state.modal === 'marksSubmitConfirm') {
-        window.history.back();
+    function showInstantToast(message) {
+      let toast = document.getElementById('mdhssInstantToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'mdhssInstantToast';
+        toast.style.cssText = 'position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: #ffffff; padding: 12px 24px; border-radius: 50px; font-size: 0.90rem; font-weight: 700; box-shadow: 0 12px 32px rgba(0,0,0,0.35); z-index: 999999; display: flex; align-items: center; gap: 8px; transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.28s ease; opacity: 0; pointer-events: none; border: 1.5px solid #38bdf8; max-width: 92vw; text-align: center;';
+        document.body.appendChild(toast);
       }
+      toast.innerHTML = message;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      
+      if (window._instantToastTimer) clearTimeout(window._instantToastTimer);
+      window._instantToastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+      }, 3200);
     }
-    window.closeMarksConfirmModal = closeMarksConfirmModal;
-
-    // Final Save Execution after teacher confirms in preview modal
-    function executeFinalMarksSubmission() {
-      closeMarksConfirmModal();
-      const payload = window._pendingMarksPayload;
-      if (!payload) return;
-
-      const {
-        examType, monthVal, isMonthly, clsInfo, secInfo,
-        className, section, subject, maxMarks, passMarks,
-        teacherName, teacherPhone, enteredCount, passCount,
-        failCount, absentCount, students
-      } = payload;
-
-      // Check if we matched an existing sheet during auto-fetch or in local storage
-      let existingId = window._currentActiveMarksSheetId;
-      if (!existingId) {
-        const existingSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
-        const normSub = subject.toLowerCase().replace(/\s+/g, '');
-        const found = existingSheets.find(s => {
-          const mCls = (s.classCode === clsInfo.code);
-          const mSec = (s.sectionCode === secInfo.code);
-          const sSubNorm = s.subject ? s.subject.trim().toLowerCase().replace(/\s+/g, '') : '';
-          const mSub = sSubNorm === normSub;
-          const mExam = s.rawExamType ? (s.rawExamType.trim() === examType.trim()) : (s.examType && s.examType.trim().startsWith(examType.trim()));
-          const mMonth = isMonthly ? (s.month === monthVal || (s.examType && s.examType.includes(monthVal))) : true;
-          return mCls && mSec && mSub && mExam && mMonth;
-        });
-        if (found && found.id) {
-          existingId = found.id;
-        }
-      }
-
-      const sheetIdToUse = existingId || ('MS-' + clsInfo.code + '-' + secInfo.code + '-' + Date.now().toString().slice(-6));
-
-      const newSheetRecord = {
-        formType: 'ExamMarks',
-        id: sheetIdToUse,
-        date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
-        examType: isMonthly && monthVal ? `${examType} - ${monthVal}` : examType,
-        rawExamType: examType,
-        month: monthVal,
-        className: className,
-        classCode: clsInfo.code,
-        section: section,
-        sectionCode: secInfo.code,
-        subject: subject,
-        maxMarks: maxMarks,
-        passMarks: passMarks,
-        teacherName: teacherName,
-        teacherPhone: teacherPhone,
-        enteredCount: enteredCount,
-        passCount: passCount,
-        failCount: failCount,
-        absentCount: absentCount,
-        students: students
-      };
-
-      // 1. Save locally in localStorage for Admin Panel
-      try {
-        let existingSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
-        // Remove existing version of this exact sheet (by ID or class/subject/exam match)
-        const normSub = subject.toLowerCase().replace(/\s+/g, '');
-        existingSheets = existingSheets.filter(s => {
-          if (s.id === sheetIdToUse) return false;
-          const matchCls = (s.classCode === clsInfo.code);
-          const matchSec = (s.sectionCode === secInfo.code);
-          const sSubNorm = s.subject ? s.subject.trim().toLowerCase().replace(/\s+/g, '') : '';
-          const matchSub = sSubNorm === normSub;
-          const matchExam = s.rawExamType ? (s.rawExamType === examType) : (s.examType === examType || s.examType.startsWith(examType));
-          const matchMonth = isMonthly ? (s.month === monthVal) : true;
-          return !(matchCls && matchSec && matchSub && matchExam && matchMonth);
-        });
-        existingSheets.unshift(newSheetRecord);
-        localStorage.setItem('mdhss_marks_sheets', JSON.stringify(existingSheets));
-      } catch (e) {
-        console.error('Error saving marks record:', e);
-      }
-
-      // 2. Dispatched to Firebase Cloud Database for Live Admin View
-      if (window.mdhssCloud && typeof window.mdhssCloud.saveMarksSheet === 'function') {
-        window.mdhssCloud.saveMarksSheet(newSheetRecord);
-      }
-
-      // 3. Dispatch to Google Sheets Webhook
-      postToGoogleSheetsWebhook(newSheetRecord);
-
-      // 4. Show Success Alert
-      const alertBox = document.getElementById('marksSuccessAlert');
-      if (alertBox) {
-        alertBox.innerHTML = `
-          ✅ <strong>सफलतापूर्वक सुरक्षित किया गया!</strong> ${className} (${section}) के <strong>${subject}</strong> विषय के कुल <strong>${enteredCount}</strong> छात्रों के अंक सुरक्षित हो गए हैं। फॉर्म को स्वतः नया डेटा भरने हेतु ब्लैंक कर दिया गया है।
-        `;
-        alertBox.style.display = 'block';
-        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => { alertBox.style.display = 'none'; }, 6000);
-      }
-
-      // 5. Automatically blank out all sections on the page after save as requested
-      const subjInput = document.getElementById('marksSubjectInput');
-      if (subjInput) subjInput.value = '';
-
-      const examSelect = document.getElementById('marksExamTypeSelect');
-      if (examSelect) examSelect.selectedIndex = 0;
-      const monthContainer = document.getElementById('marksMonthContainer');
-      if (monthContainer) monthContainer.style.display = 'none';
-
-      if (document.getElementById('marksMaxInput')) document.getElementById('marksMaxInput').value = '100';
-      if (document.getElementById('marksPassInput')) document.getElementById('marksPassInput').value = '33';
-
-      for (let i = 1; i <= 99; i++) {
-        const marksInput = document.getElementById(`grid-marks-${i}`);
-        if (marksInput) marksInput.value = '';
-        const statusCell = document.getElementById(`grid-status-cell-${i}`);
-        if (statusCell) statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
-      }
-
-      updateMarksStatsDisplay();
-
-      const autoFetchNotice = document.getElementById('marksAutoFetchNotice');
-      if (autoFetchNotice) autoFetchNotice.style.display = 'none';
-
-      // 6. User Request: "phir ohi sab roll number list hide ho jae" -> Hide the roll number list again!
-      hideMarksRollNumberList();
-
-      // Refresh Admin Tables if rendered
-      renderAdminTables();
-    }
-    window.executeFinalMarksSubmission = executeFinalMarksSubmission;
+    window.showInstantToast = showInstantToast;
 
     // =========================================================================
     // 5. GOOGLE SHEETS / DRIVE CLOUD INTEGRATION & ADMIN PORTAL
@@ -4297,13 +4400,17 @@
       const storedSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
 
       // Filter sheets matching selected class, section (if not ALL), and exam (if not ALL)
+      const targetNormCls = normalizeClassKey(selClass);
       const matchingSheets = storedSheets.filter(sheet => {
-        const matchCls = (sheet.classCode === selClass || 
+        const sheetNormCls = normalizeClassKey(sheet.classCode) || normalizeClassKey(sheet.className);
+        const matchCls = (targetNormCls === sheetNormCls) || 
+                          (sheet.classCode === selClass) || 
+                          (sheet.className && normalizeClassKey(sheet.className).includes(targetNormCls)) ||
                           (sheet.className && sheet.className.toLowerCase().includes(selClass.toLowerCase())) ||
                           (selClass === '9' && sheet.className && sheet.className.includes('9')) ||
                           (selClass === '10' && sheet.className && sheet.className.includes('10')) ||
                           (selClass === '11' && sheet.className && sheet.className.includes('11')) ||
-                          (selClass === '12' && sheet.className && sheet.className.includes('12')));
+                          (selClass === '12' && sheet.className && sheet.className.includes('12'));
         if (!matchCls) return false;
 
         if (selSection !== 'ALL') {
@@ -4335,7 +4442,47 @@
         }
       });
 
+      // Educational Academic Subject Sequence:
+      // 1. First / Main Language: Hindi (हिन्दी)
+      // 2. Second Language: English (अंग्रेजी)
+      // 3. Third Language: Sanskrit / Urdu (संस्कृत)
+      // 4. Mathematics (गणित)
+      // 5. Science (विज्ञान)
+      // 6. Social Science (सामाजिक विज्ञान)
+      // 7. Other Subjects
+      function getSubjectSortWeight(subjectName) {
+        if (!subjectName) return 999;
+        const s = subjectName.trim().toLowerCase();
+        // 1. Main / First Language: Hindi
+        if (s.includes('हिंदी') || s.includes('हिन्दी') || s.includes('hindi') || s.includes('hin') || s.includes('प्रथम भाषा') || s.includes('1st lang') || s.includes('main lang')) return 10;
+        // 2. Second Language: English
+        if (s.includes('इंग्लिश') || s.includes('अंग्रेजी') || s.includes('अंग्रेज़ी') || s.includes('english') || s.includes('eng') || s.includes('द्वितीय भाषा') || s.includes('2nd lang')) return 20;
+        // 3. Third Language: Sanskrit / Urdu
+        if (s.includes('संस्कृत') || s.includes('sanskrit') || s.includes('sans') || s.includes('तृतीय भाषा') || s.includes('3rd lang') || s.includes('उर्दू') || s.includes('urdu')) return 30;
+        // 4. Mathematics
+        if (s.includes('गणित') || s.includes('math') || s.includes('ganit') || s.includes('maths')) return 40;
+        // 5. Science
+        if (s.includes('विज्ञान') || s.includes('science') || s.includes('vigyan') || s.includes('sci') || s.includes('भौतिक') || s.includes('physics') || s.includes('रसायन') || s.includes('chemistry') || s.includes('जीव') || s.includes('biology')) return 50;
+        // 6. Social Science
+        if (s.includes('सामाजिक') || s.includes('social') || s.includes('sst') || s.includes('s.st') || s.includes('samajik') || s.includes('इतिहास') || s.includes('भूगोल') || s.includes('नागरिक')) return 60;
+        // 7. Computer / IT
+        if (s.includes('कंप्यूटर') || s.includes('computer') || s.includes('आईटी') || s.includes('it')) return 70;
+        // 8. Commerce / Accounts
+        if (s.includes('वाणिज्य') || s.includes('commerce') || s.includes('लेखा') || s.includes('accounts')) return 80;
+        // 9. Economics
+        if (s.includes('अर्थशास्त्र') || s.includes('economics')) return 85;
+        // 10. Arts / Drawing
+        if (s.includes('कला') || s.includes('art') || s.includes('drawing')) return 90;
+        return 100;
+      }
+
       const subjects = Array.from(subjectMap.keys());
+      subjects.sort((a, b) => {
+        const wA = getSubjectSortWeight(a);
+        const wB = getSubjectSortWeight(b);
+        if (wA !== wB) return wA - wB;
+        return a.localeCompare(b, 'hi');
+      });
 
       // 1. Render "शिक्षक प्रविष्टि सारांश (Who Fed The Data Summary)"
       if (matchingSheets.length === 0) {
@@ -4344,7 +4491,7 @@
             <div style="font-size: 1.3rem; margin-bottom: 4px;">ℹ️</div>
             <strong style="color: #0f172a; font-size: 0.96rem;">चयनित कक्षा (Class ${selClass}${selSection !== 'ALL' ? ' - Section ' + selSection : ''}) हेतु अभी कोई अंक प्रविष्ट नहीं हुए हैं।</strong>
             <div style="font-size: 0.84rem; color: #64748b; margin-top: 4px;">
-              जैसे ही कोई शिक्षक शिक्षक मॉड्यूल में इस कक्षा के किसी विषय के अंक दर्ज करेंगे, वे तुरंत यहाँ रोल नंबर 01 से 99 के रूप में स्वतः समेकित होकर दिखाई देंगे।
+              जैसे ही कोई शिक्षक शिक्षक मॉड्यूल में इस कक्षा के किसी विषय के अंक दर्ज करेंगे, वे तुरंत यहाँ समेकित होकर दिखाई देंगे।
             </div>
           </div>
         `;
@@ -4394,7 +4541,7 @@
               📞 संपर्क: <span style="font-family: monospace; font-weight: 700; color: #0284c7;">${sheet.teacherPhone || '-'}</span> • दिनांक: ${sheet.date || '-'}
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; border-top: 1px dashed #e2e8f0; padding-top: 6px;">
-              <span style="color: #475569;">प्रविष्ट: <strong>${sheet.enteredCount || 0}</strong>/99 | P:${sheet.passCount || 0} F:${sheet.failCount || 0} AB:${sheet.absentCount || 0}</span>
+              <span style="color: #475569;">प्रविष्ट: <strong>${sheet.enteredCount || (sheet.students ? sheet.students.length : 0)} छात्र</strong> | P:${sheet.passCount || 0} F:${sheet.failCount || 0} ABS:${sheet.absentCount || 0}</span>
               <div>
                 <button type="button" class="btn-hero-sec" style="font-size: 0.72rem; padding: 0.25rem 0.5rem; background: #eff6ff; color: #0284c7; border: 1px solid #bae6fd; cursor: pointer; margin-right: 3px;" onclick="openAdminMarksModal('${sheet.id}')">👁️ देखें</button>
                 <button type="button" class="btn-hero-sec" style="font-size: 0.72rem; padding: 0.25rem 0.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; cursor: pointer;" onclick="deleteAdminRecord('marks', '${sheet.id}')">🗑️ हटाएं</button>
@@ -4421,7 +4568,7 @@
         theadHtml += `
           <th style="padding: 10px 14px; text-align: center;">
             <div style="font-weight: 800; color: #0f172a;">${sub}</div>
-            <small style="color: #64748b; font-weight: 600;">(पूर्णांक: ${sMax} | उत्तीर्णांक: ${sheet.passMarks || 33})</small>
+            <small style="color: #64748b; font-weight: 600;">(पूर्णांक: ${sMax})</small>
           </th>
         `;
       });
@@ -4429,15 +4576,29 @@
       theadHtml += `
           <th style="padding: 10px 14px; text-align: center; background: #f1f5f9;">
             <div style="font-weight: 800; color: #0f172a;">कुल प्राप्तांक</div>
-            <small style="color: #475569; font-weight: 600;">(पूर्णांक: ${totalMaxMarks})</small>
+            <small style="color: #475569; font-weight: 600;">(${totalMaxMarks})</small>
           </th>
           <th style="padding: 10px 14px; text-align: center; background: #f1f5f9;">प्रतिशत (%)</th>
-          <th style="padding: 10px 14px; text-align: center;">परिणाम (Result)</th>
+          <th style="padding: 10px 14px; text-align: center;">परिणाम</th>
         </tr>
       `;
       thead.innerHTML = theadHtml;
 
-      // 3. Build Student Rows 1 to 99
+      // 3. Determine Maximum Entered Student Roll for this Class (Do NOT display unentered 99 rows!)
+      let maxClassRoll = 0;
+      matchingSheets.forEach(s => {
+        if (s.enteredCount && s.enteredCount > maxClassRoll) {
+          maxClassRoll = s.enteredCount;
+        }
+        if (Array.isArray(s.students)) {
+          s.students.forEach(st => {
+            const ser = Number(st.serial);
+            if (!isNaN(ser) && ser > maxClassRoll) maxClassRoll = ser;
+          });
+        }
+      });
+      if (maxClassRoll === 0) maxClassRoll = 1;
+
       const classCode = CLASS_CODE_MAP[selClass] || selClass;
       const secCode = (selSection !== 'ALL') ? (SECTION_CODE_MAP[selSection] || '2') : '2';
 
@@ -4454,7 +4615,7 @@
       });
 
       let tbodyHtml = '';
-      for (let i = 1; i <= 99; i++) {
+      for (let i = 1; i <= maxClassRoll; i++) {
         const rollStr = String(i).padStart(2, '0');
         const rollNo = `27${classCode}${secCode}${rollStr}`;
         
@@ -4475,20 +4636,17 @@
           if (stObj && stObj.marks !== undefined && stObj.marks !== '') {
             hasAnyData = true;
             const mVal = String(stObj.marks).trim().toUpperCase();
-            if (mVal === 'AB' || mVal === 'ABSENT') {
+            if (mVal === 'A' || mVal === 'AB' || mVal === 'ABS' || mVal === 'ABSENT') {
               isAnyAbsent = true;
-              cellsHtml += `<td style="padding: 8px 12px; text-align: center;"><span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-weight:800; font-size:0.75rem;">AB</span></td>`;
+              cellsHtml += `<td style="padding: 8px 12px; text-align: center; font-weight:800; color:#64748b;">ABS</td>`;
             } else {
               isAllAbsent = false;
               const num = parseFloat(mVal);
               if (!isNaN(num)) {
                 totalObtained += num;
-                if (num < passMarks) {
-                  isAnyFail = true;
-                  cellsHtml += `<td style="padding: 8px 12px; text-align: center; font-weight:800; color:#b91c1c; font-size:0.95rem;">${num} <span style="font-size:0.68rem; color:#dc2626;">(Fail)</span></td>`;
-                } else {
-                  cellsHtml += `<td style="padding: 8px 12px; text-align: center; font-weight:800; color:#15803d; font-size:0.95rem;">${num}</td>`;
-                }
+                if (num < passMarks) isAnyFail = true;
+                // Pure number only, NO (Fail) or (Pass) note so copying is clean & copy-paste friendly
+                cellsHtml += `<td style="padding: 8px 12px; text-align: center; font-weight:800; color:${num < passMarks ? '#b91c1c' : '#0f172a'}; font-size:0.95rem;">${num}</td>`;
               } else {
                 cellsHtml += `<td style="padding: 8px 12px; text-align: center; color:#64748b;">${mVal}</td>`;
               }
@@ -4499,15 +4657,15 @@
         });
 
         let percentage = (totalMaxMarks > 0 && hasAnyData) ? ((totalObtained / totalMaxMarks) * 100).toFixed(1) : '0.0';
-        let resultBadge = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">अपूर्ण</span>`;
+        let resultBadge = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
 
         if (hasAnyData) {
           if (isAllAbsent) {
-            resultBadge = `<span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-weight:800; font-size:0.75rem;">अनुपस्थित (AB)</span>`;
+            resultBadge = `<span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-weight:800; font-size:0.75rem;">ABS</span>`;
           } else if (isAnyFail) {
-            resultBadge = `<span class="page-badge-pill" style="background:#fef2f2; color:#b91c1c; font-weight:800; font-size:0.75rem;">अनुत्तीर्ण (Fail)</span>`;
+            resultBadge = `<span class="page-badge-pill" style="background:#fef2f2; color:#b91c1c; font-weight:800; font-size:0.75rem;">Fail</span>`;
           } else {
-            resultBadge = `<span class="page-badge-pill" style="background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem;">उत्तीर्ण (Pass)</span>`;
+            resultBadge = `<span class="page-badge-pill" style="background:#dcfce7; color:#15803d; font-weight:800; font-size:0.75rem;">Pass</span>`;
           }
         }
 
@@ -4517,7 +4675,7 @@
             <td style="padding: 8px 14px; font-family: monospace; font-weight: 800; color: #0284c7;">${rollNo}</td>
             ${cellsHtml}
             <td style="padding: 8px 14px; text-align: center; font-weight: 800; color: #0f172a; background: ${i % 2 === 0 ? '#f1f5f9' : '#f8fafc'};">
-              ${hasAnyData && !isAllAbsent ? totalObtained : (isAllAbsent && hasAnyData ? 'AB' : '-')}
+              ${hasAnyData && !isAllAbsent ? totalObtained : (isAllAbsent && hasAnyData ? 'ABS' : '-')}
             </td>
             <td style="padding: 8px 14px; text-align: center; font-weight: 700; color: #0369a1; background: ${i % 2 === 0 ? '#f1f5f9' : '#f8fafc'};">
               ${hasAnyData && !isAllAbsent ? percentage + '%' : '-'}
@@ -4543,8 +4701,13 @@
       const selExam = examSelect ? examSelect.value : 'ALL';
 
       const storedSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
+      const targetNormCls = normalizeClassKey(selClass);
       const matchingSheets = storedSheets.filter(sheet => {
-        const matchCls = (sheet.classCode === selClass || (sheet.className && sheet.className.includes(selClass)));
+        const sheetNormCls = normalizeClassKey(sheet.classCode) || normalizeClassKey(sheet.className);
+        const matchCls = (targetNormCls === sheetNormCls) || 
+                          (sheet.classCode === selClass) || 
+                          (sheet.className && normalizeClassKey(sheet.className).includes(targetNormCls)) ||
+                          (sheet.className && sheet.className.toLowerCase().includes(selClass.toLowerCase()));
         if (!matchCls) return false;
         if (selSection !== 'ALL') {
           const matchSec = (sheet.sectionCode === selSection || sheet.section === selSection || (sheet.section && sheet.section.includes(selSection)));
@@ -4567,13 +4730,50 @@
         const sub = (s.subject || 'अज्ञात').trim();
         if (!subjectMap.has(sub)) subjectMap.set(sub, s);
       });
+
+      function getSubjectSortWeight(subjectName) {
+        if (!subjectName) return 999;
+        const s = subjectName.trim().toLowerCase();
+        if (s.includes('हिंदी') || s.includes('हिन्दी') || s.includes('hindi') || s.includes('hin') || s.includes('प्रथम भाषा') || s.includes('1st lang') || s.includes('main lang')) return 10;
+        if (s.includes('इंग्लिश') || s.includes('अंग्रेजी') || s.includes('अंग्रेज़ी') || s.includes('english') || s.includes('eng') || s.includes('द्वितीय भाषा') || s.includes('2nd lang')) return 20;
+        if (s.includes('संस्कृत') || s.includes('sanskrit') || s.includes('sans') || s.includes('तृतीय भाषा') || s.includes('3rd lang') || s.includes('उर्दू') || s.includes('urdu')) return 30;
+        if (s.includes('गणित') || s.includes('math') || s.includes('ganit') || s.includes('maths')) return 40;
+        if (s.includes('विज्ञान') || s.includes('science') || s.includes('vigyan') || s.includes('sci') || s.includes('भौतिक') || s.includes('physics') || s.includes('रसायन') || s.includes('chemistry') || s.includes('जीव') || s.includes('biology')) return 50;
+        if (s.includes('सामाजिक') || s.includes('social') || s.includes('sst') || s.includes('s.st') || s.includes('samajik') || s.includes('इतिहास') || s.includes('भूगोल') || s.includes('नागरिक')) return 60;
+        if (s.includes('कंप्यूटर') || s.includes('computer') || s.includes('आईटी') || s.includes('it')) return 70;
+        if (s.includes('वाणिज्य') || s.includes('commerce') || s.includes('लेखा') || s.includes('accounts')) return 80;
+        if (s.includes('अर्थशास्त्र') || s.includes('economics')) return 85;
+        if (s.includes('कला') || s.includes('art') || s.includes('drawing')) return 90;
+        return 100;
+      }
+
       const subjects = Array.from(subjectMap.keys());
+      subjects.sort((a, b) => {
+        const wA = getSubjectSortWeight(a);
+        const wB = getSubjectSortWeight(b);
+        if (wA !== wB) return wA - wB;
+        return a.localeCompare(b, 'hi');
+      });
+
+      let maxClassRoll = 0;
+      matchingSheets.forEach(s => {
+        if (s.enteredCount && s.enteredCount > maxClassRoll) {
+          maxClassRoll = s.enteredCount;
+        }
+        if (Array.isArray(s.students)) {
+          s.students.forEach(st => {
+            const ser = Number(st.serial);
+            if (!isNaN(ser) && ser > maxClassRoll) maxClassRoll = ser;
+          });
+        }
+      });
+      if (maxClassRoll === 0) maxClassRoll = 1;
 
       let csvContent = '\uFEFF';
       csvContent += `Maa Durga Higher Secondary School Semariya - Consolidated Class Marksheet\n`;
       csvContent += `Class,Class ${selClass},Section,${selSection},Exam,${selExam},Generated,${new Date().toLocaleString('en-IN')}\n\n`;
       
-      // Header
+      // Header (Clean, Pure Marks Format)
       csvContent += `S_No,Roll_No,` + subjects.map(s => `"${s} (Max ${subjectMap.get(s).maxMarks||100})"`).join(',') + `,Total_Obtained,Total_Max,Percentage,Result_Status\n`;
 
       let totalMaxMarks = 0;
@@ -4582,7 +4782,7 @@
       const classCode = CLASS_CODE_MAP[selClass] || selClass;
       const secCode = (selSection !== 'ALL') ? (SECTION_CODE_MAP[selSection] || '2') : '2';
 
-      for (let i = 1; i <= 99; i++) {
+      for (let i = 1; i <= maxClassRoll; i++) {
         const rollStr = String(i).padStart(2, '0');
         const rollNo = `27${classCode}${secCode}${rollStr}`;
 
@@ -4604,27 +4804,34 @@
 
           if (studentMark !== '' && studentMark !== undefined) {
             hasData = true;
-            markCols.push(`"${studentMark}"`);
-            const num = parseFloat(studentMark);
-            if (!isNaN(num)) {
-              isAllAbsent = false;
-              totalObtained += num;
-              if (num < passMarks) isAnyFail = true;
+            const mVal = String(studentMark).trim().toUpperCase();
+            if (mVal === 'A' || mVal === 'AB' || mVal === 'ABS' || mVal === 'ABSENT') {
+              markCols.push(`"ABS"`);
+            } else {
+              const num = parseFloat(studentMark);
+              if (!isNaN(num)) {
+                isAllAbsent = false;
+                totalObtained += num;
+                if (num < passMarks) isAnyFail = true;
+                markCols.push(`"${num}"`);
+              } else {
+                markCols.push(`"${studentMark}"`);
+              }
             }
           } else {
             markCols.push(`"-"`);
           }
         });
 
-        let status = 'Incomplete';
+        let status = '-';
         let pct = (totalMaxMarks > 0 && hasData) ? ((totalObtained / totalMaxMarks) * 100).toFixed(1) + '%' : '-';
         if (hasData) {
-          if (isAllAbsent) status = 'Absent (AB)';
+          if (isAllAbsent) status = 'ABS';
           else if (isAnyFail) status = 'Fail';
           else status = 'Pass';
         }
 
-        csvContent += `${i},${rollNo},` + markCols.join(',') + `,${hasData && !isAllAbsent ? totalObtained : '-'},${totalMaxMarks},${pct},${status}\n`;
+        csvContent += `${i},${rollNo},` + markCols.join(',') + `,${hasData && !isAllAbsent ? totalObtained : (isAllAbsent && hasData ? 'ABS' : '-')},${totalMaxMarks},${pct},${status}\n`;
       }
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -4637,6 +4844,56 @@
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
+
+    // 1-Click Clipboard Copy of Pure Marks (Numbers & ABS Only, NO brackets, NO (Fail) notes)
+    function copyCleanConsolidatedMarksTable() {
+      const tbl = document.getElementById('consolidatedClassMarksTable');
+      if (!tbl) return;
+      const rows = tbl.querySelectorAll('tr');
+      if (!rows || rows.length <= 1) {
+        alert('कॉपी करने के लिए कोई अंक डेटा उपलब्ध नहीं है!');
+        return;
+      }
+
+      let clipboardText = '';
+      rows.forEach((row, rIdx) => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        const rowVals = cells.map(c => {
+          let t = c.innerText.trim();
+          t = t.replace(/\n+/g, ' ');
+          t = t.replace(/\s*\([^)]*\)/g, ''); // strip any brackets like (Fail) or (पूर्णांक: 100)
+          return t.trim();
+        });
+        clipboardText += rowVals.join('\t') + '\n';
+      });
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(clipboardText).then(() => {
+          alert('✅ केवल प्राप्तांक (Pure Numbers & ABS) क्लिपबोर्ड में कॉपी हो गए हैं!\n\nअब आप सीधे Excel या Google Sheets में Ctrl+V (Paste) कर सकते हैं। कोई भी (Fail) कोष्ठक नोट नहीं आएगा।');
+        }).catch(() => {
+          fallbackClipboardCopy(clipboardText);
+        });
+      } else {
+        fallbackClipboardCopy(clipboardText);
+      }
+    }
+
+    function fallbackClipboardCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        alert('✅ केवल प्राप्तांक (Pure Numbers & ABS) क्लिपबोर्ड में कॉपी हो गए हैं!\n\nअब आप सीधे Excel या Google Sheets में Ctrl+V (Paste) कर सकते हैं।');
+      } catch (e) {
+        alert('कॉपी करने में असमर्थ।');
+      }
+      document.body.removeChild(ta);
+    }
+    window.copyCleanConsolidatedMarksTable = copyCleanConsolidatedMarksTable;
 
     // Print Consolidated Class Marks View
     function printConsolidatedClassMarks() {
@@ -4894,16 +5151,17 @@
       if (teacher) teacher.textContent = sheet.teacherName || 'शिक्षक';
       if (teacherPhone) teacherPhone.textContent = sheet.teacherPhone || '-';
       if (maxPass) maxPass.textContent = `पूर्णांक: ${sheet.maxMarks} | उत्तीर्णांक: ${sheet.passMarks}`;
-      if (enteredCount) enteredCount.textContent = `${sheet.enteredCount || 0} छात्र प्रविष्ट (कुल 99 में से)`;
+      const totalSt = sheet.enteredCount || (sheet.students ? sheet.students.length : 0);
+      if (enteredCount) enteredCount.textContent = `${totalSt} छात्र प्रविष्ट`;
       if (resSummary) resSummary.textContent = `उत्तीर्ण: ${sheet.passCount || 0} | अनुत्तीर्ण: ${sheet.failCount || 0} | अनुपस्थित: ${sheet.absentCount || 0}`;
 
       if (tbody) {
         tbody.innerHTML = (sheet.students || []).map((st, i) => {
-          let badge = `<span class="page-badge-pill" style="background:#dcfce7; color:#15803d; font-weight:700;">उत्तीर्ण (Pass)</span>`;
-          if (st.status === 'Absent' || st.marks === 'AB') {
-            badge = `<span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-weight:700;">अनुपस्थित (AB)</span>`;
+          let badge = `<span class="page-badge-pill" style="background:#dcfce7; color:#15803d; font-weight:700;">Pass</span>`;
+          if (st.status === 'Absent' || st.marks === 'A' || st.marks === 'AB' || st.marks === 'ABS') {
+            badge = `<span class="page-badge-pill" style="background:#fee2e2; color:#991b1b; font-weight:700;">ABS</span>`;
           } else if (st.status === 'Fail') {
-            badge = `<span class="page-badge-pill" style="background:#fef2f2; color:#b91c1c; font-weight:700;">अनुत्तीर्ण (Fail)</span>`;
+            badge = `<span class="page-badge-pill" style="background:#fef2f2; color:#b91c1c; font-weight:700;">Fail</span>`;
           }
 
           return `
@@ -4945,6 +5203,27 @@
       navigateToPage('admin');
     }
 
+    function prepareForNextSubjectEntry() {
+      const subjInput = document.getElementById('marksSubjectInput');
+      if (subjInput) {
+        subjInput.value = '';
+        subjInput.placeholder = 'अगला विषय यहाँ लिखें (जैसे: विज्ञान, अंग्रेजी, गणित...)...';
+        try { subjInput.focus(); } catch (e) {}
+      }
+      for (let i = 1; i <= 99; i++) {
+        const marksInput = document.getElementById(`grid-marks-${i}`);
+        if (marksInput) marksInput.value = '';
+        const statusCell = document.getElementById(`grid-status-cell-${i}`);
+        if (statusCell) statusCell.innerHTML = `<span class="page-badge-pill" style="background:#f1f5f9; color:#94a3b8; font-size:0.75rem;">-</span>`;
+      }
+      updateMarksStatsDisplay();
+      hideMarksRollNumberList();
+      const formContainer = document.getElementById('teacherMarksFormContainer');
+      if (formContainer) {
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
     // Expose functions globally on window object
     window.switchUnifiedLoginTab = switchUnifiedLoginTab;
     window.handleAdminLogin = handleAdminLogin;
@@ -4957,6 +5236,7 @@
     window.exportSingleMarksSheetExcel = exportSingleMarksSheetExcel;
     window.exportCurrentMarksSheetToExcel = exportCurrentMarksSheetToExcel;
     window.openAdminMarksPortal = openAdminMarksPortal;
+    window.prepareForNextSubjectEntry = prepareForNextSubjectEntry;
     window.copyAbsentMsgTemplate = copyAbsentMsgTemplate;
     window.switchTeacherSectionTab = switchTeacherSectionTab;
     window.exportAllMarksConsolidatedExcel = exportAllMarksConsolidatedExcel;
