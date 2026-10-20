@@ -75,6 +75,14 @@
     // 1. Initial Seeding and Page Setup (Preloader removed for instant direct access)
     window.addEventListener('DOMContentLoaded', () => {
 
+      // Explicitly purge teacher login session and storage as requested
+      try {
+        sessionStorage.removeItem('mdhss_teacher_session');
+        localStorage.removeItem('mdhss_teacher_session');
+        localStorage.removeItem('mdhss_logged_teacher');
+        sessionStorage.removeItem('mdhss_logged_teacher');
+      } catch (e) {}
+
       // Always ensure Webhook URL is set to active Google Apps Script endpoint
       if (!localStorage.getItem('mdhss_google_sheets_webhook') || localStorage.getItem('mdhss_google_sheets_webhook') === '') {
         localStorage.setItem('mdhss_google_sheets_webhook', DEFAULT_GOOGLE_APPS_SCRIPT_WEBHOOK);
@@ -3928,34 +3936,12 @@
     const VALID_ADMIN_PASSWORD = 'Vivek64@';
 
     function switchUnifiedLoginTab(type) {
-      const teacherContainer = document.getElementById('unifiedTeacherLoginFormContainer');
-      const adminContainer = document.getElementById('unifiedAdminLoginFormContainer');
-      const tabTeacher = document.getElementById('tabBtnTeacherLogin');
-      const tabAdmin = document.getElementById('tabBtnAdminLogin');
-
-      if (type === 'admin') {
-        if (teacherContainer) teacherContainer.style.display = 'none';
-        if (adminContainer) adminContainer.style.display = 'block';
-        if (tabAdmin) {
-          tabAdmin.style.background = '#7c3aed';
-          tabAdmin.style.color = '#ffffff';
-        }
-        if (tabTeacher) {
-          tabTeacher.style.background = 'transparent';
-          tabTeacher.style.color = '#475569';
-        }
-      } else {
-        if (teacherContainer) teacherContainer.style.display = 'block';
-        if (adminContainer) adminContainer.style.display = 'none';
-        if (tabTeacher) {
-          tabTeacher.style.background = '#0284c7';
-          tabTeacher.style.color = '#ffffff';
-        }
-        if (tabAdmin) {
-          tabAdmin.style.background = 'transparent';
-          tabAdmin.style.color = '#475569';
-        }
+      if (type === 'teacher') {
+        window.open('https://mdhssslogin.netlify.app/', '_blank', 'noopener,noreferrer');
+        return;
       }
+      const adminContainer = document.getElementById('unifiedAdminLoginFormContainer');
+      if (adminContainer) adminContainer.style.display = 'block';
     }
 
     function handleAdminLogin(event) {

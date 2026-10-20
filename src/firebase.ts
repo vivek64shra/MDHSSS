@@ -503,55 +503,6 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
   } catch (err) {
     console.warn('Realtime whatsapp groups listener warning:', err);
   }
-
-  // Realtime Teacher Exam Window Config Listener
-  try {
-    onSnapshot(
-      doc(db, 'settings', 'exam_window_config'),
-      (snap) => {
-        if (snap.exists() && snap.data()?.data) {
-          const cfg = snap.data().data;
-          localStorage.setItem('mdhss_exam_window_config', JSON.stringify(cfg));
-          if (typeof (window as any).applyExamWindowConfigToUI === 'function') {
-            (window as any).applyExamWindowConfigToUI(cfg);
-          }
-        }
-      },
-      (error) => {
-        handleFirestoreError(error, OperationType.GET, 'settings/exam_window_config');
-      }
-    );
-  } catch (err) {
-    console.warn('Realtime exam window config listener warning:', err);
-  }
-
-  // Realtime Marks Sheets Listener
-  try {
-    onSnapshot(
-      collection(db, 'marks_sheets'),
-      (snap) => {
-        const deletedSet = getDeletedIdSet();
-        const cloudSheets: any[] = [];
-        snap.forEach((d) => {
-          const data = d.data();
-          if (data && data.id && !deletedSet.has(data.id)) {
-            cloudSheets.push(data);
-          }
-        });
-        cloudSheets.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
-        localStorage.setItem('mdhss_marks_sheets', JSON.stringify(cloudSheets));
-
-        if (typeof (window as any).renderAdminTables === 'function') {
-          (window as any).renderAdminTables();
-        }
-      },
-      (error) => {
-        handleFirestoreError(error, OperationType.LIST, 'marks_sheets');
-      }
-    );
-  } catch (err) {
-    console.warn('Realtime marks sheets listener warning:', err);
-  }
 }
 
 // Global Cloud Object Expose for Native Portal Scripting

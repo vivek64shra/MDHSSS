@@ -144,6 +144,13 @@
             </a>
           </li>
 
+          <!-- Teacher Login Portal Link -->
+          <li>
+            <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="nav-link-btn" style="background:#eff6ff; color:#0284c7; border:1px solid #bae6fd; font-weight:700;" title="अधिकृत शिक्षक लॉगिन पोर्टल">
+              👨‍🏫 Teacher Login ↗
+            </a>
+          </li>
+
           <!-- Notification Bell Trigger (One-Tap Access on Mobile & Desktop) -->
           <li>
             <button type="button" class="nav-bell-icon-btn" id="navTopNoticeBell" onclick="openFirstTimeNoticeManually()" title="विद्यालय आवश्यक सूचनाएं (Notice & Announcements)" aria-label="School Announcements">
@@ -159,10 +166,10 @@
             </a>
           </li>
 
-          <!-- 6. Login Portal (Teacher & Admin) -->
+          <!-- 6. Login Portal (Admin) -->
           <li>
             <a href="#login" class="nav-link-btn nav-login-pill" onclick="navigateToPage('teacher'); return false;">
-              🔐 लॉगिन
+              👑 एडमिन लॉगिन
             </a>
           </li>
 
@@ -267,6 +274,18 @@
           </div>
           <span class="threedot-item-tag" style="background:#be123c; color:#ffffff;">New Tab ↗</span>
         </button>
+
+        <!-- Teacher Login Option (Right Below Student Result) -->
+        <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="threedot-item-btn" onclick="closeThreeDotMenu();" style="border-color:#bae6fd; background:#f0f9ff; text-decoration:none;">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="background:#e0f2fe; color:#0284c7;">👨‍🏫</span>
+            <div>
+              <div style="color:#0369a1; font-weight:800;">शिक्षक लॉगिन पोर्टल (Teacher Login) ↗</div>
+              <div style="font-size:0.75rem; color:#0284c7;">अधिकृत शिक्षक पोर्टल: mdhssslogin.netlify.app</div>
+            </div>
+          </div>
+          <span class="threedot-item-tag" style="background:#0284c7; color:#ffffff;">New Tab ↗</span>
+        </a>
 
         <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openFirstTimeNoticeManually();" style="border-color:#bae6fd; background:#f0f9ff;">
           <div class="threedot-item-left">
@@ -1038,79 +1057,14 @@
             <span class="section-chip" style="background:#e0f2fe; color:#0284c7; border-color:#bae6fd;">🔐 अधिकृत विद्यालय सत्यापन पोर्टल</span>
             <h2 class="page-title-main" style="margin-top:0.5rem;">विद्यालय लॉगिन पोर्टल (School Portal Login)</h2>
             <p class="page-subtitle-text" style="max-width:640px; margin:0.5rem auto 0 auto;">
-              शिक्षक एवं विद्यालय प्रशासन हेतु एकीकृत सुरक्षित लॉगिन प्रणाली। कृपया अपना विकल्प चुनें एवं अधिकृत विवरण दर्ज करें।
+              विद्यालय प्रशासन एवं रिकॉर्ड्स प्रबंधन हेतु सुरक्षित लॉगिन प्रणाली। कृपया अधिकृत विवरण दर्ज करें।
             </p>
           </div>
 
           <div style="max-width:540px; margin:2rem auto 0 auto; background:#ffffff; border:1.5px solid #bae6fd; border-radius:var(--radius-lg); padding:2rem; box-shadow:0 10px 25px rgba(2,132,199,0.08);">
-            
-            <!-- Login Type Switcher Tabs -->
-            <div style="display: flex; gap: 8px; margin-bottom: 1.5rem; background: #f1f5f9; padding: 6px; border-radius: var(--radius-md);">
-              <button type="button" id="tabBtnTeacherLogin" onclick="switchUnifiedLoginTab('teacher')" style="flex: 1; padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: none; font-weight: 700; font-size: 0.92rem; cursor: pointer; background: #0284c7; color: #ffffff; transition: all 0.2s ease;">
-                👨‍🏫 शिक्षक लॉगिन (Teacher)
-              </button>
-              <button type="button" id="tabBtnAdminLogin" onclick="switchUnifiedLoginTab('admin')" style="flex: 1; padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: none; font-weight: 700; font-size: 0.92rem; cursor: pointer; background: transparent; color: #475569; transition: all 0.2s ease;">
-                👑 एडमिन लॉगिन (Admin)
-              </button>
-            </div>
 
-            <!-- TAB 1: TEACHER LOGIN FORM -->
-            <div id="unifiedTeacherLoginFormContainer">
-              <div style="display:flex; align-items:center; gap:14px; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid #f1f5f9;">
-                <div style="width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg, #0284c7, #0369a1); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:1.5rem; flex-shrink:0;">
-                  👨‍🏫
-                </div>
-                <div>
-                  <h3 style="margin:0; color:#0f172a; font-size:1.15rem;">शिक्षक सत्यापन प्रणाली (Teacher Authentication)</h3>
-                  <p style="margin:3px 0 0 0; color:#64748b; font-size:0.85rem;">अधिकृत नाम एवं मोबाइल नंबर का स्वचालित मिलान</p>
-                </div>
-              </div>
-
-              <!-- Login Form -->
-              <form id="teacherLoginForm" onsubmit="handleTeacherLoginSubmit(event)">
-                <div class="form-group-custom" style="margin-bottom:1.25rem;">
-                  <label class="form-label-custom">
-                    <span>शिक्षक का नाम (Registered Teacher Name) *</span>
-                  </label>
-                  <div style="position:relative;">
-                    <input type="text" class="form-input-custom" id="teacherLoginName" required placeholder="पंजीकृत शिक्षक नाम दर्ज करें..." style="padding-left:2.5rem;" autocomplete="off" />
-                    <span style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); font-size:1.1rem; color:#94a3b8;">👤</span>
-                  </div>
-                </div>
-
-                <div class="form-group-custom" style="margin-bottom:1.5rem;">
-                  <label class="form-label-custom">
-                    <span>पंजीकृत मोबाइल नंबर (Registered Mobile Number) *</span>
-                  </label>
-                  <div style="position:relative;">
-                    <input type="tel" class="form-input-custom" id="teacherLoginPhone" pattern="[0-9]{10}" required placeholder="10 अंकों का पंजीकृत मोबाइल नंबर दर्ज करें" style="padding-left:2.5rem;" autocomplete="off" />
-                    <span style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); font-size:1.1rem; color:#94a3b8;">📞</span>
-                  </div>
-                </div>
-
-                <!-- Loading Indicator -->
-                <div id="teacherLoginLoading" style="display:none; margin-bottom:1.25rem; padding:0.9rem; background:#eff6ff; border:1px solid #bfdbfe; border-radius:var(--radius-sm); color:#1d4ed8; font-size:0.9rem; text-align:center;">
-                  <span class="loading-spinner">🔄</span> आधिकारिक विद्यालय रिकॉर्ड से सत्यापन किया जा रहा है, कृपया प्रतीक्षा करें...
-                </div>
-
-                <!-- Mismatch / Error Alert Box -->
-                <div id="teacherLoginError" style="display:none; margin-bottom:1.25rem; padding:1rem; background:#fef2f2; border:1.5px solid #fca5a5; border-radius:var(--radius-sm); color:#991b1b; font-size:0.92rem; line-height:1.5;">
-                  <div style="font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-                    <span>❌</span> अमान्य क्रेडेंशियल्स (Incorrect Details)!
-                  </div>
-                  <div id="teacherLoginErrorText">
-                    दर्ज किया गया शिक्षक नाम और मोबाइल नंबर अधिकृत विद्यालय रिकॉर्ड से मेल नहीं खाता है। कृपया सही नाम एवं मोबाइल नंबर दर्ज करें।
-                  </div>
-                </div>
-
-                <button type="submit" class="btn-hero-pri" id="teacherLoginBtn" style="width:100%; justify-content:center; border:none; cursor:pointer; padding:0.9rem; font-size:1rem;">
-                  🔐 शिक्षक लॉगिन करें (Enter Teacher Portal)
-                </button>
-              </form>
-            </div>
-
-            <!-- TAB 2: ADMIN LOGIN FORM -->
-            <div id="unifiedAdminLoginFormContainer" style="display: none;">
+            <!-- ADMIN LOGIN FORM (Teacher login removed and routed to external site) -->
+            <div id="unifiedAdminLoginFormContainer">
               <div style="display:flex; align-items:center; gap:14px; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid #f1f5f9;">
                 <div style="width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg, #7c3aed, #4f46e5); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:1.5rem; flex-shrink:0;">
                   👑
@@ -1150,6 +1104,16 @@
                   🔓 प्रशासक लॉगिन करें (Admin Login)
                 </button>
               </form>
+
+              <!-- Helpful External Teacher Login Link -->
+              <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px dashed #cbd5e1; text-align: center;">
+                <div style="font-size: 0.86rem; color: #64748b; margin-bottom: 8px;">
+                  👨‍🏫 शिक्षक साथी लॉगिन हेतु अधिकृत पोर्टल:
+                </div>
+                <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; padding: 0.6rem 1.1rem; background: #f0f9ff; color: #0284c7; border: 1.5px solid #bae6fd; text-decoration: none; font-weight: 700; border-radius: var(--radius-md);">
+                  <span>👨‍🏫 शिक्षक लॉगिन पोर्टल (mdhssslogin.netlify.app) खोलें ↗</span>
+                </a>
+              </div>
             </div>
 
           </div>
@@ -1836,6 +1800,51 @@
               </a>
               <span style="font-size: 0.88rem; color: #64748b;">
                 ℹ️ एडमिन पैनल द्वारा इस लिंक को कभी भी अपडेट व परिवर्तित किया जा सकता है।
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER LOGIN PORTAL LINK CARD (Directly below Student Result) -->
+        <div class="glass-card" style="padding: 2rem; background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%); border: 2px solid #bae6fd; border-radius: var(--radius-lg); margin-top: 1.75rem; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 52px; height: 52px; border-radius: 50%; background: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #ffffff; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);">
+                👨‍🏫
+              </div>
+              <div>
+                <h3 style="color: #0369a1; margin: 0; font-size: 1.35rem; font-weight: 800;">अधिकृत शिक्षक लॉगिन पोर्टल (Teacher Login Portal)</h3>
+                <span style="font-size: 0.85rem; background: #e0f2fe; color: #0284c7; padding: 3px 12px; border-radius: 9999px; font-weight: 700; border: 1px solid #bae6fd;">🔐 शिक्षक सेवा एवं परीक्षा कार्य पोर्टल</span>
+              </div>
+            </div>
+            <span style="font-size: 0.85rem; background: #dcfce7; color: #15803d; padding: 5px 14px; border-radius: 9999px; font-weight: 700; border: 1px solid #86efac;">
+              🟢 अधिकृत लाइव लिंक (New Tab)
+            </span>
+          </div>
+
+          <p style="font-size: 1rem; color: #475569; line-height: 1.65; margin-bottom: 1.5rem;">
+            माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया के समस्त शिक्षक साथी अपने शैक्षणिक कार्यों, अंक प्रविष्टि एवं शिक्षक सेवाओं हेतु नीचे दिए गए अधिकृत पोर्टल लिंक पर क्लिक करें। यह लिंक सीधे नए टैब में खुलेगा।
+          </p>
+
+          <div style="background: #ffffff; border: 1.5px solid #bae6fd; border-radius: var(--radius-md); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: #0369a1; text-transform: uppercase; letter-spacing: 0.5px;">शिक्षक लॉगिन वेब पता (Teacher Login Web URL):</div>
+                <div style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: #0284c7; word-break: break-all; margin-top: 4px;">
+                  https://mdhssslogin.netlify.app/
+                </div>
+              </div>
+              <button type="button" class="btn-hero-sec" style="font-size: 0.88rem; padding: 0.55rem 1.1rem; border: 1px solid #cbd5e1; cursor: pointer;" onclick="navigator.clipboard && navigator.clipboard.writeText('https://mdhssslogin.netlify.app/').then(() => alert('शिक्षक लॉगिन लिंक कॉपी हो गया!'))">
+                📋 लिंक कॉपी करें
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center; padding-top: 0.75rem; border-top: 1px solid #f1f5f9;">
+              <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-hero-pri" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; font-size: 1.15rem; padding: 1rem 2.2rem; box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: #ffffff;">
+                <span>👨‍🏫 अधिकृत शिक्षक लॉगिन पोर्टल खोलें (Open Teacher Login) ↗</span>
+              </a>
+              <span style="font-size: 0.88rem; color: #64748b;">
+                ℹ️ सुरक्षित बाहरी शिक्षक पोर्टल (mdhssslogin.netlify.app)
               </span>
             </div>
           </div>
@@ -3157,6 +3166,16 @@ function doPost(e) {
             </div>
           </div>
 
+          <!-- Teacher Login Portal (DIRECTLY UNDER STUDENT RESULT) -->
+          <div class="quick-hub-card glass-card" onclick="window.open('https://mdhssslogin.netlify.app/', '_blank', 'noopener,noreferrer')" style="cursor:pointer; border:1.5px solid #bae6fd; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
+            <div class="hub-icon-circle hub-teacher" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff;">👨‍🏫</div>
+            <div class="hub-content">
+              <h4 style="color:#0369a1;">Teacher Login Portal ↗</h4>
+              <p>अधिकृत शिक्षक लॉगिन पोर्टल (mdhssslogin.netlify.app) सीधे खोलें।</p>
+              <span class="hub-link-tag" style="background:#e0f2fe; color:#0284c7; border-color:#bae6fd; font-weight:700;">शिक्षक लॉगिन ↗</span>
+            </div>
+          </div>
+
           <!-- Hub 6: About School -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('about')" style="cursor:pointer;">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #0284c7, #2563eb); color:#fff;">ℹ️</div>
@@ -3177,13 +3196,13 @@ function doPost(e) {
             </div>
           </div>
 
-          <!-- Hub 8: Teacher & Staff Portal -->
-          <div class="quick-hub-card glass-card" onclick="navigateToPage('teacher')" style="cursor:pointer;">
-            <div class="hub-icon-circle hub-teacher">👨‍🏫</div>
+          <!-- Hub 8: School Admin Portal -->
+          <div class="quick-hub-card glass-card" onclick="navigateToPage('admin')" style="cursor:pointer; border:1.5px solid #e9d5ff; background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);">
+            <div class="hub-icon-circle" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#fff;">👑</div>
             <div class="hub-content">
-              <h4>Teacher & Staff Module</h4>
-              <p>शिक्षक उपस्थिति, परीक्षा अंक एवं छात्र शुल्क विवरण खोज।</p>
-              <span class="hub-link-tag">शिक्षक पोर्टल खोलें →</span>
+              <h4 style="color:#6d28d9;">School Admin Control</h4>
+              <p>प्रवेश आवेदन, परीक्षा अंक रिकॉर्ड्स एवं डिजिटल कंट्रोल पैनल।</p>
+              <span class="hub-link-tag" style="background:#f3e8ff; color:#7e22ce; border-color:#d8b4fe; font-weight:700;">एडमिन पैनल खोलें →</span>
             </div>
           </div>
 
