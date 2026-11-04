@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="stageBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4c1d95"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#stageBg)"/>
+  
+  <!-- Curtains -->
+  <path d="M 0,0 C 80,100 120,200 140,400 L 0,400 Z" fill="#b91c1c"/>
+  <path d="M 0,0 C 60,80 80,180 100,400 L 0,400 Z" fill="#991b1b"/>
+  <path d="M 800,0 C 720,100 680,200 660,400 L 800,400 Z" fill="#b91c1c"/>
+  <path d="M 800,0 C 740,80 720,180 700,400 L 800,400 Z" fill="#991b1b"/>
+  <path d="M 0,0 Q 400,90 800,0 L 800,40 Q 400,120 0,40 Z" fill="#ef4444"/>
+
+  <!-- Spotlights -->
+  <polygon points="120,0 280,420 440,420" fill="#fde047" opacity="0.15"/>
+  <polygon points="680,0 520,420 360,420" fill="#38bdf8" opacity="0.15"/>
+
+  <!-- Stage Platform -->
+  <rect x="120" y="380" width="560" height="70" rx="6" fill="#ca8a04"/>
+  <rect x="100" y="440" width="600" height="60" fill="#854d0e"/>
+
+  <!-- Musical & Cultural Elements -->
+  <!-- Tabla -->
+  <g transform="translate(260, 310)">
+    <ellipse cx="40" cy="30" rx="25" ry="10" fill="#1e293b"/>
+    <ellipse cx="40" cy="30" rx="12" ry="5" fill="#000000"/>
+    <path d="M 15,30 C 10,70 25,85 40,85 C 55,85 70,70 65,30 Z" fill="#d97706"/>
+    <!-- Dagga -->
+    <ellipse cx="100" cy="30" rx="30" ry="12" fill="#1e293b"/>
+    <ellipse cx="100" cy="30" rx="14" ry="6" fill="#000000"/>
+    <path d="M 70,30 C 60,70 80,85 100,85 C 120,85 140,70 130,30 Z" fill="#78350f"/>
+  </g>
+
+  <!-- Microphone -->
+  <g transform="translate(480, 260)">
+    <circle cx="20" cy="20" r="14" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+    <rect x="16" y="34" width="8" height="120" fill="#64748b"/>
+    <polygon points="0,154 40,154 20,135" fill="#1e293b"/>
+  </g>
+
+  <!-- Sparkles and Musical Notes -->
+  <text x="220" y="180" font-size="28" fill="#facc15">♪</text>
+  <text x="560" y="160" font-size="34" fill="#38bdf8">♫</text>
+  <text x="390" y="140" font-size="26" fill="#f43f5e">✨</text>
+  <text x="440" y="200" font-size="30" fill="#facc15">♬</text>
+
+  <!-- Top Title -->
+  <text x="400" y="75" font-family="'Segoe UI', sans-serif" font-size="24" font-weight="bold" fill="#fef08a" text-anchor="middle">🎭 सांस्कृतिक कार्यक्रम एवं वार्षिक उत्सव</text>
+  <text x="400" y="105" font-family="'Segoe UI', sans-serif" font-size="15" fill="#e9d5ff" text-anchor="middle">गीत-संगीत, नाटक, भाषण, वाद-विवाद एवं कला प्रदर्शन</text>
+
+  <!-- Bottom Caption Badge -->
+  <rect x="30" y="430" width="370" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
+  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🎪 सांस्कृतिक एवं सह-पाठ्यक्रम गतिविधियां</text>
+</svg>

@@ -83,6 +83,20 @@
         sessionStorage.removeItem('mdhss_logged_teacher');
       } catch (e) {}
 
+      // Permanently enforce Student Result Portal link: https://mdhsssresult.netlify.app/
+      try {
+        const savedResult = localStorage.getItem('mdhss_result_link_config');
+        if (!savedResult || savedResult.includes('online.edumentsolution.com')) {
+          const permanentResultConfig = {
+            url: 'https://mdhsssresult.netlify.app/',
+            btnText: '🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें (Open Result Portal) ↗',
+            tag: '🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27',
+            note: 'सत्र 2026-27 के सभी छात्र एवं अभिभावक अपने अनुक्रमांक (Roll Number) द्वारा परीक्षा परिणाम व अंकपत्र देखने हेतु नीचे दिए गए अधिकृत परीक्षा परिणाम पोर्टल लिंक पर क्लिक करें। यह लिंक सीधे अलग विंडो/टैब में खुलेगा।'
+          };
+          localStorage.setItem('mdhss_result_link_config', JSON.stringify(permanentResultConfig));
+        }
+      } catch (e) {}
+
       // Always ensure Webhook URL is set to active Google Apps Script endpoint
       if (!localStorage.getItem('mdhss_google_sheets_webhook') || localStorage.getItem('mdhss_google_sheets_webhook') === '') {
         localStorage.setItem('mdhss_google_sheets_webhook', DEFAULT_GOOGLE_APPS_SCRIPT_WEBHOOK);
@@ -237,12 +251,12 @@
 
     function openStudentResultDirect(event) {
       if (event && event.preventDefault) event.preventDefault();
-      let resultUrl = 'https://online.edumentsolution.com/';
+      let resultUrl = 'https://mdhsssresult.netlify.app/';
       try {
         const saved = localStorage.getItem('mdhss_result_link_config');
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed && parsed.url && parsed.url.trim()) {
+          if (parsed && parsed.url && parsed.url.trim() && !parsed.url.includes('online.edumentsolution.com')) {
             resultUrl = parsed.url.trim();
           }
         }
@@ -318,8 +332,8 @@
       }
       window._currentAppPage = pageId;
 
-      // 1. If returning to Home
-      if (pageId === 'home') {
+      // 1. If returning to Home or navigating to About Us (featured on first screen)
+      if (pageId === 'home' || pageId === 'about') {
         if (homeSection) homeSection.style.display = 'block';
         if (pagesContainer) pagesContainer.style.display = 'none';
         
@@ -328,9 +342,25 @@
 
         // Reset active nav button
         document.querySelectorAll('.nav-link-btn').forEach(btn => btn.classList.remove('active-tab'));
-        if (navHomeBtn) navHomeBtn.classList.add('active-tab');
-
-        window.scrollTo(0, 0);
+        if (pageId === 'home') {
+          if (navHomeBtn) navHomeBtn.classList.add('active-tab');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Highlight about triggers if any
+          document.querySelectorAll('.nav-link-btn').forEach(btn => {
+            const href = btn.getAttribute('href') || '';
+            const onclick = btn.getAttribute('onclick') || '';
+            if (href === '#about' || onclick.includes("'about'")) {
+              btn.classList.add('active-tab');
+            }
+          });
+          const aboutSec = document.getElementById('home-about-section');
+          if (aboutSec) {
+            aboutSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
         return;
       }
 
@@ -525,8 +555,8 @@
 
     // Verified school staff directory for instantaneous fallback matching
     const BACKUP_STAFF_DIRECTORY = [
-      { name: 'Nirmal K. Dwivedi', hindiName: 'निर्मल के. द्विवेदी', phone: '9200178385', post: 'प्राचार्य' },
-      { name: 'Murlidhar Sharma', hindiName: 'मुरलीधर शर्मा', phone: '9201431631', post: 'विद्यालय संरक्षक' },
+      { name: 'Nirmal Kumar Dwivedi', hindiName: 'निर्मल कुमार द्विवेदी', phone: '9200178385', post: 'प्राचार्य' },
+      { name: 'Murlidhar Sharma (Rannu Sir)', hindiName: 'मुरलीधर शर्मा (रन्नू सर)', phone: '9201431631', post: 'विद्यालय संरक्षक व संचालक' },
       { name: 'Akhilesh Tiwari', hindiName: 'अखिलेश तिवारी', phone: '7024036526', post: 'उपाचार्य' },
       { name: 'Ram Ratan Tiwari', hindiName: 'रामरतन तिवारी', phone: '7000570538', post: 'शैक्षणिक प्रभारी' },
       { name: 'Pushpendra Dwivedi', hindiName: 'पुष्पेन्द्र द्विवेदी', phone: '9753443093', post: 'परीक्षा नियंत्रक' },
@@ -534,7 +564,7 @@
       { name: 'Rajmani Shukla', hindiName: 'राजमणि शुक्ला', phone: '9981452293', post: 'परिवहन प्रभारी' },
       { name: 'Krishna Kumar Pandey', hindiName: 'कृष्ण कुमार पाण्डेय', phone: '6265613772', post: 'लेखाविभाग प्रमुख' },
       { name: 'Ganga Mishra', hindiName: 'गंगा मिश्रा', phone: '8269419720', post: 'स्कॉलर प्रभारी' },
-      { name: 'Vivek Kumar Mishra', hindiName: 'विवेक कुमार मिश्रा', phone: '9516234519', post: 'कंप्यूटर ऑपरेटर' },
+      { name: 'IT Support Desk', hindiName: 'आई.टी. एवं तकनीकी प्रकोष्ठ', phone: '9516234519', post: 'तकनीकी सहायता' },
       { name: 'Ashok Kumar Shukla', hindiName: 'अशोक कुमार शुक्ला', phone: '9630327393', post: 'वरिष्ठ शिक्षक' },
       { name: 'Gyanendra Mishra', hindiName: 'ज्ञानेन्द्र मिश्रा', phone: '8839063673', post: 'वरिष्ठ शिक्षक' },
       { name: 'Sunita Dwivedi', hindiName: 'सुनीता द्विवेदी', phone: '9755497914', post: 'शिक्षिका' },
@@ -5426,7 +5456,7 @@
           <!-- Marksheet Header -->
           <div class="nat-cert-header">
             <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:6px;">
-              <img src="http://www.online.edumentsolution.com/ImageHandler.ashx?pTbl=ApplicationConfig&pImgFiled=iLogo1&pTblFiled=nCampusID&pVal=2&pDBName=My2070" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" style="width:52px; height:52px; border-radius:50%; border:2px solid #0284c7;" alt="MDHSS Logo">
+              <img src="/images/school_logo.jpg" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0284c7/ffffff?text=MDHSS';" style="width:52px; height:52px; border-radius:50%; border:2px solid #0284c7; object-fit:cover;" alt="MDHSS Logo">
               <div>
                 <h2 style="font-size:1.35rem; color:#0369a1; font-weight:800; margin:0;">माँ दुर्गा उच्चतर माध्यमिक विद्यालय, सेमरिया</h2>
                 <p style="font-size:0.85rem; color:#475569; margin:2px 0 0 0;">जिला - रीवा (मध्य प्रदेश) • संस्था कोड: 322517 • UDISE: 23140402055</p>
@@ -5558,12 +5588,6 @@
     }
 
     async function checkAndShowFirstTimeNotice() {
-      // Check if dismissed in this session
-      const dismissed = sessionStorage.getItem('mdhss_notice_popup_dismissed');
-      if (dismissed === 'true') {
-        return;
-      }
-
       let noticeData = null;
       try {
         const saved = localStorage.getItem('mdhss_popup_notification');
@@ -5572,19 +5596,36 @@
         }
       } catch (e) {}
 
-      // If not in localStorage, fetch from Cloud sync if available
-      if (!noticeData && window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+      // ALWAYS fetch from Cloud sync on page load so notice updates reach all visitor devices immediately
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
         try {
           const cloudData = await window.mdhssCloud.fetchSetting('popup_notification');
-          if (cloudData) {
+          if (cloudData && (cloudData.isUpdated || cloudData.updatedAt || cloudData.title)) {
             noticeData = cloudData;
             localStorage.setItem('mdhss_popup_notification', JSON.stringify(cloudData));
           }
         } catch (e) {}
       }
 
-      // If no real update exists, do not open popup (keep blank)
+      // If no valid active notice exists, return
       if (!isRealUpdatedNotice(noticeData)) {
+        return;
+      }
+
+      // Generate a unique version identifier for the current notice
+      const noticeVer = (noticeData.updatedAt || noticeData.title || 'v1').trim();
+      const lastSeenVer = localStorage.getItem('mdhss_notice_last_seen_ver');
+      const isNewNotice = lastSeenVer !== noticeVer;
+
+      // Update pulse dot on notification bell (shows pulsing glow on all phones if new notice available)
+      const bellPulse = document.getElementById('navBellPulseDot');
+      if (bellPulse) {
+        bellPulse.style.display = isNewNotice ? 'block' : 'none';
+      }
+
+      // Check if user already dismissed this specific notice in current browser session
+      const sessionDismissed = sessionStorage.getItem('mdhss_notice_dismissed_' + noticeVer);
+      if (sessionDismissed === 'true' && !isNewNotice) {
         return;
       }
 
@@ -5659,8 +5700,19 @@
       if (modalEl) {
         modalEl.style.display = 'none';
       }
-      // Record dismissal in sessionStorage so it doesn't pop up again in this session
-      sessionStorage.setItem('mdhss_notice_popup_dismissed', 'true');
+
+      let noticeData = null;
+      try {
+        const saved = localStorage.getItem('mdhss_popup_notification');
+        if (saved) noticeData = JSON.parse(saved);
+      } catch (e) {}
+
+      const noticeVer = (noticeData && (noticeData.updatedAt || noticeData.title) ? (noticeData.updatedAt || noticeData.title) : 'v1').trim();
+      sessionStorage.setItem('mdhss_notice_dismissed_' + noticeVer, 'true');
+      localStorage.setItem('mdhss_notice_last_seen_ver', noticeVer);
+
+      const bellPulse = document.getElementById('navBellPulseDot');
+      if (bellPulse) bellPulse.style.display = 'none';
     }
 
     function openFirstTimeNoticeManually() {
@@ -5692,6 +5744,12 @@
       if (modalEl) {
         modalEl.style.display = 'flex';
       }
+
+      // Mark as seen on manual opening
+      const noticeVer = (noticeData && (noticeData.updatedAt || noticeData.title) ? (noticeData.updatedAt || noticeData.title) : 'v1').trim();
+      localStorage.setItem('mdhss_notice_last_seen_ver', noticeVer);
+      const bellPulse = document.getElementById('navBellPulseDot');
+      if (bellPulse) bellPulse.style.display = 'none';
     }
 
     function onFirstNoticeActionClick() {
@@ -5778,8 +5836,12 @@
       };
 
       localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
-      // Reset session dismissal so latest update is visible
-      sessionStorage.removeItem('mdhss_notice_popup_dismissed');
+      // Reset session dismissal and mark updated version so notification triggers across devices
+      const newVer = noticeData.updatedAt;
+      sessionStorage.removeItem('mdhss_notice_dismissed_' + newVer);
+      localStorage.removeItem('mdhss_notice_last_seen_ver');
+      const bellPulse = document.getElementById('navBellPulseDot');
+      if (bellPulse) bellPulse.style.display = 'block';
 
       // Save to Firebase Cloud so notice updates across all visitor devices
       if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
@@ -6095,14 +6157,138 @@
       window.open(url, '_blank');
     }
 
+    // ==========================================================================
+    // CLIENT-SIDE IMAGE AUTO-COMPRESSION ENGINE (MAXIMUM 10 KB GUARANTEED)
+    // ==========================================================================
+    function compressImageToTargetSize(file, maxKb = 10) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type.startsWith('image/')) {
+          reject(new Error('कृपया एक वैध फोटो फ़ाइल (JPG/PNG/WEBP) चुनें।'));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            let maxDim = 520;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxDim) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const targetBytes = maxKb * 1024;
+            let quality = 0.72;
+            let base64 = canvas.toDataURL('image/jpeg', quality);
+
+            function calcByteSize(dataUrl) {
+              const head = 'data:image/jpeg;base64,';
+              const body = dataUrl.startsWith(head) ? dataUrl.slice(head.length) : dataUrl;
+              return Math.round((body.length * 3) / 4);
+            }
+
+            let byteSize = calcByteSize(base64);
+            let loopCount = 0;
+
+            // Progressive reduction down to strictly under 10 KB
+            while (byteSize > targetBytes && loopCount < 10) {
+              loopCount++;
+              if (quality > 0.32) {
+                quality -= 0.08;
+              } else {
+                width = Math.round(width * 0.82);
+                height = Math.round(height * 0.82);
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                quality = 0.6;
+              }
+              base64 = canvas.toDataURL('image/jpeg', quality);
+              byteSize = calcByteSize(base64);
+            }
+
+            resolve({
+              base64: base64,
+              sizeKb: (byteSize / 1024).toFixed(1),
+              originalSizeKb: (file.size / 1024).toFixed(1),
+              width: width,
+              height: height
+            });
+          };
+          img.onerror = () => reject(new Error('फोटो लोड करने में विफल'));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('फ़ाइल पढ़ने में त्रुटि'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleImageCompressionUpload(event, targetType) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const isModal = targetType === 'modal';
+      const urlInput = document.getElementById(isModal ? 'newImgUrl' : 'admNewImgUrl');
+      const boxEl = document.getElementById(isModal ? 'modalImgCompressBox' : 'admImgCompressBox');
+      const textEl = document.getElementById(isModal ? 'modalImgCompressText' : 'admImgCompressText');
+      const thumbEl = document.getElementById(isModal ? 'modalImgCompressThumb' : 'admImgCompressThumb');
+
+      if (boxEl) {
+        boxEl.style.display = 'flex';
+        if (textEl) textEl.textContent = '🔄 फोटो कंप्रेस हो रही है (लक्ष्य: ≤ 10 KB)...';
+      }
+
+      try {
+        const res = await compressImageToTargetSize(file, 10);
+        if (urlInput) {
+          urlInput.value = res.base64;
+        }
+        if (thumbEl) {
+          thumbEl.src = res.base64;
+        }
+        if (textEl) {
+          textEl.innerHTML = `✅ फोटो कंप्रेस हुई: <strong>${res.sizeKb} KB</strong> (मूल: ${res.originalSizeKb} KB) • 10 KB सीमा के भीतर सुरक्षित!`;
+        }
+      } catch (err) {
+        console.error('Compression error:', err);
+        alert('फोटो कंप्रेशन में त्रुटि हुई: ' + (err.message || 'अमान्य फ़ाइल'));
+        if (boxEl) boxEl.style.display = 'none';
+      }
+    }
+    window.handleImageCompressionUpload = handleImageCompressionUpload;
+    window.compressImageToTargetSize = compressImageToTargetSize;
+
     function openAddImageModal() {
       const modal = document.getElementById('addImageModal');
       if (modal) modal.style.display = 'flex';
+      const box = document.getElementById('modalImgCompressBox');
+      if (box) box.style.display = 'none';
     }
 
     function closeAddImageModal() {
       const modal = document.getElementById('addImageModal');
       if (modal) modal.style.display = 'none';
+      const fileInp = document.getElementById('modalNewImgFileInput');
+      if (fileInp) fileInp.value = '';
+      const box = document.getElementById('modalImgCompressBox');
+      if (box) box.style.display = 'none';
     }
 
     function saveNewCustomGalleryImage(e) {
@@ -6113,7 +6299,7 @@
       const tag = document.getElementById('newImgTag')?.value.trim();
 
       if (!title || !url) {
-        alert('कृपया फोटो का शीर्षक और URL दर्ज करें!');
+        alert('कृपया फोटो का शीर्षक और URL दर्ज करें या फ़ोटो चुनें!');
         return;
       }
 
@@ -6137,7 +6323,7 @@
       renderAutoGallery();
       renderAdminGalleryList();
       closeAddImageModal();
-      alert('✅ नई फोटो सफलतापूर्वक गैलरी में जोड़ दी गई है!');
+      alert('✅ नई फोटो सफलतापूर्वक गैलरी में जोड़ दी गई है (साइज़ ≤ 10 KB)!');
     }
 
     function renderAdminGalleryList() {
@@ -6223,8 +6409,11 @@
       if (document.getElementById('admNewImgTitle')) document.getElementById('admNewImgTitle').value = '';
       if (document.getElementById('admNewImgUrl')) document.getElementById('admNewImgUrl').value = '';
       if (document.getElementById('admNewImgDesc')) document.getElementById('admNewImgDesc').value = '';
+      if (document.getElementById('admNewImgFileInput')) document.getElementById('admNewImgFileInput').value = '';
+      const admBox = document.getElementById('admImgCompressBox');
+      if (admBox) admBox.style.display = 'none';
 
-      alert('✅ नई फोटो सफलतापूर्वक गैलरी में शामिल हो गई है!');
+      alert('✅ नई फोटो सफलतापूर्वक गैलरी में शामिल हो गई है (अधिकतम साइज़ ≤ 10 KB)!');
     }
 
     function deleteAdminGalleryImage(imgId) {
@@ -6259,7 +6448,7 @@
     // ==========================================================================
     function loadAdminResultLinkConfig() {
       let config = {
-        url: 'https://online.edumentsolution.com/',
+        url: 'https://mdhsssresult.netlify.app/',
         btnText: '🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें (Open Result Portal) ↗',
         tag: '🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27',
         note: 'सत्र 2026-27 के सभी छात्र एवं अभिभावक अपने अनुक्रमांक (Roll Number) द्वारा परीक्षा परिणाम व अंकपत्र देखने हेतु नीचे दिए गए अधिकृत परीक्षा परिणाम पोर्टल लिंक पर क्लिक करें। यह लिंक सीधे नए पेज/टैब में खुलेगा।'
@@ -6268,7 +6457,11 @@
       try {
         const saved = localStorage.getItem('mdhss_result_link_config');
         if (saved) {
-          config = { ...config, ...JSON.parse(saved) };
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.url && parsed.url.includes('online.edumentsolution.com')) {
+            parsed.url = 'https://mdhsssresult.netlify.app/';
+          }
+          config = { ...config, ...parsed };
         }
       } catch (e) {}
 
@@ -6302,7 +6495,7 @@
       if (event && event.preventDefault) event.preventDefault();
 
       const config = {
-        url: document.getElementById('cfgResultPortalUrl')?.value.trim() || 'https://online.edumentsolution.com/',
+        url: document.getElementById('cfgResultPortalUrl')?.value.trim() || 'https://mdhsssresult.netlify.app/',
         btnText: document.getElementById('cfgResultBtnText')?.value.trim() || '🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें ↗',
         tag: document.getElementById('cfgResultTag')?.value.trim() || '🏆 वार्षिक एवं बोर्ड परीक्षा परिणाम • सत्र 2026-27',
         note: document.getElementById('cfgResultNote')?.value.trim() || ''
@@ -6322,12 +6515,12 @@
     }
 
     function testOpenExternalResultLink() {
-      const url = document.getElementById('cfgResultPortalUrl')?.value.trim() || 'https://online.edumentsolution.com/';
+      const url = document.getElementById('cfgResultPortalUrl')?.value.trim() || 'https://mdhsssresult.netlify.app/';
       window.open(url, '_blank');
     }
 
     function copyResultPortalUrl() {
-      const displayUrl = document.getElementById('portalResultUrlDisplay')?.textContent.trim() || 'https://online.edumentsolution.com/';
+      const displayUrl = document.getElementById('portalResultUrlDisplay')?.textContent.trim() || 'https://mdhsssresult.netlify.app/';
       navigator.clipboard.writeText(displayUrl).then(() => {
         alert('✅ परीक्षा परिणाम पोर्टल लिंक क्लिपबोर्ड पर कॉपी हो गया है:\n' + displayUrl);
       }).catch(() => {

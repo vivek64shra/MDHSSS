@@ -386,20 +386,34 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     console.warn('Realtime feedbacks listener warning:', err);
   }
 
-  // Realtime Notice Popup Listener
+  // Realtime Notice Popup Listener (Instant Push to all phones & devices)
   try {
     onSnapshot(
       doc(db, 'settings', 'popup_notification'),
       (snap) => {
         if (snap.exists()) {
           const noticeData = snap.data()?.data;
-          if (noticeData) {
-            localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
-            if (typeof (window as any).applyNoticeDataToPopup === 'function') {
+          if (noticeData && typeof noticeData === 'object') {
+            try {
+              localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
+            } catch (e) {}
+
+            // Immediately notify portal runtime for instant display
+            if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
+              (window as any).onRealtimeNoticeUpdate(noticeData);
+            } else if (typeof (window as any).applyNoticeDataToPopup === 'function') {
               (window as any).applyNoticeDataToPopup(noticeData);
             }
           } else {
-            localStorage.removeItem('mdhss_popup_notification');
+            try { localStorage.removeItem('mdhss_popup_notification'); } catch (e) {}
+            if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
+              (window as any).onRealtimeNoticeUpdate(null);
+            }
+          }
+        } else {
+          try { localStorage.removeItem('mdhss_popup_notification'); } catch (e) {}
+          if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
+            (window as any).onRealtimeNoticeUpdate(null);
           }
         }
       },

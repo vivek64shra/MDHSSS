@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="roadSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="60%" stop-color="#f0f9ff"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="busYellow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#facc15"/>
+      <stop offset="50%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#roadSky)"/>
+  
+  <!-- Mountains in Background -->
+  <polygon points="0,320 180,180 360,320" fill="#94a3b8" opacity="0.4"/>
+  <polygon points="250,320 450,150 650,320" fill="#64748b" opacity="0.3"/>
+  <polygon points="500,320 680,200 800,320" fill="#94a3b8" opacity="0.4"/>
+
+  <!-- Road -->
+  <rect x="0" y="320" width="800" height="180" fill="#334155"/>
+  <!-- Road Markings -->
+  <g fill="#ffffff">
+    <rect x="40" y="400" width="80" height="12" rx="4"/>
+    <rect x="180" y="400" width="80" height="12" rx="4"/>
+    <rect x="320" y="400" width="80" height="12" rx="4"/>
+    <rect x="460" y="400" width="80" height="12" rx="4"/>
+    <rect x="600" y="400" width="80" height="12" rx="4"/>
+    <rect x="740" y="400" width="80" height="12" rx="4"/>
+  </g>
+
+  <!-- School Bus Body -->
+  <g transform="translate(100, 150)">
+    <!-- Main Yellow Shell -->
+    <rect x="20" y="30" width="560" height="170" rx="25" fill="url(#busYellow)" stroke="#a16207" stroke-width="4"/>
+    <!-- Front Engine Hood Extension -->
+    <path d="M 520,80 L 590,100 A 20,20 0 0,1 600,120 L 600,200 L 520,200 Z" fill="url(#busYellow)" stroke="#a16207" stroke-width="4"/>
+
+    <!-- Black Belt Stripe -->
+    <rect x="20" y="130" width="575" height="24" fill="#0f172a"/>
+    <text x="290" y="148" font-family="'Segoe UI', sans-serif" font-size="15" font-weight="bold" fill="#ffffff" text-anchor="middle">MAA DURGA HIGHER SECONDARY SCHOOL, SEMARIYA</text>
+
+    <!-- Windows -->
+    <g fill="#0284c7" stroke="#0f172a" stroke-width="3">
+      <!-- Front Windshield -->
+      <path d="M 510,45 L 565,65 L 565,115 L 510,115 Z" fill="#38bdf8"/>
+      <!-- Side Windows -->
+      <rect x="440" y="45" width="55" height="70" rx="4"/>
+      <rect x="370" y="45" width="55" height="70" rx="4"/>
+      <rect x="300" y="45" width="55" height="70" rx="4"/>
+      <rect x="230" y="45" width="55" height="70" rx="4"/>
+      <rect x="160" y="45" width="55" height="70" rx="4"/>
+      <rect x="90" y="45" width="55" height="70" rx="4"/>
+      <!-- Driver Window / Door -->
+      <rect x="35" y="45" width="40" height="70" rx="4"/>
+    </g>
+
+    <!-- Headlights & Bumpers -->
+    <rect x="590" y="160" width="15" height="30" rx="4" fill="#fde047" stroke="#eab308" stroke-width="2"/>
+    <rect x="10" y="180" width="20" height="25" rx="3" fill="#1e293b"/>
+    <rect x="585" y="185" width="25" height="20" rx="3" fill="#1e293b"/>
+
+    <!-- Wheels -->
+    <!-- Rear Wheel -->
+    <circle cx="150" cy="200" r="45" fill="#0f172a"/>
+    <circle cx="150" cy="200" r="24" fill="#94a3b8" stroke="#cbd5e1" stroke-width="3"/>
+    <circle cx="150" cy="200" r="8" fill="#475569"/>
+
+    <!-- Front Wheel -->
+    <circle cx="480" cy="200" r="45" fill="#0f172a"/>
+    <circle cx="480" cy="200" r="24" fill="#94a3b8" stroke="#cbd5e1" stroke-width="3"/>
+    <circle cx="480" cy="200" r="8" fill="#475569"/>
+  </g>
+
+  <!-- Top Title -->
+  <text x="400" y="60" font-family="'Segoe UI', sans-serif" font-size="24" font-weight="bold" fill="#0369a1" text-anchor="middle">🚌 सुरक्षित एवं जीपीएस युक्त स्कूल बस सुविधा</text>
+  <text x="400" y="90" font-family="'Segoe UI', sans-serif" font-size="15" fill="#0f172a" text-anchor="middle">सेमरिया एवं आसपास के 30+ ग्रामीण क्षेत्रों में नियमित पिक एवं ड्रॉप</text>
+
+  <!-- Bottom Caption Badge -->
+  <rect x="30" y="430" width="370" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
+  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🚌 सुरक्षित परिवहन एवं बस सेवा</text>
+</svg>
