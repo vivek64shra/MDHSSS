@@ -3004,4 +3004,157 @@
       color: #92400e;
       border: 1px solid #fde68a;
     }
+
+    /* ==========================================================================
+       MOBILE VIEWPORT PERFECTION & 100% DEVICE FIT ENHANCEMENTS
+       ========================================================================== */
+    html, body {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 0.75rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .ambient-sphere {
+        display: none !important; /* Prevent negative-positioned blur spheres from expanding mobile viewport */
+      }
+      .page-card-body, .glass-card {
+        padding: 1.15rem 0.85rem !important;
+      }
+      .page-top-bar {
+        padding: 0.75rem 0.65rem !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+      }
+      .btn-return-home {
+        font-size: 0.82rem !important;
+        padding: 0.4rem 0.75rem !important;
+      }
+      .page-title-main {
+        font-size: 1.45rem !important;
+        word-break: break-word !important;
+      }
+      .page-subtitle-text {
+        font-size: 0.85rem !important;
+      }
+    }
+
+    /* Top Gateway Buttons for Student Login & Teacher Login */
+    .hero-login-gateways-box {
+      width: 100%;
+    }
+    .btn-hero-gateway {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.82rem 1.25rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      color: #ffffff !important;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .gateway-student-btn {
+      background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);
+      border: 1.5px solid #fda4af;
+      box-shadow: 0 5px 16px rgba(190, 18, 60, 0.35);
+    }
+    .gateway-student-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(190, 18, 60, 0.45);
+      background: linear-gradient(135deg, #9f1239 0%, #881337 100%);
+    }
+    .gateway-teacher-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      border: 1.5px solid #bae6fd;
+      box-shadow: 0 5px 16px rgba(2, 132, 199, 0.3);
+    }
+    .gateway-teacher-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+    }
+    .gateway-btn-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .gateway-emoji {
+      font-size: 1.45rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .gateway-text-wrap {
+      min-width: 0;
+    }
+    .gateway-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gateway-sub {
+      font-size: 0.76rem;
+      font-weight: 500;
+      opacity: 0.92;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gateway-badge {
+      background: rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+      color: #ffffff;
+    }
+
+    @media (max-width: 640px) {
+      .btn-hero-gateway {
+        padding: 0.72rem 0.95rem;
+      }
+      .gateway-title {
+        font-size: 0.95rem;
+      }
+      .gateway-sub {
+        font-size: 0.72rem;
+      }
+      .gateway-badge {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+      }
+      .nav-primary-list li:not(:has(.nav-result-pill)):not(:has(#navTopNoticeBell)):not(:has(#threeDotMenuBtn)) {
+        display: none !important;
+      }
+      .nav-brand-text .nav-title-hi {
+        font-size: 0.85rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 175px !important;
+      }
+    }
   

@@ -274,7 +274,7 @@
       'feedback': { title: 'विद्यालय सुधार हेतु प्रतिक्रिया व सुझाव (Feedback)', pill: '⭐ रेटिंग व बहुमूल्य सुझाव' },
       'staff': { title: 'शिक्षक एवं स्टाफ संपर्क डायरेक्टरी (Staff Directory)', pill: '📞 डायरेक्टरी व हेल्पलाइन' },
       'teacher': { title: 'शिक्षक पोर्टल एवं उपस्थिति (Teacher Portal)', pill: '👨‍🏫 उपस्थिति, परीक्षा अंक एवं शुल्क' },
-      'student': { title: 'विद्यार्थी पोर्टल एवं परीक्षा परिणाम (Student & Results)', pill: '🏆 ऑनलाइन रिजल्ट व मार्कशीट' },
+      'student': { title: 'विद्यार्थी लॉगिन एवं परीक्षा परिणाम (Student Login)', pill: '🎓 अधिकृत छात्र लॉगिन पोर्टल' },
       'facilities': { title: 'विद्यालय सुविधाएं (Transport, Labs, Library)', pill: '🚌 GPS बस | लैब | लाइब्रेरी' },
       'admin': { title: 'प्रशासक नियंत्रण पोर्टल (Admin Portal)', pill: '🔐 सुरक्षित क्लाउड डेटाबेस' }
     };
@@ -332,8 +332,8 @@
       }
       window._currentAppPage = pageId;
 
-      // 1. If returning to Home or navigating to About Us (featured on first screen)
-      if (pageId === 'home' || pageId === 'about') {
+      // 1. If returning to Home
+      if (pageId === 'home') {
         if (homeSection) homeSection.style.display = 'block';
         if (pagesContainer) pagesContainer.style.display = 'none';
         
@@ -342,29 +342,13 @@
 
         // Reset active nav button
         document.querySelectorAll('.nav-link-btn').forEach(btn => btn.classList.remove('active-tab'));
-        if (pageId === 'home') {
-          if (navHomeBtn) navHomeBtn.classList.add('active-tab');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          // Highlight about triggers if any
-          document.querySelectorAll('.nav-link-btn').forEach(btn => {
-            const href = btn.getAttribute('href') || '';
-            const onclick = btn.getAttribute('onclick') || '';
-            if (href === '#about' || onclick.includes("'about'")) {
-              btn.classList.add('active-tab');
-            }
-          });
-          const aboutSec = document.getElementById('home-about-section');
-          if (aboutSec) {
-            aboutSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }
+        if (navHomeBtn) navHomeBtn.classList.add('active-tab');
+
+        window.scrollTo(0, 0);
         return;
       }
 
-      // 2. If navigating to a dedicated subpage
+      // 2. If navigating to a dedicated subpage (about, admission, feedback, books, etc.)
       if (homeSection) homeSection.style.display = 'none';
       if (pagesContainer) pagesContainer.style.display = 'block';
 
