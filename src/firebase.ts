@@ -203,11 +203,28 @@ export async function deleteFeedbackFromCloud(id: string): Promise<boolean> {
 export async function saveSettingToCloud(key: string, data: any): Promise<boolean> {
   const docRef = doc(db, 'settings', key);
   try {
-    await setDoc(docRef, { data, updatedAt: new Date().toISOString() }, { merge: true });
+    if (data === null || data === undefined) {
+      await deleteDoc(docRef);
+      console.log('🗑️ Setting deleted from Firebase Cloud:', key);
+      return true;
+    }
+    await setDoc(docRef, { data, updatedAt: new Date().toISOString() });
     console.log('✅ Setting saved to Firebase Cloud:', key);
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `settings/${key}`);
+    return false;
+  }
+}
+
+export async function deleteSettingFromCloud(key: string): Promise<boolean> {
+  try {
+    const docRef = doc(db, 'settings', key);
+    await deleteDoc(docRef);
+    console.log('🗑️ Setting permanently deleted from Firebase Cloud:', key);
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `settings/${key}`);
     return false;
   }
 }
@@ -227,51 +244,120 @@ export async function fetchSettingFromCloud(key: string): Promise<any | null> {
 }
 
 // ==========================================
-// 4. EXAMINATION MARKS SHEETS
+// 4. FIREBASE STORAGE & DATABASE OVERVIEW EXPLORER
 // ==========================================
-export async function saveMarksSheetToCloud(sheet: any): Promise<boolean> {
-  const id = sheet.id || `MS-${sheet.class || 'general'}-${sheet.examType || 'exam'}-${Date.now()}`;
-  const docRef = doc(db, 'marks_sheets', id);
-  try {
-    await setDoc(docRef, { ...sheet, id, updatedAt: new Date().toISOString() }, { merge: true });
-    console.log('✅ Marks sheet saved to Firebase Cloud:', id);
-    return true;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, `marks_sheets/${id}`);
-    return false;
-  }
+export interface FirebaseCollectionInfo {
+  count: number;
+  items: any[];
+  sizeBytes: number;
 }
 
-export async function fetchMarksSheetsFromCloud(): Promise<any[]> {
-  try {
-    const colRef = collection(db, 'marks_sheets');
-    const snap = await getDocs(colRef);
-    const list: any[] = [];
-    snap.forEach((d) => {
-      list.push(d.data());
-    });
-    return list;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, 'marks_sheets');
-    return [];
-  }
+export interface FirebaseSettingDocInfo {
+  exists: boolean;
+  data: any;
+  sizeBytes: number;
 }
 
-export async function deleteMarksSheetFromCloud(id: string): Promise<boolean> {
+export interface FirebaseOverviewReport {
+  connected: boolean;
+  projectId: string;
+  collections: {
+    admissions: FirebaseCollectionInfo;
+    feedbacks: FirebaseCollectionInfo;
+  };
+  settings: Record<string, FirebaseSettingDocInfo>;
+  storageEstimateBytes: number;
+  timestamp: string;
+  error?: string;
+}
+
+export async function getFirebaseOverview(): Promise<FirebaseOverviewReport> {
+  const report: FirebaseOverviewReport = {
+    connected: true,
+    projectId: firebaseConfig.projectId,
+    collections: {
+      admissions: { count: 0, items: [], sizeBytes: 0 },
+      feedbacks: { count: 0, items: [], sizeBytes: 0 },
+    },
+    settings: {},
+    storageEstimateBytes: 0,
+    timestamp: new Date().toISOString()
+  };
+
   try {
-    // Record in deleted IDs to prevent any race condition or ghost revival
-    addDeletedIdTrack(id);
-    await deleteDoc(doc(db, 'marks_sheets', id));
-    console.log('🗑️ Marks sheet deleted from Firebase Cloud:', id);
-    return true;
+    // 1. Admissions collection
+    const admSnap = await getDocs(collection(db, 'admissions'));
+    const admissions: any[] = [];
+    admSnap.forEach(d => admissions.push({ id: d.id, ...d.data() }));
+    report.collections.admissions = {
+      count: admissions.length,
+      items: admissions,
+      sizeBytes: new Blob([JSON.stringify(admissions)]).size || JSON.stringify(admissions).length
+    };
+
+    // 2. Feedbacks collection
+    const fbSnap = await getDocs(collection(db, 'feedbacks'));
+    const feedbacks: any[] = [];
+    fbSnap.forEach(d => feedbacks.push({ id: d.id, ...d.data() }));
+    report.collections.feedbacks = {
+      count: feedbacks.length,
+      items: feedbacks,
+      sizeBytes: new Blob([JSON.stringify(feedbacks)]).size || JSON.stringify(feedbacks).length
+    };
+
+    // 3. Settings documents
+    const settingKeys = [
+      'popup_notification',
+      'ticker_marquee',
+      'whatsapp_groups',
+      'gallery_images',
+      'result_link_config'
+    ];
+
+    let settingsTotalBytes = 0;
+    for (const key of settingKeys) {
+      try {
+        const snap = await getDoc(doc(db, 'settings', key));
+        if (snap.exists()) {
+          const val = snap.data();
+          const bytes = new Blob([JSON.stringify(val)]).size || JSON.stringify(val).length;
+          report.settings[key] = {
+            exists: true,
+            data: val,
+            sizeBytes: bytes
+          };
+          settingsTotalBytes += bytes;
+        } else {
+          report.settings[key] = {
+            exists: false,
+            data: null,
+            sizeBytes: 0
+          };
+        }
+      } catch (e) {
+        report.settings[key] = {
+          exists: false,
+          data: null,
+          sizeBytes: 0
+        };
+      }
+    }
+
+    report.storageEstimateBytes = report.collections.admissions.sizeBytes +
+      report.collections.feedbacks.sizeBytes +
+      settingsTotalBytes;
+
+    return report;
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, `marks_sheets/${id}`);
-    return false;
+    console.error('Error in getFirebaseOverview:', error);
+    report.connected = false;
+    report.error = String(error);
+    return report;
   }
 }
 
 // Clear all records from a cloud collection
-export async function clearCollectionFromCloud(collectionName: 'admissions' | 'feedbacks' | 'marks_sheets'): Promise<boolean> {
+export async function clearCollectionFromCloud(collectionName: 'admissions' | 'feedbacks'): Promise<boolean> {
   try {
     const colRef = collection(db, collectionName);
     const snap = await getDocs(colRef);
@@ -393,7 +479,7 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
       (snap) => {
         if (snap.exists()) {
           const noticeData = snap.data()?.data;
-          if (noticeData && typeof noticeData === 'object') {
+          if (noticeData && typeof noticeData === 'object' && noticeData.title) {
             try {
               localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
             } catch (e) {}
@@ -404,16 +490,25 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
             } else if (typeof (window as any).applyNoticeDataToPopup === 'function') {
               (window as any).applyNoticeDataToPopup(noticeData);
             }
+            if (typeof (window as any).updateAdminNoticeLiveStatus === 'function') {
+              (window as any).updateAdminNoticeLiveStatus(noticeData);
+            }
           } else {
             try { localStorage.removeItem('mdhss_popup_notification'); } catch (e) {}
             if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
               (window as any).onRealtimeNoticeUpdate(null);
+            }
+            if (typeof (window as any).updateAdminNoticeLiveStatus === 'function') {
+              (window as any).updateAdminNoticeLiveStatus(null);
             }
           }
         } else {
           try { localStorage.removeItem('mdhss_popup_notification'); } catch (e) {}
           if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
             (window as any).onRealtimeNoticeUpdate(null);
+          }
+          if (typeof (window as any).updateAdminNoticeLiveStatus === 'function') {
+            (window as any).updateAdminNoticeLiveStatus(null);
           }
         }
       },
@@ -477,9 +572,24 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
       (snap) => {
         if (snap.exists() && snap.data()?.data) {
           const tickerData = snap.data().data;
-          localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(tickerData));
+          try {
+            localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(tickerData));
+          } catch (e) {}
           if (typeof (window as any).applyTickerSettingsToUI === 'function') {
             (window as any).applyTickerSettingsToUI(tickerData);
+          }
+          if (typeof (window as any).updateAdminTickerLiveStatus === 'function') {
+            (window as any).updateAdminTickerLiveStatus(tickerData);
+          }
+        } else {
+          try {
+            localStorage.removeItem('mdhss_ticker_marquee');
+          } catch (e) {}
+          if (typeof (window as any).applyTickerSettingsToUI === 'function') {
+            (window as any).applyTickerSettingsToUI(null);
+          }
+          if (typeof (window as any).updateAdminTickerLiveStatus === 'function') {
+            (window as any).updateAdminTickerLiveStatus(null);
           }
         }
       },
@@ -496,21 +606,32 @@ export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: n
     onSnapshot(
       doc(db, 'settings', 'whatsapp_groups'),
       (snap) => {
+        (window as any)._waFirebaseChecked = true;
         if (snap.exists() && snap.data()?.data && Array.isArray(snap.data().data)) {
           const waGroups = snap.data().data;
           localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(waGroups));
-          if (typeof (window as any).renderPublicWhatsAppGroups === 'function') {
-            (window as any).renderPublicWhatsAppGroups();
+          localStorage.setItem('mdhss_wa_version', '2026_v3_links');
+        } else if (!snap.exists()) {
+          const seedGroups = (window as any).DEFAULT_WHATSAPP_GROUPS || [];
+          if (seedGroups.length > 0) {
+            saveSettingToCloud('whatsapp_groups', seedGroups).catch(() => {});
           }
-          if (typeof (window as any).renderAdminWhatsAppGroups === 'function') {
-            (window as any).renderAdminWhatsAppGroups();
-          }
-          if (typeof (window as any).renderAdminTables === 'function') {
-            (window as any).renderAdminTables();
-          }
+        }
+        if (typeof (window as any).renderPublicWhatsAppGroups === 'function') {
+          (window as any).renderPublicWhatsAppGroups();
+        }
+        if (typeof (window as any).renderAdminWhatsAppGroups === 'function') {
+          (window as any).renderAdminWhatsAppGroups();
+        }
+        if (typeof (window as any).renderAdminTables === 'function') {
+          (window as any).renderAdminTables();
         }
       },
       (error) => {
+        (window as any)._waFirebaseChecked = true;
+        if (typeof (window as any).renderPublicWhatsAppGroups === 'function') {
+          (window as any).renderPublicWhatsAppGroups();
+        }
         handleFirestoreError(error, OperationType.GET, 'settings/whatsapp_groups');
       }
     );
@@ -532,16 +653,14 @@ const mdhssCloud = {
   deleteFeedback: deleteFeedbackFromCloud,
   saveSetting: saveSettingToCloud,
   fetchSetting: fetchSettingFromCloud,
-  saveMarksSheet: saveMarksSheetToCloud,
-  fetchMarksSheets: fetchMarksSheetsFromCloud,
-  deleteMarksSheet: deleteMarksSheetFromCloud,
+  deleteSetting: deleteSettingFromCloud,
   clearCollection: clearCollectionFromCloud,
   setupRealtimeSync: setupRealtimeCloudSync,
+  getFirebaseOverview: getFirebaseOverview,
   // Helper to push all local data to cloud (Initial migration)
   migrateAllLocalDataToCloud: async () => {
     let admCount = 0;
     let fbCount = 0;
-    let msCount = 0;
     try {
       const localAdmissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
       for (const adm of localAdmissions) {
@@ -552,11 +671,6 @@ const mdhssCloud = {
       for (const fb of localFeedbacks) {
         await saveFeedbackToCloud(fb);
         fbCount++;
-      }
-      const localMarks = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
-      for (const ms of localMarks) {
-        await saveMarksSheetToCloud(ms);
-        msCount++;
       }
       const notice = JSON.parse(localStorage.getItem('mdhss_popup_notification') || 'null');
       if (notice) await saveSettingToCloud('popup_notification', notice);
@@ -573,10 +687,7 @@ const mdhssCloud = {
       const waGroups = JSON.parse(localStorage.getItem('mdhss_whatsapp_groups') || 'null');
       if (waGroups && Array.isArray(waGroups)) await saveSettingToCloud('whatsapp_groups', waGroups);
 
-      const examWindow = JSON.parse(localStorage.getItem('mdhss_exam_window_config') || 'null');
-      if (examWindow) await saveSettingToCloud('exam_window_config', examWindow);
-
-      return { success: true, admissions: admCount, feedbacks: fbCount, marks: msCount };
+      return { success: true, admissions: admCount, feedbacks: fbCount };
     } catch (e) {
       console.error('Migration error:', e);
       return { success: false, error: String(e) };

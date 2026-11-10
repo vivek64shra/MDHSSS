@@ -172,34 +172,16 @@
         localStorage.setItem('mdhss_marks_sheets', JSON.stringify(initialMarksSheets));
       }
 
-      // Initialize marks grid table and roll series
-      generateMarksGrid();
-      updateMarksSeriesInfo();
-
-      // Load Result Portal Gateway Configuration
-      loadAdminResultLinkConfig();
-
-      // Render Home Auto-Scrolling Image Gallery
-      renderAutoGallery();
-
-      // Initialize Scrolling Ticker Marquee from localStorage / Cloud
-      initTickerMarquee();
-
-      // Notification Popup Check (Opened directly without delay)
-      checkAndShowFirstTimeNotice();
-
-      // Render WhatsApp Public Groups
-      if (typeof renderPublicWhatsAppGroups === 'function') {
-        renderPublicWhatsAppGroups();
-      }
-
-      // Initialize Exam Window & Result Time Limit Access Control
-      if (typeof applyExamWindowConfigToUI === 'function') {
-        applyExamWindowConfigToUI();
-      }
-
-      // Initialize Professional SPA History & Back Button Controller
-      initBrowserHistoryRouting();
+      // Safe initialization of portal modules
+      try { if (typeof generateMarksGrid === 'function') generateMarksGrid(); } catch (e) { console.warn(e); }
+      try { if (typeof updateMarksSeriesInfo === 'function') updateMarksSeriesInfo(); } catch (e) { console.warn(e); }
+      try { if (typeof loadAdminResultLinkConfig === 'function') loadAdminResultLinkConfig(); } catch (e) { console.warn(e); }
+      try { if (typeof renderAutoGallery === 'function') renderAutoGallery(); } catch (e) { console.warn(e); }
+      try { if (typeof initTickerMarquee === 'function') initTickerMarquee(); } catch (e) { console.warn(e); }
+      try { if (typeof checkAndShowFirstTimeNotice === 'function') checkAndShowFirstTimeNotice(); } catch (e) { console.warn(e); }
+      try { if (typeof renderPublicWhatsAppGroups === 'function') renderPublicWhatsAppGroups(); } catch (e) { console.warn(e); }
+      try { if (typeof applyExamWindowConfigToUI === 'function') applyExamWindowConfigToUI(); } catch (e) { console.warn(e); }
+      try { if (typeof initBrowserHistoryRouting === 'function') initBrowserHistoryRouting(); } catch (e) { console.warn(e); }
     });
 
     // 2. Mobile Menu, 3-Dot Drawer & Navigation Functions
@@ -274,7 +256,7 @@
       'feedback': { title: 'विद्यालय सुधार हेतु प्रतिक्रिया व सुझाव (Feedback)', pill: '⭐ रेटिंग व बहुमूल्य सुझाव' },
       'staff': { title: 'शिक्षक एवं स्टाफ संपर्क डायरेक्टरी (Staff Directory)', pill: '📞 डायरेक्टरी व हेल्पलाइन' },
       'teacher': { title: 'शिक्षक पोर्टल एवं उपस्थिति (Teacher Portal)', pill: '👨‍🏫 उपस्थिति, परीक्षा अंक एवं शुल्क' },
-      'student': { title: 'विद्यार्थी पोर्टल एवं परीक्षा परिणाम (Student & Results)', pill: '🏆 ऑनलाइन रिजल्ट व मार्कशीट' },
+      'student': { title: 'विद्यार्थी लॉगिन एवं परीक्षा परिणाम (Student Login)', pill: '🎓 अधिकृत छात्र लॉगिन पोर्टल' },
       'facilities': { title: 'विद्यालय सुविधाएं (Transport, Labs, Library)', pill: '🚌 GPS बस | लैब | लाइब्रेरी' },
       'admin': { title: 'प्रशासक नियंत्रण पोर्टल (Admin Portal)', pill: '🔐 सुरक्षित क्लाउड डेटाबेस' }
     };
@@ -348,7 +330,7 @@
         return;
       }
 
-      // 2. If navigating to a dedicated subpage
+      // 2. If navigating to a dedicated subpage (about, admission, feedback, books, etc.)
       if (homeSection) homeSection.style.display = 'none';
       if (pagesContainer) pagesContainer.style.display = 'block';
 
@@ -539,8 +521,8 @@
 
     // Verified school staff directory for instantaneous fallback matching
     const BACKUP_STAFF_DIRECTORY = [
-      { name: 'Nirmal K. Dwivedi', hindiName: 'निर्मल के. द्विवेदी', phone: '9200178385', post: 'प्राचार्य' },
-      { name: 'Murlidhar Sharma', hindiName: 'मुरलीधर शर्मा', phone: '9201431631', post: 'विद्यालय संरक्षक' },
+      { name: 'Nirmal Kumar Dwivedi', hindiName: 'निर्मल कुमार द्विवेदी', phone: '9200178385', post: 'प्राचार्य' },
+      { name: 'Murlidhar Sharma (Rannu Sir)', hindiName: 'मुरलीधर शर्मा (रन्नू सर)', phone: '9201431631', post: 'विद्यालय संरक्षक व संचालक' },
       { name: 'Akhilesh Tiwari', hindiName: 'अखिलेश तिवारी', phone: '7024036526', post: 'उपाचार्य' },
       { name: 'Ram Ratan Tiwari', hindiName: 'रामरतन तिवारी', phone: '7000570538', post: 'शैक्षणिक प्रभारी' },
       { name: 'Pushpendra Dwivedi', hindiName: 'पुष्पेन्द्र द्विवेदी', phone: '9753443093', post: 'परीक्षा नियंत्रक' },
@@ -548,7 +530,7 @@
       { name: 'Rajmani Shukla', hindiName: 'राजमणि शुक्ला', phone: '9981452293', post: 'परिवहन प्रभारी' },
       { name: 'Krishna Kumar Pandey', hindiName: 'कृष्ण कुमार पाण्डेय', phone: '6265613772', post: 'लेखाविभाग प्रमुख' },
       { name: 'Ganga Mishra', hindiName: 'गंगा मिश्रा', phone: '8269419720', post: 'स्कॉलर प्रभारी' },
-      { name: 'Vivek Kumar Mishra', hindiName: 'विवेक कुमार मिश्रा', phone: '9516234519', post: 'कंप्यूटर ऑपरेटर' },
+      { name: 'IT Support Desk', hindiName: 'आई.टी. एवं तकनीकी प्रकोष्ठ', phone: '9516234519', post: 'तकनीकी सहायता' },
       { name: 'Ashok Kumar Shukla', hindiName: 'अशोक कुमार शुक्ला', phone: '9630327393', post: 'वरिष्ठ शिक्षक' },
       { name: 'Gyanendra Mishra', hindiName: 'ज्ञानेन्द्र मिश्रा', phone: '8839063673', post: 'वरिष्ठ शिक्षक' },
       { name: 'Sunita Dwivedi', hindiName: 'सुनीता द्विवेदी', phone: '9755497914', post: 'शिक्षिका' },
@@ -3976,7 +3958,7 @@
       const invertedMatches = enteredUser === VALID_ADMIN_PASSWORD && enteredPass.toLowerCase() === VALID_ADMIN_USER_ID.toLowerCase();
 
       if ((userMatches && passMatches) || invertedMatches) {
-        const adminName = 'विवेक कुमार मिश्रा (प्रशासक / कंप्यूटर ऑपरेटर)';
+        const adminName = 'निर्मल कुमार द्विवेदी / मुरलीधर शर्मा (रन्नू सर)';
         sessionStorage.setItem('mdhss_admin_session', JSON.stringify({ name: adminName, time: Date.now() }));
         
         if (unifiedErr) unifiedErr.style.display = 'none';
@@ -4106,26 +4088,24 @@
     function switchAdminTab(tab) {
       const admContent = document.getElementById('adminTabContentAdmissions');
       const waContent = document.getElementById('adminTabContentWhatsApp');
-      const marksContent = document.getElementById('adminTabContentMarks');
       const fbContent = document.getElementById('adminTabContentFeedbacks');
       const noticeContent = document.getElementById('adminTabContentNotice');
       const tickerContent = document.getElementById('adminTabContentTicker');
       const galleryContent = document.getElementById('adminTabContentGallery');
       const resultLinkContent = document.getElementById('adminTabContentResultLink');
-      const examWindowContent = document.getElementById('adminTabContentExamWindow');
+      const firebaseContent = document.getElementById('adminTabContentFirebase');
 
       const btnAdm = document.getElementById('adminTabBtnAdm');
       const btnWa = document.getElementById('adminTabBtnWhatsApp');
-      const btnMarks = document.getElementById('adminTabBtnMarks');
       const btnFb = document.getElementById('adminTabBtnFb');
       const btnNotice = document.getElementById('adminTabBtnNotice');
       const btnTicker = document.getElementById('adminTabBtnTicker');
       const btnGallery = document.getElementById('adminTabBtnGallery');
       const btnResultLink = document.getElementById('adminTabBtnResultLink');
-      const btnExamWindow = document.getElementById('adminTabBtnExamWindow');
+      const btnFirebase = document.getElementById('adminTabBtnFirebase');
 
-      [admContent, waContent, marksContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent, examWindowContent].forEach(c => { if (c) c.style.display = 'none'; });
-      [btnAdm, btnWa, btnMarks, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink, btnExamWindow].forEach(b => { 
+      [admContent, waContent, fbContent, noticeContent, tickerContent, galleryContent, resultLinkContent, firebaseContent].forEach(c => { if (c) c.style.display = 'none'; });
+      [btnAdm, btnWa, btnFb, btnNotice, btnTicker, btnGallery, btnResultLink, btnFirebase].forEach(b => { 
         if (b) {
           b.style.background = '#f8fafc';
           b.style.color = '#334155';
@@ -4149,12 +4129,6 @@
         if (typeof renderAdminWhatsAppGroups === 'function') {
           renderAdminWhatsAppGroups();
         }
-      } else if (tab === 'marks' && marksContent && btnMarks) {
-        marksContent.style.display = 'block';
-        btnMarks.style.background = '#c2410c';
-        btnMarks.style.color = '#ffffff';
-        btnMarks.style.border = '1px solid #c2410c';
-        btnMarks.style.boxShadow = '0 2px 8px rgba(194,65,12,0.25)';
       } else if (tab === 'feedbacks' && fbContent && btnFb) {
         fbContent.style.display = 'block';
         btnFb.style.background = '#059669';
@@ -4189,52 +4163,309 @@
         btnResultLink.style.border = '1px solid #be123c';
         btnResultLink.style.boxShadow = '0 2px 8px rgba(190,18,60,0.25)';
         loadAdminResultLinkConfig();
-      } else if (tab === 'examwindow' && examWindowContent && btnExamWindow) {
-        examWindowContent.style.display = 'block';
-        btnExamWindow.style.background = '#7c3aed';
-        btnExamWindow.style.color = '#ffffff';
-        btnExamWindow.style.border = '1px solid #7c3aed';
-        btnExamWindow.style.boxShadow = '0 2px 8px rgba(124,58,237,0.25)';
-        if (typeof renderAdminExamWindowConfig === 'function') {
-          renderAdminExamWindowConfig();
+      } else if (tab === 'firebase' && firebaseContent && btnFirebase) {
+        firebaseContent.style.display = 'block';
+        btnFirebase.style.background = '#ea580c';
+        btnFirebase.style.color = '#ffffff';
+        btnFirebase.style.border = '1px solid #ea580c';
+        btnFirebase.style.boxShadow = '0 2px 8px rgba(234,88,12,0.25)';
+        if (typeof renderFirebaseExplorer === 'function') {
+          renderFirebaseExplorer();
         }
       }
     }
 
+    async function renderFirebaseExplorer() {
+      const container = document.getElementById('firebaseExplorerContainer');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div style="text-align:center; padding:2rem; color:#64748b;">
+          <div style="font-size:2rem; animation:spin 1s linear infinite; display:inline-block;">🔄</div>
+          <p style="margin-top:0.5rem; font-weight:700;">Firebase Firestore क्लाउड डेटाबेस व स्टोरेज लोड हो रहा है...</p>
+        </div>
+      `;
+
+      try {
+        let report = null;
+        if (window.mdhssCloud && typeof window.mdhssCloud.getFirebaseOverview === 'function') {
+          report = await window.mdhssCloud.getFirebaseOverview();
+        }
+
+        if (!report) {
+          const adms = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
+          const fbs = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
+          const wa = JSON.parse(localStorage.getItem('mdhss_whatsapp_groups') || '[]');
+          const notice = JSON.parse(localStorage.getItem('mdhss_popup_notification') || 'null');
+          const ticker = JSON.parse(localStorage.getItem('mdhss_ticker_marquee') || 'null');
+          const gallery = JSON.parse(localStorage.getItem('mdhss_gallery_images') || '[]');
+          const res = JSON.parse(localStorage.getItem('mdhss_result_link_config') || 'null');
+
+          report = {
+            connected: true,
+            projectId: 'madurga-school',
+            collections: {
+              admissions: { count: adms.length, items: adms, sizeBytes: JSON.stringify(adms).length },
+              feedbacks: { count: fbs.length, items: fbs, sizeBytes: JSON.stringify(fbs).length },
+            },
+            settings: {
+              popup_notification: { exists: !!notice, data: notice, sizeBytes: JSON.stringify(notice || {}).length },
+              ticker_marquee: { exists: !!ticker, data: ticker, sizeBytes: JSON.stringify(ticker || {}).length },
+              whatsapp_groups: { exists: !!wa, data: wa, sizeBytes: JSON.stringify(wa || []).length },
+              gallery_images: { exists: !!gallery, data: gallery, sizeBytes: JSON.stringify(gallery || []).length },
+              result_link_config: { exists: !!res, data: res, sizeBytes: JSON.stringify(res || {}).length },
+            },
+            storageEstimateBytes: JSON.stringify({ adms, fbs, wa, notice, ticker, gallery, res }).length,
+            timestamp: new Date().toISOString()
+          };
+        }
+
+        const formatBytes = (bytes) => {
+          if (!bytes || bytes === 0) return '0 B';
+          const k = 1024;
+          const sizes = ['B', 'KB', 'MB', 'GB'];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+
+        const admCount = report.collections.admissions?.count || 0;
+        const fbCount = report.collections.feedbacks?.count || 0;
+        const waCount = Array.isArray(report.settings.whatsapp_groups?.data) ? report.settings.whatsapp_groups.data.length : 0;
+        const galCount = Array.isArray(report.settings.gallery_images?.data) ? report.settings.gallery_images.data.length : 0;
+        const totalSizeStr = formatBytes(report.storageEstimateBytes);
+
+        container.innerHTML = `
+          <!-- TOP STATUS RIBBON -->
+          <div style="background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border:1.5px solid #fed7aa; border-radius:12px; padding:1.25rem; margin-bottom:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="font-size:2rem;">🔥</div>
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <h4 style="margin:0; font-size:1.15rem; color:#9a3412; font-weight:800;">Firebase Firestore Cloud Live Status</h4>
+                    <span style="background:#dcfce7; color:#15803d; border:1px solid #86efac; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:9999px;">● CONNECTED & ACTIVE</span>
+                  </div>
+                  <p style="margin:3px 0 0 0; font-size:0.84rem; color:#c2410c;">
+                    प्रोजेक्ट ID: <strong>${report.projectId || 'madurga-school'}</strong> • कुल अनुमानित स्टोरेज: <strong>${totalSizeStr}</strong> • अंतिम सिंक: <strong>${new Date().toLocaleTimeString()}</strong>
+                  </p>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-hero-sec" onclick="renderFirebaseExplorer()" style="background:#fff; color:#c2410c; border:1.5px solid #fdba74; font-weight:700; padding:0.5rem 1rem; border-radius:8px; cursor:pointer;">
+                  🔄 लाइव रीफ्रेश करें
+                </button>
+                <button type="button" class="btn-hero-pri" onclick="downloadFirebaseBackupJSON()" style="background:linear-gradient(135deg, #ea580c, #c2410c); font-size:0.85rem; padding:0.5rem 1rem; border-radius:8px; cursor:pointer;">
+                  📥 पूर्ण बैकअप JSON
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- METRIC CARDS GRID -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.85rem; margin-bottom:1.5rem;">
+            <!-- Card 1: Admissions -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#0369a1;">📁 admissions</span>
+                <span style="font-size:0.72rem; background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:700;">Collection</span>
+              </div>
+              <div style="font-size:1.6rem; font-weight:800; color:#0f172a;">${admCount}</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.collections.admissions?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('admissions')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#f0f9ff; color:#0284c7; border:1px solid #bae6fd; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+
+            <!-- Card 2: Feedbacks -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#15803d;">📁 feedbacks</span>
+                <span style="font-size:0.72rem; background:#dcfce7; color:#15803d; padding:2px 6px; border-radius:4px; font-weight:700;">Collection</span>
+              </div>
+              <div style="font-size:1.6rem; font-weight:800; color:#0f172a;">${fbCount}</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.collections.feedbacks?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('feedbacks')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#f0fdf4; color:#16a34a; border:1px solid #86efac; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+
+            <!-- Card 3: WhatsApp Groups -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#059669;">📄 whatsapp_groups</span>
+                <span style="font-size:0.72rem; background:#ecfdf5; color:#059669; padding:2px 6px; border-radius:4px; font-weight:700;">Setting Doc</span>
+              </div>
+              <div style="font-size:1.6rem; font-weight:800; color:#0f172a;">${waCount} ग्रुप्स</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.settings.whatsapp_groups?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('whatsapp_groups')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#f0fdf4; color:#059669; border:1px solid #a7f3d0; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+
+            <!-- Card 4: Gallery Images Storage -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#7c3aed;">🖼️ gallery_images</span>
+                <span style="font-size:0.72rem; background:#f5f3ff; color:#7c3aed; padding:2px 6px; border-radius:4px; font-weight:700;">Setting Doc</span>
+              </div>
+              <div style="font-size:1.6rem; font-weight:800; color:#0f172a;">${galCount} फोटोज़</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.settings.gallery_images?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('gallery_images')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#faf5ff; color:#7c3aed; border:1px solid #ddd6fe; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+
+            <!-- Card 5: Popup Notification -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#0284c7;">📢 popup_notification</span>
+                <span style="font-size:0.72rem; background:#eff6ff; color:#0284c7; padding:2px 6px; border-radius:4px; font-weight:700;">Setting Doc</span>
+              </div>
+              <div style="font-size:1.2rem; font-weight:800; color:#0f172a;">${report.settings.popup_notification?.exists ? (report.settings.popup_notification.data?.active !== false ? '✅ सक्रिय' : '⏸️ निष्क्रिय') : '⚠️ रिक्त'}</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.settings.popup_notification?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('popup_notification')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#eff6ff; color:#0284c7; border:1px solid #bae6fd; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+
+            <!-- Card 6: Ticker Marquee -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#dc2626;">🚩 ticker_marquee</span>
+                <span style="font-size:0.72rem; background:#fef2f2; color:#dc2626; padding:2px 6px; border-radius:4px; font-weight:700;">Setting Doc</span>
+              </div>
+              <div style="font-size:1.2rem; font-weight:800; color:#0f172a;">${report.settings.ticker_marquee?.exists ? (report.settings.ticker_marquee.data?.active !== false ? '✅ सक्रिय' : '⏸️ निष्क्रिय') : '⚠️ रिक्त'}</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.settings.ticker_marquee?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('ticker_marquee')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+
+            <!-- Card 7: Result Link Config -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:700; color:#be123c;">🎓 result_link_config</span>
+                <span style="font-size:0.72rem; background:#fff1f2; color:#be123c; padding:2px 6px; border-radius:4px; font-weight:700;">Setting Doc</span>
+              </div>
+              <div style="font-size:1.1rem; font-weight:800; color:#0f172a; word-break:break-all;">mdhsssresult</div>
+              <div style="font-size:0.76rem; color:#64748b; margin-top:2px;">आकार: ${formatBytes(report.settings.result_link_config?.sizeBytes)}</div>
+              <button type="button" onclick="inspectFirebaseDoc('result_link_config')" style="margin-top:0.65rem; width:100%; padding:4px 8px; font-size:0.78rem; background:#fff1f2; color:#be123c; border:1px solid #fecdd3; border-radius:6px; cursor:pointer; font-weight:700;">
+                🔍 डेटा देखें
+              </button>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE RAW JSON & DOCUMENT INSPECTOR -->
+          <div style="background:#1e293b; color:#f8fafc; border-radius:10px; padding:1.25rem; margin-top:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.85rem; border-bottom:1px solid #334155; padding-bottom:0.75rem;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">👁️</span>
+                <span style="font-weight:700; font-size:0.95rem; color:#e2e8f0;">Firebase लाइव डॉक्युमेंट / कलेक्शन व्यूअर</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <select id="fbDocSelector" onchange="onFbDocSelectChange()" style="background:#0f172a; color:#f8fafc; border:1px solid #475569; border-radius:6px; padding:4px 8px; font-size:0.84rem;">
+                  <option value="all">🌟 सम्पूर्ण रिपोर्ट (Full Overview JSON)</option>
+                  <option value="admissions">📁 admissions (प्रवेश आवेदन)</option>
+                  <option value="feedbacks">📁 feedbacks (फीडबैक)</option>
+                  <option value="whatsapp_groups">📄 settings/whatsapp_groups</option>
+                  <option value="gallery_images">🖼️ settings/gallery_images</option>
+                  <option value="popup_notification">📢 settings/popup_notification</option>
+                  <option value="ticker_marquee">🚩 settings/ticker_marquee</option>
+                  <option value="result_link_config">🎓 settings/result_link_config</option>
+                </select>
+                <button type="button" onclick="copyCurrentFbInspectorJSON()" style="background:#3b82f6; color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                  📋 कॉपी JSON
+                </button>
+              </div>
+            </div>
+            <pre id="fbInspectorJsonPre" style="background:#0f172a; padding:1rem; border-radius:8px; overflow-x:auto; font-family:monospace; font-size:0.82rem; color:#38bdf8; max-height:420px; line-height:1.5;"></pre>
+          </div>
+        `;
+
+        window._lastFirebaseReport = report;
+        onFbDocSelectChange();
+
+      } catch (err) {
+        container.innerHTML = `
+          <div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:1.25rem; border-radius:10px;">
+            <strong>⚠️ Firebase डेटा लोड करने में त्रुटि:</strong> ${err.message || err}
+          </div>
+        `;
+      }
+    }
+
+    function inspectFirebaseDoc(docKey) {
+      const sel = document.getElementById('fbDocSelector');
+      if (sel) {
+        sel.value = docKey;
+        onFbDocSelectChange();
+        sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function onFbDocSelectChange() {
+      const sel = document.getElementById('fbDocSelector');
+      const pre = document.getElementById('fbInspectorJsonPre');
+      if (!sel || !pre || !window._lastFirebaseReport) return;
+
+      const key = sel.value;
+      let targetData = null;
+
+      if (key === 'all') {
+        targetData = window._lastFirebaseReport;
+      } else if (key === 'admissions' || key === 'feedbacks') {
+        targetData = window._lastFirebaseReport.collections[key];
+      } else {
+        targetData = window._lastFirebaseReport.settings[key];
+      }
+
+      pre.textContent = JSON.stringify(targetData, null, 2);
+    }
+
+    function copyCurrentFbInspectorJSON() {
+      const pre = document.getElementById('fbInspectorJsonPre');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.textContent).then(() => {
+        alert('✅ Firebase डेटा JSON क्लिपबोर्ड पर सफलतापूर्वक कॉपी हो गया!');
+      }).catch(() => {
+        alert('कॉपीड');
+      });
+    }
+
+    function downloadFirebaseBackupJSON() {
+      if (!window._lastFirebaseReport) {
+        alert('कृपया पहले डेटा लोड होने दें।');
+        return;
+      }
+      const str = JSON.stringify(window._lastFirebaseReport, null, 2);
+      const blob = new Blob([str], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mdhss-firebase-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function renderAdminTables() {
       const admissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
-      const marksSheets = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
       const feedbacks = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
       const waGroups = typeof getWhatsAppGroups === 'function' ? getWhatsAppGroups() : [];
 
       // Update counters
       const statAdm = document.getElementById('statAdmissionsCount');
-      const statMarks = document.getElementById('statMarksSheetsCount');
       const statFb = document.getElementById('statFeedbacksCount');
       const statWa = document.getElementById('statWhatsAppCount');
       const badgeAdm = document.getElementById('tabAdmCountBadge');
-      const badgeMarks = document.getElementById('tabMarksCountBadge');
       const badgeFb = document.getElementById('tabFbCountBadge');
       const badgeWa = document.getElementById('tabWhatsAppCountBadge');
 
       if (statAdm) statAdm.textContent = admissions.length;
-      if (statMarks) statMarks.textContent = marksSheets.length;
       if (statFb) statFb.textContent = feedbacks.length;
       if (statWa) statWa.textContent = waGroups.length;
       if (badgeAdm) badgeAdm.textContent = admissions.length;
-      if (badgeMarks) badgeMarks.textContent = marksSheets.length;
       if (badgeFb) badgeFb.textContent = feedbacks.length;
       if (badgeWa) badgeWa.textContent = waGroups.length;
-
-      if (statAdm) statAdm.textContent = admissions.length;
-      if (statMarks) statMarks.textContent = marksSheets.length;
-      if (statFb) statFb.textContent = feedbacks.length;
-      if (badgeAdm) badgeAdm.textContent = admissions.length;
-      if (badgeMarks) badgeMarks.textContent = marksSheets.length;
-      if (badgeFb) badgeFb.textContent = feedbacks.length;
-
-      const rawSheetsCountBadge = document.getElementById('rawSheetsCountBadge');
-      if (rawSheetsCountBadge) rawSheetsCountBadge.textContent = marksSheets.length;
 
       // 1. Render Admissions Body
       const admBody = document.getElementById('adminAdmissionsTableBody');
@@ -5555,7 +5786,7 @@
     }
 
     // ==========================================================================
-    // 9. ULTRA-FAST REAL-TIME NOTIFICATION POPUP ENGINE & CLOUD SYNC
+    // 9. NOTIFICATION POPUP ENGINE (FIREBASE CLOUD FIRST & ADMIN CONTROLLED)
     // ==========================================================================
     function isRealUpdatedNotice(noticeData) {
       if (!noticeData || typeof noticeData !== 'object') return false;
@@ -5563,7 +5794,7 @@
       if (!noticeData.title || !noticeData.title.trim()) return false;
       // Valid if explicitly updated by administrator or marked with timestamp
       if (noticeData.isUpdated === true || noticeData.updatedAt) return true;
-      // Prevent displaying the old hardcoded dummy placeholder
+      // Never display old dummy placeholder
       if (noticeData.title.trim() === 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया में प्रवेश प्रारंभ!' && !noticeData.isUpdated) {
         return false;
       }
@@ -5575,7 +5806,12 @@
       const modalEl = document.getElementById('firstTimeNoticeModal');
       const bellPulse = document.getElementById('navBellPulseDot');
 
-      // If notice was disabled, deleted, or cleared by admin
+      // Update admin live status box if visible
+      if (typeof updateAdminNoticeLiveStatus === 'function') {
+        updateAdminNoticeLiveStatus(noticeData);
+      }
+
+      // If notice was disabled, deleted, or cleared by admin in Firebase
       if (!noticeData || !isRealUpdatedNotice(noticeData)) {
         if (modalEl && !window._manualNoticeModalOpen) {
           modalEl.style.display = 'none';
@@ -5584,16 +5820,8 @@
         return;
       }
 
-      // Notice is valid and active
+      // Notice is valid and active in Firebase
       applyNoticeDataToPopup(noticeData);
-
-      // If Admin notice settings tab is currently open, sync input fields smoothly
-      if (window._currentAppPage === 'admin') {
-        const titleInp = document.getElementById('cfgNoticeTitle');
-        if (titleInp && document.activeElement !== titleInp && !titleInp.value) {
-          loadAdminNoticeSettings();
-        }
-      }
 
       const noticeVer = (noticeData.updatedAt || noticeData.title || 'v1').trim();
       const lastSeenVer = localStorage.getItem('mdhss_notice_last_seen_ver');
@@ -5614,43 +5842,55 @@
     }
     window.onRealtimeNoticeUpdate = onRealtimeNoticeUpdate;
 
-    function checkAndShowFirstTimeNotice() {
+    async function checkAndShowFirstTimeNotice() {
+      const modalEl = document.getElementById('firstTimeNoticeModal');
+      if (modalEl) modalEl.style.display = 'none';
+
       let noticeData = null;
-      try {
-        const saved = localStorage.getItem('mdhss_popup_notification');
-        if (saved) {
-          noticeData = JSON.parse(saved);
-        }
-      } catch (e) {}
 
-      // FAST PATH 1: Instant 0ms local storage render so first-time visitors don't wait
-      if (isRealUpdatedNotice(noticeData)) {
-        const noticeVer = (noticeData.updatedAt || noticeData.title || 'v1').trim();
-        const sessionDismissed = sessionStorage.getItem('mdhss_notice_dismissed_' + noticeVer);
-        const lastSeenVer = localStorage.getItem('mdhss_notice_last_seen_ver');
-        const bellPulse = document.getElementById('navBellPulseDot');
-
-        applyNoticeDataToPopup(noticeData);
-
-        if (bellPulse) {
-          bellPulse.style.display = (lastSeenVer !== noticeVer) ? 'block' : 'none';
-        }
-
-        if (sessionDismissed !== 'true') {
-          const modalEl = document.getElementById('firstTimeNoticeModal');
-          if (modalEl) {
-            modalEl.style.display = 'flex';
+      // FIRST: Check Firebase Cloud directly - Do NOT show cached dummy data before checking Firebase
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        try {
+          const cloudData = await window.mdhssCloud.fetchSetting('popup_notification');
+          if (cloudData && cloudData.title && cloudData.enabled !== 'false') {
+            noticeData = cloudData;
+            localStorage.setItem('mdhss_popup_notification', JSON.stringify(cloudData));
+          } else {
+            localStorage.removeItem('mdhss_popup_notification');
           }
-        }
+        } catch (e) {}
+      } else {
+        try {
+          const saved = localStorage.getItem('mdhss_popup_notification');
+          if (saved) noticeData = JSON.parse(saved);
+        } catch (e) {}
       }
 
-      // FAST PATH 2: Immediate parallel cloud fetch to ensure live server state
-      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
-        window.mdhssCloud.fetchSetting('popup_notification').then((cloudData) => {
-          if (cloudData) {
-            onRealtimeNoticeUpdate(cloudData);
-          }
-        }).catch(() => {});
+      // If no valid active notice in Firebase, DO NOT show
+      if (!isRealUpdatedNotice(noticeData)) {
+        if (modalEl) modalEl.style.display = 'none';
+        const bellPulse = document.getElementById('navBellPulseDot');
+        if (bellPulse) bellPulse.style.display = 'none';
+        return;
+      }
+
+      const noticeVer = (noticeData.updatedAt || noticeData.title || 'v1').trim();
+      const lastSeenVer = localStorage.getItem('mdhss_notice_last_seen_ver');
+      const sessionDismissed = sessionStorage.getItem('mdhss_notice_dismissed_' + noticeVer);
+      const isNewNotice = (lastSeenVer !== noticeVer);
+
+      const bellPulse = document.getElementById('navBellPulseDot');
+      if (bellPulse) {
+        bellPulse.style.display = isNewNotice ? 'block' : 'none';
+      }
+
+      if (sessionDismissed === 'true' && !isNewNotice) {
+        return;
+      }
+
+      applyNoticeDataToPopup(noticeData);
+      if (modalEl) {
+        modalEl.style.display = 'flex';
       }
     }
     window.checkAndShowFirstTimeNotice = checkAndShowFirstTimeNotice;
@@ -5741,25 +5981,12 @@
       let noticeData = null;
       try {
         const saved = localStorage.getItem('mdhss_popup_notification');
-        if (saved) {
-          noticeData = JSON.parse(saved);
-        }
+        if (saved) noticeData = JSON.parse(saved);
       } catch (e) {}
 
       if (!isRealUpdatedNotice(noticeData)) {
-        noticeData = {
-          badge: '🔔 आवश्यक सूचना • सत्र 2026-27',
-          enabled: 'true',
-          title: 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय, सेमरिया',
-          body: 'नवीन शैक्षणिक सत्र 2026-27 हेतु नर्सरी से 12वीं (गणित, विज्ञान, वाणिज्य संकाय) में प्रवेश प्रारंभ हो चुके हैं। नियमित विद्यालय समय: प्रातः 09:30 AM से सायं 04:00 PM तक।',
-          highlights: '✅ 100% CCTV सुरक्षित कैंपस • स्मार्ट क्लासरूम • आधुनिक कंप्यूटर व साइंस लैब • सेमरिया एवं ग्रामीण अंचलों हेतु सुरक्षित बस सुविधा',
-          helpline: '📞 प्रवेश एवं सहायता: 9200178385, 7024036526 | 🏫 UDISE: 23140402055',
-          btnText: '✍️ ऑनलाइन प्रवेश फॉर्म 2026-27 भरें',
-          btnAction: 'admission',
-          customUrl: '',
-          isUpdated: true,
-          updatedAt: 'v1'
-        };
+        alert('वर्तमान में विद्यालय की कोई नई सूचना सक्रिय नहीं है।');
+        return;
       }
 
       applyNoticeDataToPopup(noticeData);
@@ -5769,8 +5996,7 @@
         modalEl.style.display = 'flex';
       }
 
-      // Mark as seen on manual opening
-      const noticeVer = (noticeData.updatedAt || noticeData.title || 'v1').trim();
+      const noticeVer = (noticeData && (noticeData.updatedAt || noticeData.title) ? (noticeData.updatedAt || noticeData.title) : 'v1').trim();
       localStorage.setItem('mdhss_notice_last_seen_ver', noticeVer);
       const bellPulse = document.getElementById('navBellPulseDot');
       if (bellPulse) bellPulse.style.display = 'none';
@@ -5795,14 +6021,72 @@
     }
     window.onFirstNoticeActionClick = onFirstNoticeActionClick;
 
-    function loadAdminNoticeSettings() {
+    // Admin Notice Live Status Inspector (Shows what is currently in Firebase)
+    function updateAdminNoticeLiveStatus(noticeData) {
+      const detailsEl = document.getElementById('adminNoticeLiveDetails');
+      const dotEl = document.getElementById('adminNoticeLiveDot');
+      if (!detailsEl) return;
+
+      if (!noticeData || !isRealUpdatedNotice(noticeData)) {
+        if (dotEl) dotEl.style.background = '#94a3b8';
+        detailsEl.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; color:#64748b;">
+            <span style="font-size:1.2rem;">⚪</span>
+            <div>
+              <strong style="color:#0f172a;">Firebase में कोई सूचना सक्रिय नहीं है (खाली है)</strong>
+              <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">वेबसाइट पर विजिटर्स को कोई पॉपअप नहीं दिखेगा। नीचे दिए फॉर्म से नई सूचना दर्ज कर सुरक्षित करें।</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (dotEl) dotEl.style.background = (noticeData.enabled === 'false') ? '#ef4444' : '#16a34a';
+      const statusBadge = (noticeData.enabled === 'false') 
+        ? '<span style="background:#fee2e2; color:#b91c1c; font-weight:800; padding:2px 8px; border-radius:4px; font-size:0.75rem;">🔴 बंद (Disabled)</span>'
+        : '<span style="background:#dcfce7; color:#15803d; font-weight:800; padding:2px 8px; border-radius:4px; font-size:0.75rem;">🟢 सक्रिय (Live Active)</span>';
+
+      const updateTime = noticeData.updatedAt ? new Date(noticeData.updatedAt).toLocaleString('hi-IN') : 'सक्रिय';
+
+      detailsEl.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+          <div>
+            <div style="font-size:0.75rem; color:#64748b; font-weight:700;">शीर्षक (Title):</div>
+            <div style="font-weight:800; color:#0369a1; font-size:0.95rem;">${noticeData.title || '-'}</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; color:#64748b; font-weight:700;">स्थिति व अंतिम अपडेट:</div>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">${statusBadge} <span style="font-size:0.78rem; color:#475569;">${updateTime}</span></div>
+          </div>
+          ${noticeData.badge ? `<div><div style="font-size:0.75rem; color:#64748b; font-weight:700;">बैज / चिप:</div><div style="font-size:0.85rem; color:#334155;">${noticeData.badge}</div></div>` : ''}
+          ${noticeData.btnText ? `<div><div style="font-size:0.75rem; color:#64748b; font-weight:700;">बटन लेबल:</div><div style="font-size:0.85rem; color:#334155;">${noticeData.btnText} (${noticeData.btnAction || 'admission'})</div></div>` : ''}
+        </div>
+        ${noticeData.body ? `<div style="margin-top:8px; padding-top:6px; border-top:1px dashed #e2e8f0; font-size:0.84rem; color:#475569;"><strong>विवरण:</strong> ${noticeData.body}</div>` : ''}
+        ${noticeData.highlights ? `<div style="margin-top:4px; font-size:0.82rem; color:#15803d;"><strong>हाइलाइट्स:</strong> ${noticeData.highlights}</div>` : ''}
+      `;
+    }
+    window.updateAdminNoticeLiveStatus = updateAdminNoticeLiveStatus;
+
+    async function loadAdminNoticeSettings() {
       let noticeData = null;
-      try {
-        const saved = localStorage.getItem('mdhss_popup_notification');
-        if (saved) {
-          noticeData = JSON.parse(saved);
-        }
-      } catch (e) {}
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        try {
+          const cloudData = await window.mdhssCloud.fetchSetting('popup_notification');
+          if (cloudData) {
+            noticeData = cloudData;
+            localStorage.setItem('mdhss_popup_notification', JSON.stringify(cloudData));
+          } else {
+            localStorage.removeItem('mdhss_popup_notification');
+          }
+        } catch (e) {}
+      } else {
+        try {
+          const saved = localStorage.getItem('mdhss_popup_notification');
+          if (saved) noticeData = JSON.parse(saved);
+        } catch (e) {}
+      }
+
+      updateAdminNoticeLiveStatus(noticeData);
 
       const isUpdated = isRealUpdatedNotice(noticeData);
       const data = isUpdated ? noticeData : {
@@ -5863,25 +6147,26 @@
         updatedAt: new Date().toISOString()
       };
 
-      // 1. Save to LocalStorage immediately
+      // 1. Save locally
       localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
 
-      // 2. Clear previous dismissal so the new notification immediately pops up across all visitor devices
+      // 2. Clear old dismissal so newly updated notice immediately pops up for all visitors
       const newVer = noticeData.updatedAt;
       sessionStorage.removeItem('mdhss_notice_dismissed_' + newVer);
       localStorage.removeItem('mdhss_notice_last_seen_ver');
       const bellPulse = document.getElementById('navBellPulseDot');
       if (bellPulse) bellPulse.style.display = 'block';
 
-      // 3. Update current DOM immediately
+      // 3. Immediately update UI & Admin Live Status
       applyNoticeDataToPopup(noticeData);
+      updateAdminNoticeLiveStatus(noticeData);
 
-      // 4. Instant push to Firebase Cloud (propagates via onSnapshot in milliseconds to all users)
+      // 4. Save directly to Firebase Firestore
       if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
         try {
           await window.mdhssCloud.saveSetting('popup_notification', noticeData);
         } catch (err) {
-          console.warn('Notice cloud save notification:', err);
+          console.warn('Notice cloud save error:', err);
         }
       }
 
@@ -5892,6 +6177,45 @@
       }
     }
     window.saveAdminNoticeSettings = saveAdminNoticeSettings;
+
+    async function deleteAdminNoticeFromCloud() {
+      if (!confirm('⚠️ क्या आप निश्चित हैं कि आप Firebase Firestore से इस सूचना को हमेशा के लिए हटाना (Delete) चाहते हैं?\n\nहटाने के बाद किसी भी यूजर के फोन पर पॉपअप नहीं खुलेगा।')) {
+        return;
+      }
+      try {
+        localStorage.removeItem('mdhss_popup_notification');
+        if (window.mdhssCloud && typeof window.mdhssCloud.deleteSetting === 'function') {
+          await window.mdhssCloud.deleteSetting('popup_notification');
+        } else if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+          await window.mdhssCloud.saveSetting('popup_notification', null);
+        }
+
+        const modalEl = document.getElementById('firstTimeNoticeModal');
+        if (modalEl) modalEl.style.display = 'none';
+
+        const bellPulse = document.getElementById('navBellPulseDot');
+        if (bellPulse) bellPulse.style.display = 'none';
+
+        updateAdminNoticeLiveStatus(null);
+        loadAdminNoticeSettings();
+        alert('✅ Firebase से सूचना सफलतापूर्वक डिलीट कर दी गई है! अब वेबसाइट पर कोई पॉपअप नहीं दिखेगा।');
+      } catch (err) {
+        alert('डिलीट करने में त्रुटि: ' + (err.message || err));
+      }
+    }
+    window.deleteAdminNoticeFromCloud = deleteAdminNoticeFromCloud;
+
+    async function refreshAdminNoticeStatus() {
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        const cloudData = await window.mdhssCloud.fetchSetting('popup_notification');
+        updateAdminNoticeLiveStatus(cloudData);
+        if (cloudData) {
+          localStorage.setItem('mdhss_popup_notification', JSON.stringify(cloudData));
+          loadAdminNoticeSettings();
+        }
+      }
+    }
+    window.refreshAdminNoticeStatus = refreshAdminNoticeStatus;
 
     function testLiveNoticeModal() {
       const titleVal = document.getElementById('cfgNoticeTitle')?.value.trim() || 'माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया';
@@ -5913,18 +6237,12 @@
       const modalEl = document.getElementById('firstTimeNoticeModal');
       if (modalEl) modalEl.style.display = 'flex';
     }
+    window.testLiveNoticeModal = testLiveNoticeModal;
 
     function resetDefaultNoticeSettings() {
-      if (!confirm('क्या आप सूचना पॉपअप सेटिंग्स को हटाना/रीसेट करना चाहते हैं?')) return;
-      localStorage.removeItem('mdhss_popup_notification');
-      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
-        window.mdhssCloud.saveSetting('popup_notification', null);
-      }
-      loadAdminNoticeSettings();
-      const modalEl = document.getElementById('firstTimeNoticeModal');
-      if (modalEl) modalEl.style.display = 'none';
-      alert('सूचना पॉपअप सेटिंग्स रीसेट कर दी गई हैं!');
+      deleteAdminNoticeFromCloud();
     }
+    window.resetDefaultNoticeSettings = resetDefaultNoticeSettings;
 
     // Keyboard accessibility: Close modal with Escape key
     document.addEventListener('keydown', (e) => {
@@ -5939,16 +6257,6 @@
     // ==========================================================================
     // 9B. SCROLLING TICKER MARQUEE (PRAVESH SOOCHNA ADMIN CONTROLLER & RUNTIME)
     // ==========================================================================
-    const DEFAULT_TICKER_DATA = {
-      enabled: 'true',
-      tag: '🔔 प्रवेश सूचना',
-      text: 'प्रवेश प्रारंभ! शैक्षणिक सत्र 2026-27 के लिए प्रवेश खुले हैं | स्कूल समय: प्रातः 09:30 से सायं 04:00 बजे (9:30 AM - 4:00 PM) | Nursery to Class 12th (गणित, विज्ञान, वाणिज्य संकाय) | म.प्र. बोर्ड ई-बुक्स एवं कक्षावार व्हाट्सएप ग्रुप लिंक उपलब्ध | 100% CCTV सुरक्षित कैंपस, स्मार्ट क्लास, कंप्यूटर एवं विज्ञान लैब | संपर्क: 9200178385, 9201431631, 7024036526 ★ प्रवेश प्रारंभ! सत्र 2026-27 | स्कूल समय: 9:30 AM - 4:00 PM | विद्या ददाति विनयं |',
-      speed: 'normal',
-      theme: 'red',
-      clickAction: 'admission',
-      updatedAt: ''
-    };
-
     const TICKER_THEMES = {
       red: {
         bar: 'linear-gradient(90deg, #991b1b, #dc2626, #991b1b)',
@@ -5973,30 +6281,33 @@
     };
 
     async function initTickerMarquee() {
-      let tickerData = null;
-      try {
-        const saved = localStorage.getItem('mdhss_ticker_marquee');
-        if (saved) {
-          tickerData = JSON.parse(saved);
-        }
-      } catch (e) {}
+      const bar = document.getElementById('portalMarqueeBar');
+      if (bar) bar.style.display = 'none';
 
-      if (!tickerData && window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+      let tickerData = null;
+      // Fetch directly from Firebase Firestore first - no hardcoded default
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
         try {
           const cloudData = await window.mdhssCloud.fetchSetting('ticker_marquee');
-          if (cloudData) {
+          if (cloudData && cloudData.text && cloudData.enabled !== 'false') {
             tickerData = cloudData;
             localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(cloudData));
+          } else {
+            localStorage.removeItem('mdhss_ticker_marquee');
           }
+        } catch (e) {}
+      } else {
+        try {
+          const saved = localStorage.getItem('mdhss_ticker_marquee');
+          if (saved) tickerData = JSON.parse(saved);
         } catch (e) {}
       }
 
-      applyTickerSettingsToUI(tickerData || DEFAULT_TICKER_DATA);
+      applyTickerSettingsToUI(tickerData);
     }
     window.initTickerMarquee = initTickerMarquee;
 
     function applyTickerSettingsToUI(data) {
-      const ticker = { ...DEFAULT_TICKER_DATA, ...(data || {}) };
       const bar = document.getElementById('portalMarqueeBar');
       const tagEl = document.getElementById('portalMarqueeTag');
       const tagTextEl = document.getElementById('portalMarqueeTagText');
@@ -6004,31 +6315,33 @@
 
       if (!bar) return;
 
-      if (ticker.enabled === 'false') {
+      // If data is null, empty, or disabled, hide the ticker completely
+      if (!data || data.enabled === 'false' || !data.text || !data.text.trim()) {
         bar.style.display = 'none';
         return;
       }
+
       bar.style.display = 'flex';
 
       if (tagTextEl) {
-        tagTextEl.textContent = (ticker.tag && ticker.tag.trim()) ? ticker.tag.trim() : '🔔 प्रवेश सूचना';
+        tagTextEl.textContent = (data.tag && data.tag.trim()) ? data.tag.trim() : '🔔 प्रवेश सूचना';
       }
 
       if (textEl) {
-        textEl.textContent = ticker.text || '';
+        textEl.textContent = data.text.trim();
         let duration = '52s';
-        if (ticker.speed === 'slow') duration = '80s';
-        else if (ticker.speed === 'fast') duration = '32s';
+        if (data.speed === 'slow') duration = '80s';
+        else if (data.speed === 'fast') duration = '32s';
         textEl.style.animationDuration = duration;
       }
 
-      const currentTheme = TICKER_THEMES[ticker.theme] || TICKER_THEMES.red;
+      const currentTheme = TICKER_THEMES[data.theme] || TICKER_THEMES.red;
       bar.style.background = currentTheme.bar;
       if (tagEl) {
         tagEl.style.background = currentTheme.tag;
       }
 
-      bar.dataset.clickAction = ticker.clickAction || 'admission';
+      bar.dataset.clickAction = data.clickAction || 'admission';
     }
     window.applyTickerSettingsToUI = applyTickerSettingsToUI;
 
@@ -6047,16 +6360,79 @@
     }
     window.handleTickerBarClick = handleTickerBarClick;
 
-    function loadAdminTickerSettings() {
-      let tickerData = null;
-      try {
-        const saved = localStorage.getItem('mdhss_ticker_marquee');
-        if (saved) {
-          tickerData = JSON.parse(saved);
-        }
-      } catch (e) {}
+    function updateAdminTickerLiveStatus(tickerData) {
+      const detailsEl = document.getElementById('adminTickerLiveDetails');
+      const dotEl = document.getElementById('adminTickerLiveDot');
+      if (!detailsEl) return;
 
-      const data = { ...DEFAULT_TICKER_DATA, ...(tickerData || {}) };
+      if (!tickerData || tickerData.enabled === 'false' || !tickerData.text || !tickerData.text.trim()) {
+        if (dotEl) dotEl.style.background = '#94a3b8';
+        detailsEl.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; color:#64748b;">
+            <span style="font-size:1.2rem;">⚪</span>
+            <div>
+              <strong style="color:#0f172a;">Firebase में कोई सूचना पट्टी सक्रिय नहीं है (खाली/हटा दी गई है)</strong>
+              <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">होम स्क्रीन पर लाल सूचना पट्टी स्वतः छिपी रहेगी। नीचे दिए फॉर्म से नया टेक्स्ट लिखकर सुरक्षित करें।</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (dotEl) dotEl.style.background = '#16a34a';
+      const updateTime = tickerData.updatedAt ? new Date(tickerData.updatedAt).toLocaleString('hi-IN') : 'सक्रिय';
+
+      detailsEl.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:8px;">
+          <div>
+            <div style="font-size:0.75rem; color:#64748b; font-weight:700;">टैग हेडिंग:</div>
+            <div style="font-weight:800; color:#dc2626; font-size:0.92rem;">${tickerData.tag || '🔔 प्रवेश सूचना'}</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; color:#64748b; font-weight:700;">थीम व स्पीड:</div>
+            <div style="font-size:0.85rem; color:#334155;">थीम: ${tickerData.theme || 'red'} • स्पीड: ${tickerData.speed || 'normal'}</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; color:#64748b; font-weight:700;">अंतिम अपडेट:</div>
+            <div style="font-size:0.82rem; color:#475569;">${updateTime}</div>
+          </div>
+        </div>
+        <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:6px; padding:8px 12px; font-size:0.85rem; color:#991b1b; line-height:1.5;">
+          <strong>स्क्रॉलिंग टेक्स्ट:</strong> ${tickerData.text}
+        </div>
+      `;
+    }
+    window.updateAdminTickerLiveStatus = updateAdminTickerLiveStatus;
+
+    async function loadAdminTickerSettings() {
+      let tickerData = null;
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        try {
+          const cloudData = await window.mdhssCloud.fetchSetting('ticker_marquee');
+          if (cloudData) {
+            tickerData = cloudData;
+            localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(cloudData));
+          } else {
+            localStorage.removeItem('mdhss_ticker_marquee');
+          }
+        } catch (e) {}
+      } else {
+        try {
+          const saved = localStorage.getItem('mdhss_ticker_marquee');
+          if (saved) tickerData = JSON.parse(saved);
+        } catch (e) {}
+      }
+
+      updateAdminTickerLiveStatus(tickerData);
+
+      const data = tickerData || {
+        enabled: 'true',
+        tag: '🔔 प्रवेश सूचना',
+        text: '',
+        speed: 'normal',
+        theme: 'red',
+        clickAction: 'admission'
+      };
 
       const selEnabled = document.getElementById('cfgTickerEnabled');
       const inputTag = document.getElementById('cfgTickerTag');
@@ -6124,6 +6500,7 @@
 
       localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(tickerData));
       applyTickerSettingsToUI(tickerData);
+      updateAdminTickerLiveStatus(tickerData);
 
       if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
         try {
@@ -6141,15 +6518,44 @@
     }
     window.saveAdminTickerSettings = saveAdminTickerSettings;
 
-    function resetDefaultTickerSettings() {
-      if (!confirm('क्या आप प्रवेश सूचना पट्टी को मूल डिफ़ॉल्ट पर रीसेट करना चाहते हैं?')) return;
-      localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(DEFAULT_TICKER_DATA));
-      if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
-        window.mdhssCloud.saveSetting('ticker_marquee', DEFAULT_TICKER_DATA);
+    async function deleteAdminTickerFromCloud() {
+      if (!confirm('⚠️ क्या आप निश्चित हैं कि आप Firebase Firestore से इस सूचना पट्टी को हमेशा के लिए हटाना (Delete) चाहते हैं?\n\nहटाने के बाद होम स्क्रीन पर लाल सूचना पट्टी पूरी तरह छिप जाएगी।')) {
+        return;
       }
-      loadAdminTickerSettings();
-      applyTickerSettingsToUI(DEFAULT_TICKER_DATA);
-      alert('प्रवेश सूचना पट्टी मूल सेटिंग्स पर रीसेट हो गई है!');
+      try {
+        localStorage.removeItem('mdhss_ticker_marquee');
+        if (window.mdhssCloud && typeof window.mdhssCloud.deleteSetting === 'function') {
+          await window.mdhssCloud.deleteSetting('ticker_marquee');
+        } else if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+          await window.mdhssCloud.saveSetting('ticker_marquee', null);
+        }
+
+        const bar = document.getElementById('portalMarqueeBar');
+        if (bar) bar.style.display = 'none';
+
+        updateAdminTickerLiveStatus(null);
+        loadAdminTickerSettings();
+        alert('✅ Firebase से प्रवेश सूचना पट्टी सफलतापूर्वक हटा दी गई है! होम स्क्रीन पर पट्टी छिप गई है।');
+      } catch (err) {
+        alert('डिलीट करने में त्रुटि: ' + (err.message || err));
+      }
+    }
+    window.deleteAdminTickerFromCloud = deleteAdminTickerFromCloud;
+
+    async function refreshAdminTickerStatus() {
+      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
+        const cloudData = await window.mdhssCloud.fetchSetting('ticker_marquee');
+        updateAdminTickerLiveStatus(cloudData);
+        if (cloudData) {
+          localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(cloudData));
+          loadAdminTickerSettings();
+        }
+      }
+    }
+    window.refreshAdminTickerStatus = refreshAdminTickerStatus;
+
+    function resetDefaultTickerSettings() {
+      deleteAdminTickerFromCloud();
     }
     window.resetDefaultTickerSettings = resetDefaultTickerSettings;
 
@@ -6566,7 +6972,64 @@
     // ==========================================================================
     // 12. CLASS-WISE WHATSAPP GROUPS DYNAMIC CONTROLLER & ADMIN MANAGER
     // ==========================================================================
+    // ==========================================================================
+    // 12. CLASS-WISE WHATSAPP GROUPS DYNAMIC CONTROLLER & ADMIN MANAGER
+    // ==========================================================================
     const DEFAULT_WHATSAPP_GROUPS = [
+      {
+        id: 'wa-nursery',
+        className: 'Nursery & KG Class',
+        badge: 'NUR',
+        sub: 'नर्सरी व बालवाटिका आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/KL8gLpiBNrc6lhVEPnwVmP',
+        btnText: 'Join Nursery Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-lkg',
+        className: 'LKG Class Group',
+        badge: 'LKG',
+        sub: 'एल.के.जी. आधिकारिक क्लास ग्रुप',
+        link: 'https://chat.whatsapp.com/KL8gLpiBNrc6lhVEPnwVmP',
+        btnText: 'Join LKG Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-ukg',
+        className: 'UKG Class Group',
+        badge: 'UKG',
+        sub: 'यू.के.जी. आधिकारिक क्लास ग्रुप',
+        link: 'https://chat.whatsapp.com/KL8gLpiBNrc6lhVEPnwVmP',
+        btnText: 'Join UKG Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-1st',
+        className: 'Class 1st Group',
+        badge: '1st',
+        sub: 'कक्षा-1st आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/GjjqASc0W749b8zCCFkmtM?s=cl&p=a&mlu=4&ilr=4',
+        btnText: 'Join Class 1st Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-2nd',
+        className: 'Class 2nd Group',
+        badge: '2nd',
+        sub: 'Class 2nd Group आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/FZa41MneuszDXT6ldFGKwV?s=cl&p=a&iam=2',
+        btnText: 'Join Class 2nd Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-3rd',
+        className: 'Class 3rd Group',
+        badge: '3rd',
+        sub: 'कक्षा 3री आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/KL8gLpiBNrc6lhVEPnwVmP',
+        btnText: 'Join Class 3rd Group ↗',
+        status: 'active'
+      },
       {
         id: 'wa-class-4th',
         className: 'Class 4th Group',
@@ -6583,6 +7046,24 @@
         sub: 'कक्षा 5वीं आधिकारिक ग्रुप',
         link: 'https://chat.whatsapp.com/DwZKKN3R5ixIc92LwjfCvS',
         btnText: 'Join Class 5th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-6th',
+        className: 'Class 6th Group',
+        badge: '6th',
+        sub: 'कक्षा -6th आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/Fm4NBqtUlQE0zwEhzcdfm0',
+        btnText: 'Join Class 6th Group ↗',
+        status: 'active'
+      },
+      {
+        id: 'wa-class-7th',
+        className: 'Class 7th Group',
+        badge: '7th',
+        sub: 'कक्षा -7th आधिकारिक ग्रुप',
+        link: 'https://chat.whatsapp.com/EkBgEXerlQtEcBiQ58rcvt?s=cl&p=a&mlu=4&ilr=4',
+        btnText: 'Join Class 7th Group ↗',
         status: 'active'
       },
       {
@@ -6644,11 +7125,74 @@
 
     const WA_SVG_ICON = `<svg class="wa-svg-inline" viewBox="0 0 24 24" style="width:1.15rem; height:1.15rem; fill:currentColor; vertical-align:middle;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>`;
 
+    // Logical Grade Hierarchy Ranking Function (Nursery -> LKG -> UKG -> 1st -> ... -> 12th -> Helpline)
+    function getGradeOrderRank(item) {
+      if (!item) return 9999;
+      if (item.isCare || item.id === 'wa-helpline') return 3000;
+
+      const raw = ((item.className || '') + ' ' + (item.badge || '') + ' ' + (item.sub || '')).toLowerCase();
+
+      if (raw.includes('care') || raw.includes('help') || raw.includes('पूछताछ') || raw.includes('हेल्पलाइन') || raw.includes('admission care')) {
+        return 3000;
+      }
+
+      // Pre-Primary
+      if (raw.includes('nursery') || raw.includes('नर्सरी') || raw.includes('play') || raw.includes('प्ले') || raw.includes('balvatika') || raw.includes('बालवाटिका')) {
+        return 10;
+      }
+      if (raw.includes('lkg') || raw.includes('एलकेजी') || raw.includes('l.k.g') || /\bkg[- ]?1\b/.test(raw) || raw.includes('केजी 1') || raw.includes('के.जी. 1')) {
+        return 20;
+      }
+      if (raw.includes('ukg') || raw.includes('यूकेजी') || raw.includes('u.k.g') || /\bkg[- ]?2\b/.test(raw) || raw.includes('केजी 2') || raw.includes('के.जी. 2')) {
+        return 30;
+      }
+
+      // Exact Classes 12 to 1 in descending numerical checks
+      if (/\b12(th)?\b/i.test(raw) || raw.includes('12वीं') || raw.includes('बारहवीं') || raw.includes('12th')) return 1200;
+      if (/\b11(th)?\b/i.test(raw) || raw.includes('11वीं') || raw.includes('ग्यारहवीं') || raw.includes('11th')) return 1100;
+      if (/\b10(th)?\b/i.test(raw) || raw.includes('10वीं') || raw.includes('दसवीं') || raw.includes('10th')) return 1000;
+      if (/\b9(th)?\b/i.test(raw) || raw.includes('9वीं') || raw.includes('नौवीं') || raw.includes('9th')) return 900;
+      if (/\b8(th)?\b/i.test(raw) || raw.includes('8वीं') || raw.includes('आठवीं') || raw.includes('8th')) return 800;
+      if (/\b7(th)?\b/i.test(raw) || raw.includes('7वीं') || raw.includes('सातवीं') || raw.includes('7th')) return 700;
+      if (/\b6(th)?\b/i.test(raw) || raw.includes('6वीं') || raw.includes('छठवीं') || raw.includes('6th')) return 600;
+      if (/\b5(th)?\b/i.test(raw) || raw.includes('5वीं') || raw.includes('पांचवीं') || raw.includes('5th')) return 500;
+      if (/\b4(th)?\b/i.test(raw) || raw.includes('4थी') || raw.includes('चौथी') || raw.includes('4th')) return 400;
+      if (/\b3(rd)?\b/i.test(raw) || raw.includes('3री') || raw.includes('तीसरी') || raw.includes('3rd')) return 300;
+      if (/\b2(nd)?\b/i.test(raw) || raw.includes('2री') || raw.includes('दूसरी') || raw.includes('2nd')) return 200;
+      if (/\b1(st)?\b/i.test(raw) || raw.includes('1ली') || raw.includes('पहली') || raw.includes('1st')) return 100;
+
+      // Fallback: match standalone digits
+      const match = raw.match(/\d+/);
+      if (match) {
+        const num = parseInt(match[0], 10);
+        if (num >= 1 && num <= 12) return num * 100;
+      }
+
+      return 2000;
+    }
+
+    // Sort WhatsApp groups array chronologically by class
+    function sortWhatsAppGroups(groups) {
+      if (!Array.isArray(groups)) return [];
+      return [...groups].sort((a, b) => {
+        const rA = getGradeOrderRank(a);
+        const rB = getGradeOrderRank(b);
+        if (rA !== rB) return rA - rB;
+        return (a.className || '').localeCompare(b.className || '', undefined, { numeric: true });
+      });
+    }
+
+    window.DEFAULT_WHATSAPP_GROUPS = DEFAULT_WHATSAPP_GROUPS;
+    window._waFirebaseChecked = false;
+    let _waFetchTimer = null;
+
     function getWhatsAppGroups() {
+      const CURRENT_WA_VERSION = '2026_v4_user_verified';
       let groups = null;
       try {
+        const storedVer = localStorage.getItem('mdhss_wa_version');
         const stored = localStorage.getItem('mdhss_whatsapp_groups');
-        if (stored) {
+        if (stored && storedVer === CURRENT_WA_VERSION) {
           groups = JSON.parse(stored);
         }
       } catch (e) {
@@ -6656,16 +7200,25 @@
       }
       if (!groups || !Array.isArray(groups) || groups.length === 0) {
         groups = [...DEFAULT_WHATSAPP_GROUPS];
-        localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(groups));
+        const sorted = sortWhatsAppGroups(groups);
+        localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(sorted));
+        localStorage.setItem('mdhss_wa_version', CURRENT_WA_VERSION);
+        if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
+          window.mdhssCloud.saveSetting('whatsapp_groups', sorted);
+        }
+        return sorted;
       }
-      return groups;
+      return sortWhatsAppGroups(groups);
     }
 
     function saveWhatsAppGroupsToStorage(groups) {
-      localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(groups));
+      const sorted = sortWhatsAppGroups(groups);
+      localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(sorted));
+      localStorage.setItem('mdhss_wa_version', '2026_v4_user_verified');
       if (window.mdhssCloud && typeof window.mdhssCloud.saveSetting === 'function') {
-        window.mdhssCloud.saveSetting('whatsapp_groups', groups);
+        window.mdhssCloud.saveSetting('whatsapp_groups', sorted);
       }
+      window._waFirebaseChecked = true;
       renderPublicWhatsAppGroups();
       renderAdminWhatsAppGroups();
       if (typeof renderAdminTables === 'function') {
@@ -6676,6 +7229,25 @@
     function renderPublicWhatsAppGroups() {
       const grid = document.getElementById('publicWhatsAppCardsGrid');
       if (!grid) return;
+
+      // If Firebase cloud check is pending, show modern live status
+      if (!window._waFirebaseChecked && window.mdhssCloud) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding:1.75rem 1.25rem; background:#f0fdf4; border:1.5px solid #86efac; border-radius:12px; color:#166534;">
+            <div style="font-size:1.8rem; margin-bottom:6px;">☁️</div>
+            <strong style="font-size:1rem;">फायरबेस क्लाउड से नवीनतम व्हाट्सएप ग्रुप लिंक लोड किए जा रहे हैं...</strong>
+            <div style="font-size:0.8rem; color:#15803d; margin-top:4px;">कृपया एक पल प्रतीक्षा करें, लाइव डाटा लोड हो रहा है।</div>
+          </div>
+        `;
+        if (!_waFetchTimer) {
+          _waFetchTimer = setTimeout(() => {
+            window._waFirebaseChecked = true;
+            renderPublicWhatsAppGroups();
+          }, 600);
+        }
+        return;
+      }
+
       const groups = getWhatsAppGroups();
       const activeGroups = groups.filter(g => g.status !== 'inactive');
 
@@ -7008,8 +7580,25 @@
     window.closeAddImageModal = closeAddImageModal;
     window.saveNewCustomGalleryImage = saveNewCustomGalleryImage;
 
+    // Firebase Live Notice & Ticker Exports
+    window.updateAdminNoticeLiveStatus = updateAdminNoticeLiveStatus;
+    window.deleteAdminNoticeFromCloud = deleteAdminNoticeFromCloud;
+    window.refreshAdminNoticeStatus = refreshAdminNoticeStatus;
+    window.updateAdminTickerLiveStatus = updateAdminTickerLiveStatus;
+    window.deleteAdminTickerFromCloud = deleteAdminTickerFromCloud;
+    window.refreshAdminTickerStatus = refreshAdminTickerStatus;
+    window.saveAdminTickerSettings = saveAdminTickerSettings;
+    window.loadAdminTickerSettings = loadAdminTickerSettings;
+    window.updateTickerLivePreview = updateTickerLivePreview;
+    window.applyTickerSettingsToUI = applyTickerSettingsToUI;
+    window.onRealtimeNoticeUpdate = onRealtimeNoticeUpdate;
+    window.checkAndShowFirstTimeNotice = checkAndShowFirstTimeNotice;
+    window.initTickerMarquee = initTickerMarquee;
+
     // WhatsApp Groups exports
     window.getWhatsAppGroups = getWhatsAppGroups;
+    window.sortWhatsAppGroups = sortWhatsAppGroups;
+    window.getGradeOrderRank = getGradeOrderRank;
     window.renderPublicWhatsAppGroups = renderPublicWhatsAppGroups;
     window.renderAdminWhatsAppGroups = renderAdminWhatsAppGroups;
     window.filterAdminWhatsAppGroups = filterAdminWhatsAppGroups;
@@ -7022,6 +7611,13 @@
     window.cancelEditAdminWhatsAppGroup = cancelEditAdminWhatsAppGroup;
     window.deleteAdminWhatsAppGroup = deleteAdminWhatsAppGroup;
     window.resetDefaultWhatsAppGroups = resetDefaultWhatsAppGroups;
+
+    // Firebase Explorer exports
+    window.renderFirebaseExplorer = renderFirebaseExplorer;
+    window.inspectFirebaseDoc = inspectFirebaseDoc;
+    window.onFbDocSelectChange = onFbDocSelectChange;
+    window.copyCurrentFbInspectorJSON = copyCurrentFbInspectorJSON;
+    window.downloadFirebaseBackupJSON = downloadFirebaseBackupJSON;
   
 
 // Explicit Window Exports for Global In-Page Handlers

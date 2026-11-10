@@ -72,7 +72,6 @@
         <div class="tabs">
           <button class="tab-btn active" onclick="showTab('notice')">📢 फर्स्ट-टाइम नोटिफिकेशन कंट्रोल</button>
           <button class="tab-btn" onclick="showTab('admissions')">📝 ऑनलाइन प्रवेश (<span id="admCount">0</span>)</button>
-          <button class="tab-btn" onclick="showTab('marks')">📊 शिक्षक परीक्षा अंक शीट्स (<span id="marksCount">0</span>)</button>
           <button class="tab-btn" onclick="showTab('feedbacks')">⭐ फीडबैक (<span id="fbCount">0</span>)</button>
         </div>
 
@@ -126,20 +125,7 @@
           </div>
         </div>
 
-        <!-- TAB 3: MARKS -->
-        <div id="tabMarks" style="display: none;">
-          <div class="flex-between" style="margin-bottom: 1rem;">
-            <h3>परीक्षा प्राप्तांक शीट्स (Exam Marks Records by Teachers)</h3>
-          </div>
-          <div class="table-box">
-            <table>
-              <thead><tr><th>दिनांक</th><th>कक्षा/सेक्शन</th><th>विषय</th><th>परीक्षा प्रकार</th><th>शिक्षक</th><th>छात्र संख्या</th></tr></thead>
-              <tbody id="marksTbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TAB 4: FEEDBACKS -->
+        <!-- TAB 3: FEEDBACKS -->
         <div id="tabFeedbacks" style="display: none;">
           <div class="flex-between" style="margin-bottom: 1rem;">
             <h3>प्राप्त फीडबैक एवं सुझाव</h3>
@@ -192,20 +178,17 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tabNotice').style.display = (t === 'notice' ? 'block' : 'none');
       document.getElementById('tabAdmissions').style.display = (t === 'admissions' ? 'block' : 'none');
-      document.getElementById('tabMarks').style.display = (t === 'marks' ? 'block' : 'none');
       document.getElementById('tabFeedbacks').style.display = (t === 'feedbacks' ? 'block' : 'none');
       
-      const idx = ['notice', 'admissions', 'marks', 'feedbacks'].indexOf(t);
+      const idx = ['notice', 'admissions', 'feedbacks'].indexOf(t);
       if (idx !== -1) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
     }
 
     function loadStats() {
       const adms = JSON.parse(localStorage.getItem('mdhss_admission_records') || '[]');
-      const marks = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
       const fbs = JSON.parse(localStorage.getItem('mdhss_feedback_records') || '[]');
 
       document.getElementById('admCount').textContent = adms.length;
-      document.getElementById('marksCount').textContent = marks.length;
       document.getElementById('fbCount').textContent = fbs.length;
 
       // Render Admissions
@@ -214,13 +197,6 @@
         admHtml += `<tr><td>${i+1}</td><td>${a.studentName || '-'}</td><td>${a.fatherName || '-'}</td><td>${a.mobile || '-'}</td><td>${a.class || '-'}</td><td>${a.village || '-'}</td></tr>`;
       });
       document.getElementById('admTbody').innerHTML = admHtml || '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">कोई प्रवेश रिकॉर्ड उपलब्ध नहीं</td></tr>';
-
-      // Render Marks Sheets
-      let mHtml = '';
-      marks.forEach((m) => {
-        mHtml += `<tr><td>${m.date || '-'}</td><td>${m.className || '-'} (${m.section || '-'})</td><td><strong>${m.subject || '-'}</strong></td><td>${m.examType || '-'}</td><td>${m.teacher || '-'}</td><td>${(m.students || []).length} छात्र</td></tr>`;
-      });
-      document.getElementById('marksTbody').innerHTML = mHtml || '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">कोई परीक्षा अंक शीट उपलब्ध नहीं</td></tr>';
 
       // Render Feedbacks
       let fbHtml = '';
