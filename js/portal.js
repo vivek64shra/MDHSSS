@@ -289,6 +289,9 @@
         if (marqueeBar) marqueeBar.style.setProperty('display', 'none', 'important');
       } else {
         if (marqueeBar) marqueeBar.style.removeProperty('display');
+        if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+          setTimeout(() => window.mdhssCloud.syncPublicDomNow(), 0);
+        }
       }
 
       // Top navbar notice bell visible ONLY on home page
@@ -358,14 +361,16 @@
         updateTeacherView();
       }
 
-      // If admin module, update admin login vs dashboard view
+      // If admin module, notify React AdminPortalApp to sync session
       if (pageId === 'admin') {
-        updateAdminView();
+        window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
       }
 
-      // If whatsapp page, re-render latest WhatsApp cards
-      if (pageId === 'whatsapp') {
-        if (typeof renderPublicWhatsAppGroups === 'function') {
+      // If whatsapp or student page, ensure latest Firestore snapshot is rendered
+      if (pageId === 'whatsapp' || pageId === 'student') {
+        if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+          window.mdhssCloud.syncPublicDomNow();
+        } else if (pageId === 'whatsapp' && typeof renderPublicWhatsAppGroups === 'function') {
           renderPublicWhatsAppGroups();
         }
       }
@@ -3815,7 +3820,7 @@
 
       const newAdmission = {
         formType: 'Admission',
-        id: 'ADM-' + Date.now().toString().slice(-4),
+        id: 'ADM-' + Date.now().toString().slice(-6) + '-' + Math.floor(10 + Math.random() * 90),
         date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
         studentName: studentName,
         fatherName: fatherName,
@@ -3824,24 +3829,24 @@
         class: admClass,
         subject: subject,
         address: address,
-        remarks: remarks
+        remarks: remarks,
+        updatedAt: new Date().toISOString()
       };
 
-      // 1. Saved securely in browser for Admin Dashboard Instant Live View
-      try {
-        const stored = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
-        stored.unshift(newAdmission);
-        localStorage.setItem('mdhss_admissions', JSON.stringify(stored));
-      } catch (e) {
-        console.error(e);
-      }
-
-      // 2. Dispatched to Firebase Cloud Database so Admin receives it across all devices
+      // 1. Dispatched directly to Firebase Cloud Engine (handles stripUndefined, setDoc merge:true & localStorage cache)
       if (window.mdhssCloud && typeof window.mdhssCloud.saveAdmission === 'function') {
         window.mdhssCloud.saveAdmission(newAdmission);
+      } else {
+        try {
+          const stored = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
+          stored.unshift(newAdmission);
+          localStorage.setItem('mdhss_admissions', JSON.stringify(stored));
+        } catch (e) {
+          console.error(e);
+        }
       }
 
-      // 3. Dispatched directly to Google Sheets Webhook for Admissions Sheet
+      // 2. Dispatched directly to Google Sheets Webhook for Admissions Sheet
       postToGoogleSheetsWebhook(newAdmission);
 
       const successBox = document.getElementById('natAdmSuccessBox');
@@ -3852,9 +3857,6 @@
 
       const form = document.getElementById('nativeAdmissionForm');
       if (form) form.reset();
-
-      // Refresh admin tables if rendered
-      renderAdminTables();
     }
 
     // Feedback Rating System & Submission Handler
@@ -3882,7 +3884,7 @@
 
       const newFeedback = {
         formType: 'Feedback',
-        id: 'FB-' + Date.now().toString().slice(-4),
+        id: 'FB-' + Date.now().toString().slice(-6) + '-' + Math.floor(10 + Math.random() * 90),
         date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
         name: name,
         phone: phone,
@@ -3890,24 +3892,24 @@
         role: role,
         subject: subject,
         rating: currentRating,
-        message: msg
+        message: msg,
+        updatedAt: new Date().toISOString()
       };
 
-      // 1. Saved securely for Admin Dashboard Instant Live View
-      try {
-        const stored = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
-        stored.unshift(newFeedback);
-        localStorage.setItem('mdhss_feedbacks', JSON.stringify(stored));
-      } catch (e) {
-        console.error(e);
-      }
-
-      // 2. Dispatched to Firebase Cloud Database so Admin receives it across all devices
+      // 1. Dispatched directly to Firebase Cloud Engine (handles stripUndefined, setDoc merge:true & localStorage cache)
       if (window.mdhssCloud && typeof window.mdhssCloud.saveFeedback === 'function') {
         window.mdhssCloud.saveFeedback(newFeedback);
+      } else {
+        try {
+          const stored = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
+          stored.unshift(newFeedback);
+          localStorage.setItem('mdhss_feedbacks', JSON.stringify(stored));
+        } catch (e) {
+          console.error(e);
+        }
       }
 
-      // 3. Dispatched directly to Google Sheets Webhook for Feedbacks Sheet
+      // 2. Dispatched directly to Google Sheets Webhook for Feedbacks Sheet
       postToGoogleSheetsWebhook(newFeedback);
 
       const successMsg = document.getElementById('feedback-success-msg');
@@ -3919,9 +3921,6 @@
       const fbForm = document.getElementById('nativeFeedbackForm');
       if (fbForm) fbForm.reset();
       setRating(5);
-
-      // Refresh admin tables if rendered
-      renderAdminTables();
     }
 
     // =========================================================================
@@ -3959,7 +3958,7 @@
 
       if ((userMatches && passMatches) || invertedMatches) {
         const adminName = 'निर्मल कुमार द्विवेदी / मुरलीधर शर्मा (रन्नू सर)';
-        sessionStorage.setItem('mdhss_admin_session', JSON.stringify({ name: adminName, time: Date.now() }));
+        sessionStorage.setItem('mdhss_admin_session', JSON.stringify({ role: 'admin', name: adminName, time: Date.now() }));
         
         if (unifiedErr) unifiedErr.style.display = 'none';
         if (standaloneErr) standaloneErr.style.display = 'none';
@@ -3968,9 +3967,9 @@
         if (unifiedPassInput) unifiedPassInput.value = '';
         if (standalonePassInput) standalonePassInput.value = '';
 
-        // Navigate directly to Admin Portal Dashboard
+        // Notify React AdminPortalApp and navigate directly to Admin Dashboard
+        window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
         navigateToPage('admin');
-        updateAdminView();
       } else {
         if (unifiedErr) unifiedErr.style.display = 'block';
         if (standaloneErr) standaloneErr.style.display = 'block';
@@ -3978,110 +3977,27 @@
     }
 
     function quickAdminAuth(pin, name) {
-      sessionStorage.setItem('mdhss_admin_session', JSON.stringify({ name: name, time: Date.now() }));
-      updateAdminView();
+      sessionStorage.setItem('mdhss_admin_session', JSON.stringify({ role: 'admin', name: name, time: Date.now() }));
+      window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
+      navigateToPage('admin');
     }
 
     function handleAdminLogout() {
       sessionStorage.removeItem('mdhss_admin_session');
-      updateAdminView();
+      window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
     }
 
     function updateAdminView() {
-      const loginScreen = document.getElementById('admin-login-screen');
-      const dashboardScreen = document.getElementById('admin-dashboard-screen');
-      const sessionData = sessionStorage.getItem('mdhss_admin_session');
-
-      if (sessionData) {
-        try {
-          const admin = JSON.parse(sessionData);
-          if (loginScreen) loginScreen.style.display = 'none';
-          if (dashboardScreen) dashboardScreen.style.display = 'block';
-
-          const titleEl = document.getElementById('loggedAdminTitle');
-          if (titleEl) titleEl.textContent = 'प्रशासक: ' + admin.name;
-
-          // Load webhook URL if saved
-          const savedWebhook = localStorage.getItem('mdhss_google_sheets_webhook') || '';
-          const webhookInput = document.getElementById('adminWebhookUrlInput');
-          if (webhookInput) webhookInput.value = savedWebhook;
-
-          renderAdminTables();
-
-          // Automatically sync and pull all records from Firebase Cloud Database in background
-          triggerManualCloudSync();
-        } catch (e) {
-          if (loginScreen) loginScreen.style.display = 'block';
-          if (dashboardScreen) dashboardScreen.style.display = 'none';
-        }
-      } else {
-        if (loginScreen) loginScreen.style.display = 'block';
-        if (dashboardScreen) dashboardScreen.style.display = 'none';
-      }
+      window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
     }
 
     async function triggerManualCloudSync() {
-      const btn = document.getElementById('btnAdminCloudSync');
-      const badge = document.getElementById('adminCloudSyncBadge');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '🔄 सिंक हो रहा है...';
-      }
       try {
-        if (window.mdhssCloud) {
-          // 1. Fetch latest admissions from Firestore
-          const cloudAdms = await window.mdhssCloud.fetchAdmissions();
-          if (cloudAdms && cloudAdms.length > 0) {
-            const localAdmissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
-            const map = new Map();
-            localAdmissions.forEach(item => { if (item.id) map.set(item.id, item); });
-            cloudAdms.forEach(item => { if (item.id) map.set(item.id, item); });
-            const merged = Array.from(map.values()).sort((a, b) => (b.id || '').localeCompare(a.id || ''));
-            localStorage.setItem('mdhss_admissions', JSON.stringify(merged));
-          }
-
-          // 2. Fetch latest feedbacks from Firestore
-          const cloudFbs = await window.mdhssCloud.fetchFeedbacks();
-          if (cloudFbs && cloudFbs.length > 0) {
-            const localFeedbacks = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
-            const map = new Map();
-            localFeedbacks.forEach(item => { if (item.id) map.set(item.id, item); });
-            cloudFbs.forEach(item => { if (item.id) map.set(item.id, item); });
-            const merged = Array.from(map.values()).sort((a, b) => (b.id || '').localeCompare(a.id || ''));
-            localStorage.setItem('mdhss_feedbacks', JSON.stringify(merged));
-          }
-
-          // 3. Fetch latest marks sheets from Firestore
-          const cloudMarks = await window.mdhssCloud.fetchMarksSheets();
-          if (cloudMarks && cloudMarks.length > 0) {
-            const localMarks = JSON.parse(localStorage.getItem('mdhss_marks_sheets') || '[]');
-            const map = new Map();
-            localMarks.forEach(item => { if (item.id) map.set(item.id, item); });
-            cloudMarks.forEach(item => { if (item.id) map.set(item.id, item); });
-            localStorage.setItem('mdhss_marks_sheets', JSON.stringify(Array.from(map.values())));
-          }
-
-          // 4. Initial local data migration to Firestore
-          await window.mdhssCloud.migrateAllLocalDataToCloud();
-        }
-        renderAdminTables();
-        if (badge) {
-          badge.textContent = '✅ क्लाउड सिंक सफल (सभी डिवाइसेज का डेटा लाइव अपडेटेड)';
-          badge.style.display = 'inline-block';
-          setTimeout(() => { badge.style.display = 'none'; }, 4000);
+        if (window.mdhssCloud && typeof window.mdhssCloud.refreshAllFromCloud === 'function') {
+          await window.mdhssCloud.refreshAllFromCloud();
         }
       } catch (e) {
         console.error('Manual sync notice:', e);
-        if (badge) {
-          badge.textContent = 'ℹ️ स्थानीय डेटा सुरक्षित है';
-          badge.style.display = 'inline-block';
-          setTimeout(() => { badge.style.display = 'none'; }, 3000);
-        }
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '🔄 क्लाउड डेटा रीफ्रेश (Sync Now)';
-        }
       }
     }
 
@@ -5843,55 +5759,13 @@
     window.onRealtimeNoticeUpdate = onRealtimeNoticeUpdate;
 
     async function checkAndShowFirstTimeNotice() {
+      // Delegate to real-time Firestore onSnapshot engine when active (prevents race/stale cache)
+      if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+        window.mdhssCloud.syncPublicDomNow();
+        return;
+      }
       const modalEl = document.getElementById('firstTimeNoticeModal');
       if (modalEl) modalEl.style.display = 'none';
-
-      let noticeData = null;
-
-      // FIRST: Check Firebase Cloud directly - Do NOT show cached dummy data before checking Firebase
-      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
-        try {
-          const cloudData = await window.mdhssCloud.fetchSetting('popup_notification');
-          if (cloudData && cloudData.title && cloudData.enabled !== 'false') {
-            noticeData = cloudData;
-            localStorage.setItem('mdhss_popup_notification', JSON.stringify(cloudData));
-          } else {
-            localStorage.removeItem('mdhss_popup_notification');
-          }
-        } catch (e) {}
-      } else {
-        try {
-          const saved = localStorage.getItem('mdhss_popup_notification');
-          if (saved) noticeData = JSON.parse(saved);
-        } catch (e) {}
-      }
-
-      // If no valid active notice in Firebase, DO NOT show
-      if (!isRealUpdatedNotice(noticeData)) {
-        if (modalEl) modalEl.style.display = 'none';
-        const bellPulse = document.getElementById('navBellPulseDot');
-        if (bellPulse) bellPulse.style.display = 'none';
-        return;
-      }
-
-      const noticeVer = (noticeData.updatedAt || noticeData.title || 'v1').trim();
-      const lastSeenVer = localStorage.getItem('mdhss_notice_last_seen_ver');
-      const sessionDismissed = sessionStorage.getItem('mdhss_notice_dismissed_' + noticeVer);
-      const isNewNotice = (lastSeenVer !== noticeVer);
-
-      const bellPulse = document.getElementById('navBellPulseDot');
-      if (bellPulse) {
-        bellPulse.style.display = isNewNotice ? 'block' : 'none';
-      }
-
-      if (sessionDismissed === 'true' && !isNewNotice) {
-        return;
-      }
-
-      applyNoticeDataToPopup(noticeData);
-      if (modalEl) {
-        modalEl.style.display = 'flex';
-      }
     }
     window.checkAndShowFirstTimeNotice = checkAndShowFirstTimeNotice;
 
@@ -5978,14 +5852,25 @@
 
     function openFirstTimeNoticeManually() {
       window._manualNoticeModalOpen = true;
-      let noticeData = null;
-      try {
-        const saved = localStorage.getItem('mdhss_popup_notification');
-        if (saved) noticeData = JSON.parse(saved);
-      } catch (e) {}
+      let noticeData = window.mdhssCloud?.getSnapshot?.()?.popupNotice || null;
+      if (!noticeData) {
+        try {
+          const saved = localStorage.getItem('mdhss_popup_notification');
+          if (saved) noticeData = JSON.parse(saved);
+        } catch (e) {}
+      }
 
       if (!isRealUpdatedNotice(noticeData)) {
-        alert('वर्तमान में विद्यालय की कोई नई सूचना सक्रिय नहीं है।');
+        let toast = document.getElementById('mdhssInfoNoticeToast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'mdhssInfoNoticeToast';
+          toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:999px;font-size:0.86rem;font-weight:700;z-index:999999;box-shadow:0 8px 20px rgba(0,0,0,0.28);border:1px solid #38bdf8;';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = '🔔 वर्तमान में विद्यालय की कोई नई सूचना सक्रिय नहीं है।';
+        toast.style.display = 'block';
+        setTimeout(() => { if (toast) toast.style.display = 'none'; }, 3000);
         return;
       }
 
@@ -6281,29 +6166,13 @@
     };
 
     async function initTickerMarquee() {
+      // Delegate to real-time Firestore onSnapshot engine when active
+      if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+        window.mdhssCloud.syncPublicDomNow();
+        return;
+      }
       const bar = document.getElementById('portalMarqueeBar');
       if (bar) bar.style.display = 'none';
-
-      let tickerData = null;
-      // Fetch directly from Firebase Firestore first - no hardcoded default
-      if (window.mdhssCloud && typeof window.mdhssCloud.fetchSetting === 'function') {
-        try {
-          const cloudData = await window.mdhssCloud.fetchSetting('ticker_marquee');
-          if (cloudData && cloudData.text && cloudData.enabled !== 'false') {
-            tickerData = cloudData;
-            localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(cloudData));
-          } else {
-            localStorage.removeItem('mdhss_ticker_marquee');
-          }
-        } catch (e) {}
-      } else {
-        try {
-          const saved = localStorage.getItem('mdhss_ticker_marquee');
-          if (saved) tickerData = JSON.parse(saved);
-        } catch (e) {}
-      }
-
-      applyTickerSettingsToUI(tickerData);
     }
     window.initTickerMarquee = initTickerMarquee;
 
@@ -6563,6 +6432,10 @@
     // 10. AUTO-SCROLLING VISUAL IMAGE GALLERY (HOMEPAGE & ADMIN CONTROLLER)
     // ==========================================================================
     function renderAutoGallery() {
+      if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+        window.mdhssCloud.syncPublicDomNow();
+        return;
+      }
       const track = document.getElementById('galleryTrack');
       if (!track) return;
 
@@ -6888,6 +6761,10 @@
     // 11. STUDENT RESULT PORTAL LINK GATEWAY CONTROLLER
     // ==========================================================================
     function loadAdminResultLinkConfig() {
+      if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+        window.mdhssCloud.syncPublicDomNow();
+        return;
+      }
       let config = {
         url: 'https://mdhsssresult.netlify.app/',
         btnText: '🌐 अधिकृत परीक्षा परिणाम पोर्टल खोलें (Open Result Portal) ↗',
@@ -7227,6 +7104,10 @@
     }
 
     function renderPublicWhatsAppGroups() {
+      if (window.mdhssCloud && typeof window.mdhssCloud.syncPublicDomNow === 'function') {
+        window.mdhssCloud.syncPublicDomNow();
+        return;
+      }
       const grid = document.getElementById('publicWhatsAppCardsGrid');
       if (!grid) return;
 

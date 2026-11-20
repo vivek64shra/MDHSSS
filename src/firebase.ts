@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import {
@@ -8,18 +9,34 @@ import {
   setDoc,
   getDocs,
   getDoc,
+  getDocFromServer,
   deleteDoc,
   onSnapshot,
   Firestore,
   setLogLevel,
+  Unsubscribe,
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
+import {
+  AdmissionRecord,
+  DEFAULT_RESULT_LINK_CONFIG,
+  DEFAULT_WHATSAPP_GROUPS,
+  FeedbackRecord,
+  GalleryImageItem,
+  PopupNoticeConfig,
+  PortalStoreSnapshot,
+  ResultLinkConfig,
+  sortWhatsAppGroups,
+  TickerMarqueeConfig,
+  WhatsAppGroupItem,
+} from './types/portal';
+import { syncAllPublicDom } from './services/publicSyncBridge';
 
-// Silence non-fatal offline connection notices
+// Silence noisy SDK offline warnings while preserving our structured error logger
 try {
   setLogLevel('silent');
 } catch {
-  // Ignore in case setLogLevel is restricted
+  // Ignore if restricted
 }
 
 export enum OperationType {
@@ -48,7 +65,35 @@ export interface FirestoreErrorInfo {
   };
 }
 
-// Initialize Firebase App
+/**
+ * Recursively strips all `undefined` values from objects and arrays before writing to Firestore.
+ * Prevents Firestore `Unsupported field value: undefined` crashes on setDoc(..., { merge: true }).
+ */
+export function stripUndefined<T>(value: T): T {
+  if (value === null || value === undefined) {
+    return value;
+  }
+  if (value instanceof Date) {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value
+      .filter((item) => item !== undefined)
+      .map((item) => stripUndefined(item)) as unknown as T;
+  }
+  if (typeof value === 'object') {
+    const cleaned: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+      if (val !== undefined) {
+        cleaned[key] = stripUndefined(val);
+      }
+    }
+    return cleaned as T;
+  }
+  return value;
+}
+
+// Initialize Firebase App & Database (using configured firestoreDatabaseId)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 export const db: Firestore = (() => {
@@ -65,15 +110,28 @@ export const db: Firestore = (() => {
   }
 })();
 
-export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+// ==========================================
+// STRUCTURED FIRESTORE ERROR HANDLER
+// ==========================================
+export function isOfflineError(error: unknown): boolean {
   const errMsg = error instanceof Error ? error.message : String(error);
-  const isOfflineNotice =
+  return (
     errMsg.includes('Could not reach Cloud Firestore') ||
     errMsg.includes('offline mode') ||
     errMsg.includes('unavailable') ||
-    errMsg.includes('Backend didn\'t respond') ||
-    errMsg.includes('the client is offline');
-  
+    errMsg.includes("Backend didn't respond") ||
+    errMsg.includes('the client is offline') ||
+    errMsg.includes('Failed to get document because the client is offline')
+  );
+}
+
+export function handleFirestoreError(
+  error: unknown,
+  operationType: OperationType,
+  path: string | null,
+  options?: { rethrow?: boolean }
+): FirestoreErrorInfo {
+  const errMsg = error instanceof Error ? error.message : String(error);
   const errInfo: FirestoreErrorInfo = {
     error: errMsg,
     operationType,
@@ -81,45 +139,207 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     authInfo: {
       userId: auth.currentUser?.uid || null,
       email: auth.currentUser?.email || null,
-      emailVerified: auth.currentUser?.emailVerified || null,
-      isAnonymous: auth.currentUser?.isAnonymous || null,
+      emailVerified: auth.currentUser?.emailVerified ?? null,
+      isAnonymous: auth.currentUser?.isAnonymous ?? null,
       tenantId: auth.currentUser?.tenantId || null,
-      providerInfo: auth.currentUser?.providerData?.map((p) => ({
-        providerId: p.providerId,
-        email: p.email,
-      })) || [],
+      providerInfo:
+        auth.currentUser?.providerData?.map((p) => ({
+          providerId: p.providerId,
+          email: p.email,
+        })) || [],
     },
   };
-  
-  if (isOfflineNotice) {
-    // Handled quietly without UI disruption or console noise
+
+  if (isOfflineError(error)) {
+    updateStore({ connectionStatus: 'offline' });
   } else {
-    console.warn('Firestore Operation Notification:', JSON.stringify(errInfo));
+    const serialized = JSON.stringify(errInfo);
+    console.error('Firestore Error:', serialized);
+    updateStore({ lastError: `${operationType.toUpperCase()} ${path || ''}: ${errMsg}` });
+    if (options?.rethrow) {
+      throw new Error(serialized);
+    }
   }
+
   return errInfo;
 }
 
-// Resilient connection check
-export async function testConnection(): Promise<boolean> {
+// ==========================================
+// LOCALSTORAGE OFFLINE FALLBACK CACHE HELPERS
+// ==========================================
+function readCache<T>(key: string, fallback: T): T {
   try {
-    const { getDocFromServer } = await import('firebase/firestore');
-    await getDocFromServer(doc(db, 'test', 'connection'));
-    return true;
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
   } catch {
-    // Graceful offline fallback
-    return false;
+    return fallback;
   }
 }
 
+function writeCache(key: string, value: unknown): void {
+  try {
+    if (value === null || value === undefined) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  } catch {
+    // Ignore storage quota errors
+  }
+}
+
+function getDeletedIdSet(): Set<string> {
+  return new Set(readCache<string[]>('mdhss_deleted_ids', []));
+}
+
+function addDeletedIdTrack(id: string): void {
+  const set = getDeletedIdSet();
+  set.add(id);
+  writeCache('mdhss_deleted_ids', Array.from(set).slice(-500));
+}
+
 // ==========================================
-// 1. ADMISSION INQUIRIES
+// REACTIVE REAL-TIME STORE (onSnapshot + localStorage fallback)
 // ==========================================
-export async function saveAdmissionToCloud(data: any): Promise<boolean> {
-  const id = data.id || ('ADM-' + Date.now().toString().slice(-6));
+const initialAdmissions = readCache<AdmissionRecord[]>('mdhss_admissions', []);
+const initialFeedbacks = readCache<FeedbackRecord[]>('mdhss_feedbacks', []);
+const initialWhatsApp = sortWhatsAppGroups(
+  readCache<WhatsAppGroupItem[]>('mdhss_whatsapp_groups', DEFAULT_WHATSAPP_GROUPS)
+);
+const initialGallery = readCache<GalleryImageItem[]>('mdhss_gallery_images', []);
+const initialResultCfg: ResultLinkConfig = {
+  ...DEFAULT_RESULT_LINK_CONFIG,
+  ...readCache<Partial<ResultLinkConfig>>('mdhss_result_link_config', {}),
+};
+
+let storeState: PortalStoreSnapshot = {
+  admissions: initialAdmissions,
+  feedbacks: initialFeedbacks,
+  // Notice & Ticker start null until Firebase verifies (prevents stale/dummy flash!)
+  popupNotice: null,
+  tickerMarquee: null,
+  whatsappGroups: initialWhatsApp,
+  galleryImages: initialGallery,
+  resultLinkConfig: initialResultCfg,
+  ready: {
+    admissions: false,
+    feedbacks: false,
+    popupNotice: false,
+    tickerMarquee: false,
+    whatsappGroups: false,
+    galleryImages: false,
+    resultLinkConfig: false,
+  },
+  connectionStatus: typeof navigator !== 'undefined' && !navigator.onLine ? 'offline' : 'checking',
+  lastSyncAt: null,
+  lastError: null,
+};
+
+const listeners = new Set<() => void>();
+
+function emitStoreChange() {
+  listeners.forEach((listener) => {
+    try {
+      listener();
+    } catch (e) {
+      console.warn('Store subscriber error:', e);
+    }
+  });
+  if (typeof document !== 'undefined') {
+    syncAllPublicDom(storeState);
+  }
+}
+
+function updateStore(partial: Partial<PortalStoreSnapshot>) {
+  storeState = {
+    ...storeState,
+    ...partial,
+    ready: partial.ready ? { ...storeState.ready, ...partial.ready } : storeState.ready,
+  };
+  emitStoreChange();
+}
+
+export function getPortalSnapshot(): PortalStoreSnapshot {
+  return storeState;
+}
+
+export function subscribePortalStore(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+export function usePortalStore(): PortalStoreSnapshot {
+  return useSyncExternalStore(subscribePortalStore, getPortalSnapshot, getPortalSnapshot);
+}
+
+// ==========================================
+// STARTUP CONNECTION VALIDATION
+// ==========================================
+export async function testConnection(): Promise<boolean> {
+  try {
+    await getDocFromServer(doc(db, 'test', 'connection'));
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString() });
+    return true;
+  } catch (error) {
+    if (isOfflineError(error)) {
+      console.warn('Firestore offline fallback active — using localStorage cache.');
+      hydrateOfflineFallback();
+      updateStore({ connectionStatus: 'offline' });
+      return false;
+    }
+    // Non-offline error (e.g., missing test/connection doc) still means network reached Firestore
+    updateStore({ connectionStatus: 'online' });
+    return true;
+  }
+}
+
+function hydrateOfflineFallback() {
+  const cachedNotice = readCache<PopupNoticeConfig | null>('mdhss_popup_notification', null);
+  const cachedTicker = readCache<TickerMarqueeConfig | null>('mdhss_ticker_marquee', null);
+  const cachedWa = sortWhatsAppGroups(
+    readCache<WhatsAppGroupItem[]>('mdhss_whatsapp_groups', DEFAULT_WHATSAPP_GROUPS)
+  );
+  updateStore({
+    popupNotice: cachedNotice,
+    tickerMarquee: cachedTicker,
+    whatsappGroups: cachedWa,
+    ready: {
+      admissions: true,
+      feedbacks: true,
+      popupNotice: true,
+      tickerMarquee: true,
+      whatsappGroups: true,
+      galleryImages: true,
+      resultLinkConfig: true,
+    },
+  });
+}
+
+// ==========================================
+// 1. ADMISSION INQUIRIES (stripUndefined + setDoc merge:true)
+// ==========================================
+export async function saveAdmissionToCloud(data: Partial<AdmissionRecord>): Promise<boolean> {
+  const id = data.id || `ADM-${Date.now().toString().slice(-6)}-${Math.floor(10 + Math.random() * 90)}`;
+  const payload = stripUndefined({
+    ...data,
+    id,
+    formType: data.formType || 'Admission',
+    date: data.date || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    updatedAt: new Date().toISOString(),
+  }) as AdmissionRecord;
+
+  // Optimistic local cache update
+  const nextList = [payload, ...storeState.admissions.filter((a) => a.id !== id)];
+  writeCache('mdhss_admissions', nextList);
+  updateStore({ admissions: nextList });
+
   const docRef = doc(db, 'admissions', id);
   try {
-    await setDoc(docRef, { ...data, id, updatedAt: new Date().toISOString() }, { merge: true });
-    console.log('✅ Admission saved to Firebase Cloud:', id);
+    await setDoc(docRef, stripUndefined(payload), { merge: true });
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `admissions/${id}`);
@@ -127,26 +347,42 @@ export async function saveAdmissionToCloud(data: any): Promise<boolean> {
   }
 }
 
-export async function fetchAdmissionsFromCloud(): Promise<any[]> {
+export async function fetchAdmissionsFromCloud(): Promise<AdmissionRecord[]> {
   try {
-    const colRef = collection(db, 'admissions');
-    const snap = await getDocs(colRef);
-    const list: any[] = [];
+    const snap = await getDocs(collection(db, 'admissions'));
+    const deletedSet = getDeletedIdSet();
+    const list: AdmissionRecord[] = [];
     snap.forEach((d) => {
-      list.push(d.data());
+      const data = d.data() as AdmissionRecord;
+      const id = data.id || d.id;
+      if (!deletedSet.has(id)) {
+        list.push({ ...data, id });
+      }
+    });
+    list.sort((a, b) => (b.updatedAt || b.id || '').localeCompare(a.updatedAt || a.id || ''));
+    writeCache('mdhss_admissions', list);
+    updateStore({
+      admissions: list,
+      ready: { ...storeState.ready, admissions: true },
+      connectionStatus: 'online',
+      lastSyncAt: new Date().toISOString(),
     });
     return list;
   } catch (error) {
     handleFirestoreError(error, OperationType.LIST, 'admissions');
-    return [];
+    return storeState.admissions;
   }
 }
 
 export async function deleteAdmissionFromCloud(id: string): Promise<boolean> {
+  addDeletedIdTrack(id);
+  const nextList = storeState.admissions.filter((a) => a.id !== id);
+  writeCache('mdhss_admissions', nextList);
+  updateStore({ admissions: nextList });
+
   try {
-    addDeletedIdTrack(id);
     await deleteDoc(doc(db, 'admissions', id));
-    console.log('🗑️ Admission deleted from Firebase Cloud:', id);
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, `admissions/${id}`);
@@ -155,14 +391,26 @@ export async function deleteAdmissionFromCloud(id: string): Promise<boolean> {
 }
 
 // ==========================================
-// 2. FEEDBACK SUBMISSIONS
+// 2. FEEDBACK SUBMISSIONS (stripUndefined + setDoc merge:true)
 // ==========================================
-export async function saveFeedbackToCloud(data: any): Promise<boolean> {
-  const id = data.id || ('FB-' + Date.now().toString().slice(-6));
+export async function saveFeedbackToCloud(data: Partial<FeedbackRecord>): Promise<boolean> {
+  const id = data.id || `FB-${Date.now().toString().slice(-6)}-${Math.floor(10 + Math.random() * 90)}`;
+  const payload = stripUndefined({
+    ...data,
+    id,
+    formType: data.formType || 'Feedback',
+    date: data.date || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    updatedAt: new Date().toISOString(),
+  }) as FeedbackRecord;
+
+  const nextList = [payload, ...storeState.feedbacks.filter((f) => f.id !== id)];
+  writeCache('mdhss_feedbacks', nextList);
+  updateStore({ feedbacks: nextList });
+
   const docRef = doc(db, 'feedbacks', id);
   try {
-    await setDoc(docRef, { ...data, id, updatedAt: new Date().toISOString() }, { merge: true });
-    console.log('✅ Feedback saved to Firebase Cloud:', id);
+    await setDoc(docRef, stripUndefined(payload), { merge: true });
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `feedbacks/${id}`);
@@ -170,26 +418,42 @@ export async function saveFeedbackToCloud(data: any): Promise<boolean> {
   }
 }
 
-export async function fetchFeedbacksFromCloud(): Promise<any[]> {
+export async function fetchFeedbacksFromCloud(): Promise<FeedbackRecord[]> {
   try {
-    const colRef = collection(db, 'feedbacks');
-    const snap = await getDocs(colRef);
-    const list: any[] = [];
+    const snap = await getDocs(collection(db, 'feedbacks'));
+    const deletedSet = getDeletedIdSet();
+    const list: FeedbackRecord[] = [];
     snap.forEach((d) => {
-      list.push(d.data());
+      const data = d.data() as FeedbackRecord;
+      const id = data.id || d.id;
+      if (!deletedSet.has(id)) {
+        list.push({ ...data, id });
+      }
+    });
+    list.sort((a, b) => (b.updatedAt || b.id || '').localeCompare(a.updatedAt || a.id || ''));
+    writeCache('mdhss_feedbacks', list);
+    updateStore({
+      feedbacks: list,
+      ready: { ...storeState.ready, feedbacks: true },
+      connectionStatus: 'online',
+      lastSyncAt: new Date().toISOString(),
     });
     return list;
   } catch (error) {
     handleFirestoreError(error, OperationType.LIST, 'feedbacks');
-    return [];
+    return storeState.feedbacks;
   }
 }
 
 export async function deleteFeedbackFromCloud(id: string): Promise<boolean> {
+  addDeletedIdTrack(id);
+  const nextList = storeState.feedbacks.filter((f) => f.id !== id);
+  writeCache('mdhss_feedbacks', nextList);
+  updateStore({ feedbacks: nextList });
+
   try {
-    addDeletedIdTrack(id);
     await deleteDoc(doc(db, 'feedbacks', id));
-    console.log('🗑️ Feedback deleted from Firebase Cloud:', id);
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, `feedbacks/${id}`);
@@ -198,18 +462,78 @@ export async function deleteFeedbackFromCloud(id: string): Promise<boolean> {
 }
 
 // ==========================================
-// 3. SETTINGS & CONFIGURATION (Notice, Result Link, Gallery, etc.)
+// 3. SETTINGS & ADMIN CONFIGURATIONS (stripUndefined + setDoc merge:true)
 // ==========================================
-export async function saveSettingToCloud(key: string, data: any): Promise<boolean> {
+export type SettingKey =
+  | 'popup_notification'
+  | 'ticker_marquee'
+  | 'whatsapp_groups'
+  | 'gallery_images'
+  | 'result_link_config'
+  | string;
+
+function applyLocalSettingUpdate(key: SettingKey, data: any) {
+  if (key === 'popup_notification') {
+    writeCache('mdhss_popup_notification', data);
+    updateStore({
+      popupNotice: data || null,
+      ready: { ...storeState.ready, popupNotice: true },
+    });
+  } else if (key === 'ticker_marquee') {
+    writeCache('mdhss_ticker_marquee', data);
+    updateStore({
+      tickerMarquee: data || null,
+      ready: { ...storeState.ready, tickerMarquee: true },
+    });
+  } else if (key === 'whatsapp_groups') {
+    const sorted = Array.isArray(data) ? sortWhatsAppGroups(data) : [];
+    writeCache('mdhss_whatsapp_groups', sorted);
+    updateStore({
+      whatsappGroups: sorted,
+      ready: { ...storeState.ready, whatsappGroups: true },
+    });
+  } else if (key === 'gallery_images') {
+    const imgs = Array.isArray(data) ? data : [];
+    writeCache('mdhss_gallery_images', imgs);
+    updateStore({
+      galleryImages: imgs,
+      ready: { ...storeState.ready, galleryImages: true },
+    });
+  } else if (key === 'result_link_config') {
+    const cfg: ResultLinkConfig = {
+      ...DEFAULT_RESULT_LINK_CONFIG,
+      ...(data || {}),
+    };
+    writeCache('mdhss_result_link_config', cfg);
+    updateStore({
+      resultLinkConfig: cfg,
+      ready: { ...storeState.ready, resultLinkConfig: true },
+    });
+  }
+}
+
+export async function saveSettingToCloud(key: SettingKey, rawData: any): Promise<boolean> {
   const docRef = doc(db, 'settings', key);
   try {
-    if (data === null || data === undefined) {
+    if (rawData === null || rawData === undefined) {
+      applyLocalSettingUpdate(key, null);
       await deleteDoc(docRef);
-      console.log('🗑️ Setting deleted from Firebase Cloud:', key);
+      updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
       return true;
     }
-    await setDoc(docRef, { data, updatedAt: new Date().toISOString() });
-    console.log('✅ Setting saved to Firebase Cloud:', key);
+
+    const cleanedData = stripUndefined(
+      key === 'whatsapp_groups' && Array.isArray(rawData) ? sortWhatsAppGroups(rawData) : rawData
+    );
+    applyLocalSettingUpdate(key, cleanedData);
+
+    const payload = stripUndefined({
+      data: cleanedData,
+      updatedAt: new Date().toISOString(),
+    });
+
+    await setDoc(docRef, payload, { merge: true });
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `settings/${key}`);
@@ -217,11 +541,11 @@ export async function saveSettingToCloud(key: string, data: any): Promise<boolea
   }
 }
 
-export async function deleteSettingFromCloud(key: string): Promise<boolean> {
+export async function deleteSettingFromCloud(key: SettingKey): Promise<boolean> {
+  applyLocalSettingUpdate(key, null);
   try {
-    const docRef = doc(db, 'settings', key);
-    await deleteDoc(docRef);
-    console.log('🗑️ Setting permanently deleted from Firebase Cloud:', key);
+    await deleteDoc(doc(db, 'settings', key));
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, `settings/${key}`);
@@ -229,16 +553,24 @@ export async function deleteSettingFromCloud(key: string): Promise<boolean> {
   }
 }
 
-export async function fetchSettingFromCloud(key: string): Promise<any | null> {
+export async function fetchSettingFromCloud(key: SettingKey): Promise<any | null> {
   try {
-    const docRef = doc(db, 'settings', key);
-    const snap = await getDoc(docRef);
+    const snap = await getDoc(doc(db, 'settings', key));
     if (snap.exists()) {
-      return snap.data().data;
+      const val = snap.data()?.data ?? null;
+      applyLocalSettingUpdate(key, val);
+      return val;
     }
+    applyLocalSettingUpdate(key, null);
     return null;
   } catch (error) {
     handleFirestoreError(error, OperationType.GET, `settings/${key}`);
+    // Offline fallback
+    if (key === 'popup_notification') return readCache('mdhss_popup_notification', null);
+    if (key === 'ticker_marquee') return readCache('mdhss_ticker_marquee', null);
+    if (key === 'whatsapp_groups') return readCache('mdhss_whatsapp_groups', DEFAULT_WHATSAPP_GROUPS);
+    if (key === 'gallery_images') return readCache('mdhss_gallery_images', []);
+    if (key === 'result_link_config') return readCache('mdhss_result_link_config', DEFAULT_RESULT_LINK_CONFIG);
     return null;
   }
 }
@@ -261,6 +593,7 @@ export interface FirebaseSettingDocInfo {
 export interface FirebaseOverviewReport {
   connected: boolean;
   projectId: string;
+  databaseId: string;
   collections: {
     admissions: FirebaseCollectionInfo;
     feedbacks: FirebaseCollectionInfo;
@@ -275,98 +608,90 @@ export async function getFirebaseOverview(): Promise<FirebaseOverviewReport> {
   const report: FirebaseOverviewReport = {
     connected: true,
     projectId: firebaseConfig.projectId,
+    databaseId: firebaseConfig.firestoreDatabaseId,
     collections: {
       admissions: { count: 0, items: [], sizeBytes: 0 },
       feedbacks: { count: 0, items: [], sizeBytes: 0 },
     },
     settings: {},
     storageEstimateBytes: 0,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   try {
-    // 1. Admissions collection
-    const admSnap = await getDocs(collection(db, 'admissions'));
+    const [admSnap, fbSnap] = await Promise.all([
+      getDocs(collection(db, 'admissions')),
+      getDocs(collection(db, 'feedbacks')),
+    ]);
+
     const admissions: any[] = [];
-    admSnap.forEach(d => admissions.push({ id: d.id, ...d.data() }));
-    report.collections.admissions = {
-      count: admissions.length,
-      items: admissions,
-      sizeBytes: new Blob([JSON.stringify(admissions)]).size || JSON.stringify(admissions).length
-    };
+    admSnap.forEach((d) => admissions.push({ id: d.id, ...d.data() }));
+    const admBytes = new Blob([JSON.stringify(admissions)]).size;
+    report.collections.admissions = { count: admissions.length, items: admissions, sizeBytes: admBytes };
 
-    // 2. Feedbacks collection
-    const fbSnap = await getDocs(collection(db, 'feedbacks'));
     const feedbacks: any[] = [];
-    fbSnap.forEach(d => feedbacks.push({ id: d.id, ...d.data() }));
-    report.collections.feedbacks = {
-      count: feedbacks.length,
-      items: feedbacks,
-      sizeBytes: new Blob([JSON.stringify(feedbacks)]).size || JSON.stringify(feedbacks).length
-    };
+    fbSnap.forEach((d) => feedbacks.push({ id: d.id, ...d.data() }));
+    const fbBytes = new Blob([JSON.stringify(feedbacks)]).size;
+    report.collections.feedbacks = { count: feedbacks.length, items: feedbacks, sizeBytes: fbBytes };
 
-    // 3. Settings documents
     const settingKeys = [
       'popup_notification',
       'ticker_marquee',
       'whatsapp_groups',
       'gallery_images',
-      'result_link_config'
+      'result_link_config',
     ];
 
     let settingsTotalBytes = 0;
-    for (const key of settingKeys) {
-      try {
-        const snap = await getDoc(doc(db, 'settings', key));
-        if (snap.exists()) {
-          const val = snap.data();
-          const bytes = new Blob([JSON.stringify(val)]).size || JSON.stringify(val).length;
-          report.settings[key] = {
-            exists: true,
-            data: val,
-            sizeBytes: bytes
-          };
-          settingsTotalBytes += bytes;
-        } else {
-          report.settings[key] = {
-            exists: false,
-            data: null,
-            sizeBytes: 0
-          };
+    await Promise.all(
+      settingKeys.map(async (key) => {
+        try {
+          const snap = await getDoc(doc(db, 'settings', key));
+          if (snap.exists()) {
+            const val = snap.data();
+            const bytes = new Blob([JSON.stringify(val)]).size;
+            report.settings[key] = { exists: true, data: val, sizeBytes: bytes };
+            settingsTotalBytes += bytes;
+          } else {
+            report.settings[key] = { exists: false, data: null, sizeBytes: 0 };
+          }
+        } catch {
+          report.settings[key] = { exists: false, data: null, sizeBytes: 0 };
         }
-      } catch (e) {
-        report.settings[key] = {
-          exists: false,
-          data: null,
-          sizeBytes: 0
-        };
-      }
-    }
+      })
+    );
 
-    report.storageEstimateBytes = report.collections.admissions.sizeBytes +
-      report.collections.feedbacks.sizeBytes +
-      settingsTotalBytes;
-
+    report.storageEstimateBytes = admBytes + fbBytes + settingsTotalBytes;
+    updateStore({ connectionStatus: 'online', lastSyncAt: report.timestamp });
     return report;
   } catch (error) {
-    console.error('Error in getFirebaseOverview:', error);
+    handleFirestoreError(error, OperationType.GET, 'overview');
     report.connected = false;
-    report.error = String(error);
+    report.error = error instanceof Error ? error.message : String(error);
     return report;
   }
 }
 
-// Clear all records from a cloud collection
 export async function clearCollectionFromCloud(collectionName: 'admissions' | 'feedbacks'): Promise<boolean> {
+  if (collectionName === 'admissions') {
+    storeState.admissions.forEach((a) => addDeletedIdTrack(a.id));
+    writeCache('mdhss_admissions', []);
+    updateStore({ admissions: [] });
+  } else {
+    storeState.feedbacks.forEach((f) => addDeletedIdTrack(f.id));
+    writeCache('mdhss_feedbacks', []);
+    updateStore({ feedbacks: [] });
+  }
+
   try {
-    const colRef = collection(db, collectionName);
-    const snap = await getDocs(colRef);
-    const deletePromises = snap.docs.map(d => {
-      addDeletedIdTrack(d.id);
-      return deleteDoc(doc(db, collectionName, d.id));
-    });
-    await Promise.all(deletePromises);
-    console.log(`🗑️ All records cleared from Firebase Cloud collection: ${collectionName}`);
+    const snap = await getDocs(collection(db, collectionName));
+    await Promise.all(
+      snap.docs.map((d) => {
+        addDeletedIdTrack(d.id);
+        return deleteDoc(doc(db, collectionName, d.id));
+      })
+    );
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, collectionName);
@@ -374,277 +699,313 @@ export async function clearCollectionFromCloud(collectionName: 'admissions' | 'f
   }
 }
 
-function getDeletedIdSet(): Set<string> {
+export async function refreshAllFromCloud(): Promise<boolean> {
   try {
-    const arr = JSON.parse(localStorage.getItem('mdhss_deleted_ids') || '[]');
-    return new Set(arr);
-  } catch {
-    return new Set();
-  }
-}
-
-function addDeletedIdTrack(id: string) {
-  try {
-    const set = getDeletedIdSet();
-    set.add(id);
-    localStorage.setItem('mdhss_deleted_ids', JSON.stringify(Array.from(set).slice(-500)));
-  } catch (e) {
-    console.warn('Track deleted id error:', e);
+    await Promise.all([
+      fetchAdmissionsFromCloud(),
+      fetchFeedbacksFromCloud(),
+      fetchSettingFromCloud('popup_notification'),
+      fetchSettingFromCloud('ticker_marquee'),
+      fetchSettingFromCloud('whatsapp_groups'),
+      fetchSettingFromCloud('gallery_images'),
+      fetchSettingFromCloud('result_link_config'),
+    ]);
+    updateStore({ connectionStatus: 'online', lastSyncAt: new Date().toISOString(), lastError: null });
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, 'refreshAll');
+    return false;
   }
 }
 
 // ==========================================
-// 5. REALTIME LISTENERS & TWO-WAY SYNC
+// 5. REAL-TIME LIVE LISTENERS (onSnapshot)
 // ==========================================
 let realtimeSyncStarted = false;
+let activeUnsubscribers: Unsubscribe[] = [];
 
-export function setupRealtimeCloudSync(onSyncComplete?: (status: { admissions: number; feedbacks: number }) => void) {
+export function stopRealtimeCloudSync() {
+  activeUnsubscribers.forEach((unsub) => {
+    try {
+      unsub();
+    } catch {
+      // ignore
+    }
+  });
+  activeUnsubscribers = [];
+  realtimeSyncStarted = false;
+}
+
+export function setupRealtimeCloudSync() {
   if (realtimeSyncStarted) return;
   realtimeSyncStarted = true;
 
-  // If browser is currently offline, wait until online to start realtime listeners
-  if (typeof navigator !== 'undefined' && !navigator.onLine) {
-    const handleOnline = () => {
-      window.removeEventListener('online', handleOnline);
-      realtimeSyncStarted = false;
-      setupRealtimeCloudSync(onSyncComplete);
-    };
-    window.addEventListener('online', handleOnline);
-    return;
+  // Startup connection validation
+  testConnection();
+
+  // Monitor browser online/offline transitions
+  if (typeof window !== 'undefined') {
+    window.addEventListener('online', () => {
+      updateStore({ connectionStatus: 'checking' });
+      testConnection();
+      refreshAllFromCloud();
+    });
+    window.addEventListener('offline', () => {
+      hydrateOfflineFallback();
+      updateStore({ connectionStatus: 'offline' });
+    });
+
+    if (!navigator.onLine) {
+      hydrateOfflineFallback();
+      updateStore({ connectionStatus: 'offline' });
+    }
   }
 
-  const deletedIds = getDeletedIdSet();
+  // Fallback timeout in case network is slow so public WhatsApp cards never stay stuck loading
+  setTimeout(() => {
+    if (!storeState.ready.whatsappGroups) {
+      updateStore({
+        ready: { ...storeState.ready, whatsappGroups: true },
+      });
+    }
+  }, 2000);
 
-  // Realtime Admissions Listener
+  // 1. Live Admissions Listener
   try {
-    onSnapshot(
+    const unsubAdm = onSnapshot(
       collection(db, 'admissions'),
       (snap) => {
         const deletedSet = getDeletedIdSet();
-        const cloudAdmissions: any[] = [];
+        const cloudAdmissions: AdmissionRecord[] = [];
         snap.forEach((d) => {
-          const data = d.data();
-          if (data && data.id && !deletedSet.has(data.id)) {
-            cloudAdmissions.push(data);
+          const data = d.data() as AdmissionRecord;
+          const id = data?.id || d.id;
+          if (data && !deletedSet.has(id)) {
+            cloudAdmissions.push({ ...data, id });
           }
         });
-        cloudAdmissions.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
-        localStorage.setItem('mdhss_admissions', JSON.stringify(cloudAdmissions));
-
-        // Trigger UI table re-render if function exists
-        if (typeof (window as any).renderAdminTables === 'function') {
-          (window as any).renderAdminTables();
-        }
+        cloudAdmissions.sort((a, b) => (b.updatedAt || b.id || '').localeCompare(a.updatedAt || a.id || ''));
+        writeCache('mdhss_admissions', cloudAdmissions);
+        updateStore({
+          admissions: cloudAdmissions,
+          ready: { ...storeState.ready, admissions: true },
+          connectionStatus: 'online',
+          lastSyncAt: new Date().toISOString(),
+        });
       },
       (error) => {
         handleFirestoreError(error, OperationType.LIST, 'admissions');
+        updateStore({ ready: { ...storeState.ready, admissions: true } });
       }
     );
+    activeUnsubscribers.push(unsubAdm);
   } catch (err) {
-    console.warn('Realtime admissions listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, 'admissions');
   }
 
-  // Realtime Feedbacks Listener
+  // 2. Live Feedbacks Listener
   try {
-    onSnapshot(
+    const unsubFb = onSnapshot(
       collection(db, 'feedbacks'),
       (snap) => {
         const deletedSet = getDeletedIdSet();
-        const cloudFeedbacks: any[] = [];
+        const cloudFeedbacks: FeedbackRecord[] = [];
         snap.forEach((d) => {
-          const data = d.data();
-          if (data && data.id && !deletedSet.has(data.id)) {
-            cloudFeedbacks.push(data);
+          const data = d.data() as FeedbackRecord;
+          const id = data?.id || d.id;
+          if (data && !deletedSet.has(id)) {
+            cloudFeedbacks.push({ ...data, id });
           }
         });
-        cloudFeedbacks.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
-        localStorage.setItem('mdhss_feedbacks', JSON.stringify(cloudFeedbacks));
-
-        if (typeof (window as any).renderAdminTables === 'function') {
-          (window as any).renderAdminTables();
-        }
+        cloudFeedbacks.sort((a, b) => (b.updatedAt || b.id || '').localeCompare(a.updatedAt || a.id || ''));
+        writeCache('mdhss_feedbacks', cloudFeedbacks);
+        updateStore({
+          feedbacks: cloudFeedbacks,
+          ready: { ...storeState.ready, feedbacks: true },
+          connectionStatus: 'online',
+          lastSyncAt: new Date().toISOString(),
+        });
       },
       (error) => {
         handleFirestoreError(error, OperationType.LIST, 'feedbacks');
+        updateStore({ ready: { ...storeState.ready, feedbacks: true } });
       }
     );
+    activeUnsubscribers.push(unsubFb);
   } catch (err) {
-    console.warn('Realtime feedbacks listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, 'feedbacks');
   }
 
-  // Realtime Notice Popup Listener (Instant Push to all phones & devices)
+  // 3. Live Popup Notification Listener (instant push to all mobile & desktop visitors)
   try {
-    onSnapshot(
+    const unsubNotice = onSnapshot(
       doc(db, 'settings', 'popup_notification'),
       (snap) => {
-        if (snap.exists()) {
-          const noticeData = snap.data()?.data;
-          if (noticeData && typeof noticeData === 'object' && noticeData.title) {
-            try {
-              localStorage.setItem('mdhss_popup_notification', JSON.stringify(noticeData));
-            } catch (e) {}
-
-            // Immediately notify portal runtime for instant display
-            if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
-              (window as any).onRealtimeNoticeUpdate(noticeData);
-            } else if (typeof (window as any).applyNoticeDataToPopup === 'function') {
-              (window as any).applyNoticeDataToPopup(noticeData);
-            }
-            if (typeof (window as any).updateAdminNoticeLiveStatus === 'function') {
-              (window as any).updateAdminNoticeLiveStatus(noticeData);
-            }
-          } else {
-            try { localStorage.removeItem('mdhss_popup_notification'); } catch (e) {}
-            if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
-              (window as any).onRealtimeNoticeUpdate(null);
-            }
-            if (typeof (window as any).updateAdminNoticeLiveStatus === 'function') {
-              (window as any).updateAdminNoticeLiveStatus(null);
-            }
-          }
-        } else {
-          try { localStorage.removeItem('mdhss_popup_notification'); } catch (e) {}
-          if (typeof (window as any).onRealtimeNoticeUpdate === 'function') {
-            (window as any).onRealtimeNoticeUpdate(null);
-          }
-          if (typeof (window as any).updateAdminNoticeLiveStatus === 'function') {
-            (window as any).updateAdminNoticeLiveStatus(null);
-          }
-        }
+        const noticeData = snap.exists() ? (snap.data()?.data as PopupNoticeConfig | undefined) : null;
+        const valid = noticeData && typeof noticeData === 'object' && noticeData.title ? noticeData : null;
+        writeCache('mdhss_popup_notification', valid);
+        updateStore({
+          popupNotice: valid,
+          ready: { ...storeState.ready, popupNotice: true },
+          connectionStatus: 'online',
+          lastSyncAt: new Date().toISOString(),
+        });
       },
       (error) => {
         handleFirestoreError(error, OperationType.GET, 'settings/popup_notification');
+        const fallback = readCache<PopupNoticeConfig | null>('mdhss_popup_notification', null);
+        updateStore({
+          popupNotice: fallback,
+          ready: { ...storeState.ready, popupNotice: true },
+        });
       }
     );
+    activeUnsubscribers.push(unsubNotice);
   } catch (err) {
-    console.warn('Realtime notice listener warning:', err);
+    handleFirestoreError(err, OperationType.GET, 'settings/popup_notification');
   }
 
-  // Realtime Result Link Listener
+  // 4. Live Ticker Marquee Listener
   try {
-    onSnapshot(
-      doc(db, 'settings', 'result_link_config'),
-      (snap) => {
-        if (snap.exists() && snap.data()?.data) {
-          const cfg = snap.data().data;
-          localStorage.setItem('mdhss_result_link_config', JSON.stringify(cfg));
-          if (typeof (window as any).applyResultLinkConfigToUI === 'function') {
-            (window as any).applyResultLinkConfigToUI(cfg);
-          }
-        }
-      },
-      (error) => {
-        handleFirestoreError(error, OperationType.GET, 'settings/result_link_config');
-      }
-    );
-  } catch (err) {
-    console.warn('Realtime result link listener warning:', err);
-  }
-
-  // Realtime Gallery Images Listener
-  try {
-    onSnapshot(
-      doc(db, 'settings', 'gallery_images'),
-      (snap) => {
-        if (snap.exists() && snap.data()?.data && Array.isArray(snap.data().data)) {
-          const gallery = snap.data().data;
-          localStorage.setItem('mdhss_gallery_images', JSON.stringify(gallery));
-          if (typeof (window as any).renderAutoGallery === 'function') {
-            (window as any).renderAutoGallery();
-          }
-          if (typeof (window as any).renderAdminGalleryList === 'function') {
-            (window as any).renderAdminGalleryList();
-          }
-        }
-      },
-      (error) => {
-        handleFirestoreError(error, OperationType.GET, 'settings/gallery_images');
-      }
-    );
-  } catch (err) {
-    console.warn('Realtime gallery listener warning:', err);
-  }
-
-  // Realtime Scrolling Ticker Marquee Listener
-  try {
-    onSnapshot(
+    const unsubTicker = onSnapshot(
       doc(db, 'settings', 'ticker_marquee'),
       (snap) => {
-        if (snap.exists() && snap.data()?.data) {
-          const tickerData = snap.data().data;
-          try {
-            localStorage.setItem('mdhss_ticker_marquee', JSON.stringify(tickerData));
-          } catch (e) {}
-          if (typeof (window as any).applyTickerSettingsToUI === 'function') {
-            (window as any).applyTickerSettingsToUI(tickerData);
-          }
-          if (typeof (window as any).updateAdminTickerLiveStatus === 'function') {
-            (window as any).updateAdminTickerLiveStatus(tickerData);
-          }
-        } else {
-          try {
-            localStorage.removeItem('mdhss_ticker_marquee');
-          } catch (e) {}
-          if (typeof (window as any).applyTickerSettingsToUI === 'function') {
-            (window as any).applyTickerSettingsToUI(null);
-          }
-          if (typeof (window as any).updateAdminTickerLiveStatus === 'function') {
-            (window as any).updateAdminTickerLiveStatus(null);
-          }
-        }
+        const tickerData = snap.exists() ? (snap.data()?.data as TickerMarqueeConfig | undefined) : null;
+        const valid = tickerData && typeof tickerData === 'object' ? tickerData : null;
+        writeCache('mdhss_ticker_marquee', valid);
+        updateStore({
+          tickerMarquee: valid,
+          ready: { ...storeState.ready, tickerMarquee: true },
+          connectionStatus: 'online',
+          lastSyncAt: new Date().toISOString(),
+        });
       },
       (error) => {
         handleFirestoreError(error, OperationType.GET, 'settings/ticker_marquee');
+        const fallback = readCache<TickerMarqueeConfig | null>('mdhss_ticker_marquee', null);
+        updateStore({
+          tickerMarquee: fallback,
+          ready: { ...storeState.ready, tickerMarquee: true },
+        });
       }
     );
+    activeUnsubscribers.push(unsubTicker);
   } catch (err) {
-    console.warn('Realtime ticker marquee listener warning:', err);
+    handleFirestoreError(err, OperationType.GET, 'settings/ticker_marquee');
   }
 
-  // Realtime WhatsApp Groups Listener
+  // 5. Live WhatsApp Groups Listener (strict class hierarchy sorting, never overwrites Firebase data!)
   try {
-    onSnapshot(
+    const unsubWa = onSnapshot(
       doc(db, 'settings', 'whatsapp_groups'),
       (snap) => {
         (window as any)._waFirebaseChecked = true;
-        if (snap.exists() && snap.data()?.data && Array.isArray(snap.data().data)) {
-          const waGroups = snap.data().data;
-          localStorage.setItem('mdhss_whatsapp_groups', JSON.stringify(waGroups));
-          localStorage.setItem('mdhss_wa_version', '2026_v3_links');
+        if (snap.exists() && Array.isArray(snap.data()?.data)) {
+          const sorted = sortWhatsAppGroups(snap.data().data as WhatsAppGroupItem[]);
+          writeCache('mdhss_whatsapp_groups', sorted);
+          updateStore({
+            whatsappGroups: sorted,
+            ready: { ...storeState.ready, whatsappGroups: true },
+            connectionStatus: 'online',
+            lastSyncAt: new Date().toISOString(),
+          });
         } else if (!snap.exists()) {
-          const seedGroups = (window as any).DEFAULT_WHATSAPP_GROUPS || [];
-          if (seedGroups.length > 0) {
-            saveSettingToCloud('whatsapp_groups', seedGroups).catch(() => {});
-          }
-        }
-        if (typeof (window as any).renderPublicWhatsAppGroups === 'function') {
-          (window as any).renderPublicWhatsAppGroups();
-        }
-        if (typeof (window as any).renderAdminWhatsAppGroups === 'function') {
-          (window as any).renderAdminWhatsAppGroups();
-        }
-        if (typeof (window as any).renderAdminTables === 'function') {
-          (window as any).renderAdminTables();
+          // Seed only if document does not exist in Firestore yet
+          const seeded = sortWhatsAppGroups(DEFAULT_WHATSAPP_GROUPS);
+          writeCache('mdhss_whatsapp_groups', seeded);
+          updateStore({
+            whatsappGroups: seeded,
+            ready: { ...storeState.ready, whatsappGroups: true },
+            connectionStatus: 'online',
+          });
+          saveSettingToCloud('whatsapp_groups', seeded).catch(() => {});
+        } else {
+          updateStore({ ready: { ...storeState.ready, whatsappGroups: true } });
         }
       },
       (error) => {
         (window as any)._waFirebaseChecked = true;
-        if (typeof (window as any).renderPublicWhatsAppGroups === 'function') {
-          (window as any).renderPublicWhatsAppGroups();
-        }
         handleFirestoreError(error, OperationType.GET, 'settings/whatsapp_groups');
+        const fallback = sortWhatsAppGroups(
+          readCache<WhatsAppGroupItem[]>('mdhss_whatsapp_groups', DEFAULT_WHATSAPP_GROUPS)
+        );
+        updateStore({
+          whatsappGroups: fallback,
+          ready: { ...storeState.ready, whatsappGroups: true },
+        });
       }
     );
+    activeUnsubscribers.push(unsubWa);
   } catch (err) {
-    console.warn('Realtime whatsapp groups listener warning:', err);
+    handleFirestoreError(err, OperationType.GET, 'settings/whatsapp_groups');
+  }
+
+  // 6. Live Gallery Images Listener
+  try {
+    const unsubGallery = onSnapshot(
+      doc(db, 'settings', 'gallery_images'),
+      (snap) => {
+        const gallery =
+          snap.exists() && Array.isArray(snap.data()?.data)
+            ? (snap.data().data as GalleryImageItem[])
+            : [];
+        writeCache('mdhss_gallery_images', gallery);
+        updateStore({
+          galleryImages: gallery,
+          ready: { ...storeState.ready, galleryImages: true },
+          connectionStatus: 'online',
+          lastSyncAt: new Date().toISOString(),
+        });
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, 'settings/gallery_images');
+        updateStore({ ready: { ...storeState.ready, galleryImages: true } });
+      }
+    );
+    activeUnsubscribers.push(unsubGallery);
+  } catch (err) {
+    handleFirestoreError(err, OperationType.GET, 'settings/gallery_images');
+  }
+
+  // 7. Live Result Link Config Listener
+  try {
+    const unsubResult = onSnapshot(
+      doc(db, 'settings', 'result_link_config'),
+      (snap) => {
+        const raw = snap.exists() ? (snap.data()?.data as Partial<ResultLinkConfig> | undefined) : null;
+        const merged: ResultLinkConfig = {
+          ...DEFAULT_RESULT_LINK_CONFIG,
+          ...(raw || {}),
+        };
+        if (merged.url && merged.url.includes('online.edumentsolution.com')) {
+          merged.url = DEFAULT_RESULT_LINK_CONFIG.url;
+        }
+        writeCache('mdhss_result_link_config', merged);
+        updateStore({
+          resultLinkConfig: merged,
+          ready: { ...storeState.ready, resultLinkConfig: true },
+          connectionStatus: 'online',
+          lastSyncAt: new Date().toISOString(),
+        });
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, 'settings/result_link_config');
+        updateStore({ ready: { ...storeState.ready, resultLinkConfig: true } });
+      }
+    );
+    activeUnsubscribers.push(unsubResult);
+  } catch (err) {
+    handleFirestoreError(err, OperationType.GET, 'settings/result_link_config');
   }
 }
 
-// Global Cloud Object Expose for Native Portal Scripting
+// Global Cloud Bridge for legacy public forms & page navigation hooks
 const mdhssCloud = {
   isAvailable: true,
   projectId: firebaseConfig.projectId,
   databaseId: firebaseConfig.firestoreDatabaseId,
+  stripUndefined,
+  testConnection,
   saveAdmission: saveAdmissionToCloud,
   fetchAdmissions: fetchAdmissionsFromCloud,
   deleteAdmission: deleteAdmissionFromCloud,
@@ -655,46 +1016,15 @@ const mdhssCloud = {
   fetchSetting: fetchSettingFromCloud,
   deleteSetting: deleteSettingFromCloud,
   clearCollection: clearCollectionFromCloud,
+  refreshAllFromCloud,
   setupRealtimeSync: setupRealtimeCloudSync,
-  getFirebaseOverview: getFirebaseOverview,
-  // Helper to push all local data to cloud (Initial migration)
-  migrateAllLocalDataToCloud: async () => {
-    let admCount = 0;
-    let fbCount = 0;
-    try {
-      const localAdmissions = JSON.parse(localStorage.getItem('mdhss_admissions') || '[]');
-      for (const adm of localAdmissions) {
-        await saveAdmissionToCloud(adm);
-        admCount++;
-      }
-      const localFeedbacks = JSON.parse(localStorage.getItem('mdhss_feedbacks') || '[]');
-      for (const fb of localFeedbacks) {
-        await saveFeedbackToCloud(fb);
-        fbCount++;
-      }
-      const notice = JSON.parse(localStorage.getItem('mdhss_popup_notification') || 'null');
-      if (notice) await saveSettingToCloud('popup_notification', notice);
-
-      const resultCfg = JSON.parse(localStorage.getItem('mdhss_result_link_config') || 'null');
-      if (resultCfg) await saveSettingToCloud('result_link_config', resultCfg);
-
-      const gallery = JSON.parse(localStorage.getItem('mdhss_gallery_images') || 'null');
-      if (gallery) await saveSettingToCloud('gallery_images', gallery);
-
-      const ticker = JSON.parse(localStorage.getItem('mdhss_ticker_marquee') || 'null');
-      if (ticker) await saveSettingToCloud('ticker_marquee', ticker);
-
-      const waGroups = JSON.parse(localStorage.getItem('mdhss_whatsapp_groups') || 'null');
-      if (waGroups && Array.isArray(waGroups)) await saveSettingToCloud('whatsapp_groups', waGroups);
-
-      return { success: true, admissions: admCount, feedbacks: fbCount };
-    } catch (e) {
-      console.error('Migration error:', e);
-      return { success: false, error: String(e) };
-    }
-  },
+  getFirebaseOverview,
+  getSnapshot: getPortalSnapshot,
+  syncPublicDomNow: () => syncAllPublicDom(storeState),
 };
 
-(window as any).mdhssCloud = mdhssCloud;
+if (typeof window !== 'undefined') {
+  (window as any).mdhssCloud = mdhssCloud;
+}
 
 export default mdhssCloud;

@@ -1,36 +1,51 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
+import AdminPortalApp from './components/admin/AdminPortalApp.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 import './index.css';
 import mdhssCloud from './firebase.ts';
 
-// Initialize real-time cloud data synchronization immediately for ultra-fast notification & live updates
-if (typeof window !== 'undefined') {
-  const initSync = () => {
-    try {
-      mdhssCloud.setupRealtimeSync();
-      console.log('🚀 Maa Durga School Cloud Database connected (Project:', mdhssCloud.projectId, ')');
-    } catch (e) {
-      console.info('Cloud sync notice:', e);
-    }
-  };
+function bootPortalEngine() {
+  // 1. Launch real-time Firestore onSnapshot listeners immediately
+  try {
+    mdhssCloud.setupRealtimeSync();
+  } catch (e) {
+    console.info('Cloud sync notice:', e);
+  }
 
-  // Launch instantly without any artificial delay
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSync);
-  } else {
-    initSync();
+  // 2. Mount React + Tailwind + Firestore Admin & Staff Portal inside #react-admin-portal-root
+  const adminContainer = document.getElementById('react-admin-portal-root');
+  if (adminContainer && !adminContainer.dataset.mounted) {
+    adminContainer.dataset.mounted = 'true';
+    createRoot(adminContainer).render(
+      <StrictMode>
+        <ErrorBoundary>
+          <AdminPortalApp />
+        </ErrorBoundary>
+      </StrictMode>
+    );
+  }
+
+  // 3. Preserve existing #student-analytics-root mount if present
+  const analyticsContainer =
+    document.getElementById('student-analytics-root') || document.getElementById('root');
+  if (analyticsContainer && !analyticsContainer.dataset.mounted) {
+    analyticsContainer.dataset.mounted = 'true';
+    createRoot(analyticsContainer).render(
+      <StrictMode>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </StrictMode>
+    );
   }
 }
 
-// Mount to #student-analytics-root if present, otherwise #root
-const container = document.getElementById('student-analytics-root') || document.getElementById('root');
-
-if (container) {
-  createRoot(container).render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-  );
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootPortalEngine);
+  } else {
+    bootPortalEngine();
+  }
 }
-
