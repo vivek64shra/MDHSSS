@@ -1,69 +1,138 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
-    <linearGradient id="sciBg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ecfdf5"/>
-      <stop offset="100%" stop-color="#d1fae5"/>
+    <linearGradient id="labWall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ecfeff"/>
+      <stop offset="100%" stop-color="#cffafe"/>
     </linearGradient>
-    <linearGradient id="flaskLiquid" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="benchTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="flaskBlue" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#38bdf8"/>
       <stop offset="100%" stop-color="#0284c7"/>
     </linearGradient>
-    <linearGradient id="flaskLiquid2" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#f43f5e"/>
-      <stop offset="100%" stop-color="#be123c"/>
+    <linearGradient id="flaskGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#15803d"/>
     </linearGradient>
+    <linearGradient id="flaskAmber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="labShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.16"/>
+    </filter>
   </defs>
-  <rect width="800" height="500" fill="url(#sciBg)"/>
-  <rect x="0" y="360" width="800" height="140" fill="#334155"/>
-  
-  <!-- Science Lab Shelf -->
-  <rect x="60" y="100" width="680" height="15" fill="#0f766e" rx="3"/>
-  <rect x="60" y="220" width="680" height="15" fill="#0f766e" rx="3"/>
 
-  <!-- Chemical Flasks on Shelf -->
-  <g transform="translate(100, 120)">
-    <path d="M 30,0 L 40,0 L 40,30 L 60,75 A 10,10 0 0,1 55,85 L 15,85 A 10,10 0 0,1 10,75 L 30,30 Z" fill="url(#flaskLiquid)" stroke="#0369a1" stroke-width="2"/>
-    <circle cx="35" cy="65" r="4" fill="#ffffff" opacity="0.7"/>
-    <circle cx="45" cy="55" r="2.5" fill="#ffffff" opacity="0.7"/>
-  </g>
-  <g transform="translate(200, 120)">
-    <rect x="25" y="10" width="20" height="75" rx="10" fill="url(#flaskLiquid2)" stroke="#9f1239" stroke-width="2"/>
-    <line x1="28" y1="30" x2="35" y2="30" stroke="#ffffff" stroke-width="1.5"/>
-    <line x1="28" y1="45" x2="38" y2="45" stroke="#ffffff" stroke-width="1.5"/>
-    <line x1="28" y1="60" x2="35" y2="60" stroke="#ffffff" stroke-width="1.5"/>
-  </g>
-  <g transform="translate(300, 120)">
-    <path d="M 30,0 L 40,0 L 40,30 L 60,75 A 10,10 0 0,1 55,85 L 15,85 A 10,10 0 0,1 10,75 L 30,30 Z" fill="#eab308" stroke="#a16207" stroke-width="2"/>
+  <!-- Background Lab Wall -->
+  <rect width="800" height="500" fill="url(#labWall)"/>
+
+  <!-- Subtle Tile Grid Pattern -->
+  <g stroke="#a5f3fc" stroke-width="1" opacity="0.55">
+    <line x1="0" y1="120" x2="800" y2="120"/>
+    <line x1="0" y1="240" x2="800" y2="240"/>
+    <line x1="200" y1="0" x2="200" y2="350"/>
+    <line x1="400" y1="0" x2="400" y2="350"/>
+    <line x1="600" y1="0" x2="600" y2="350"/>
   </g>
 
-  <!-- Microscope in Center Table -->
-  <g transform="translate(480, 160)">
-    <!-- Base -->
-    <rect x="40" y="180" width="140" height="20" rx="5" fill="#1e293b"/>
-    <!-- Arm -->
-    <path d="M 150,180 C 150,100 110,60 70,70 L 65,95 C 95,85 125,115 125,180 Z" fill="#0284c7"/>
-    <!-- Stage -->
-    <rect x="30" y="125" width="80" height="10" rx="2" fill="#0f172a"/>
-    <!-- Body Tube -->
-    <rect x="35" y="40" width="25" height="75" rx="3" fill="#64748b" transform="rotate(-15 35 40)"/>
-    <circle cx="45" cy="30" r="10" fill="#334155"/>
-    <!-- Mirror / Lamp -->
-    <circle cx="70" cy="155" r="12" fill="#fde047" stroke="#eab308" stroke-width="2"/>
+  <!-- Periodic Table Poster (Left Wall) -->
+  <g filter="url(#labShadow)">
+    <rect x="44" y="42" width="218" height="142" rx="10" fill="#ffffff" stroke="#0891b2" stroke-width="2"/>
+    <rect x="58" y="54" width="190" height="18" rx="4" fill="#0e7490"/>
+    <text x="153" y="67" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.8">PERIODIC TABLE</text>
+    <!-- Periodic blocks -->
+    <g>
+      <rect x="60" y="80" width="18" height="18" rx="3" fill="#38bdf8"/>
+      <rect x="228" y="80" width="18" height="18" rx="3" fill="#a855f7"/>
+      <rect x="60" y="102" width="18" height="18" rx="3" fill="#f59e0b"/>
+      <rect x="82" y="102" width="18" height="18" rx="3" fill="#fbbf24"/>
+      <rect x="162" y="102" width="18" height="18" rx="3" fill="#4ade80"/>
+      <rect x="184" y="102" width="18" height="18" rx="3" fill="#4ade80"/>
+      <rect x="206" y="102" width="18" height="18" rx="3" fill="#22d3ee"/>
+      <rect x="228" y="102" width="18" height="18" rx="3" fill="#a855f7"/>
+      <rect x="60" y="124" width="186" height="18" rx="3" fill="#e0f2fe"/>
+      <rect x="60" y="148" width="186" height="18" rx="3" fill="#cffafe"/>
+    </g>
   </g>
 
-  <!-- Atomic Model Graphic -->
-  <g transform="translate(180, 290)">
-    <circle cx="60" cy="50" r="14" fill="#ef4444"/>
-    <ellipse cx="60" cy="50" rx="45" ry="18" fill="none" stroke="#0284c7" stroke-width="2" transform="rotate(30 60 50)"/>
-    <ellipse cx="60" cy="50" rx="45" ry="18" fill="none" stroke="#10b981" stroke-width="2" transform="rotate(-30 60 50)"/>
-    <ellipse cx="60" cy="50" rx="45" ry="18" fill="none" stroke="#f59e0b" stroke-width="2" transform="rotate(90 60 50)"/>
+  <!-- Atom & DNA Diagram Poster (Right Wall) -->
+  <g filter="url(#labShadow)">
+    <rect x="556" y="42" width="198" height="142" rx="10" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+    <g transform="translate(655, 113)">
+      <ellipse cx="0" cy="0" rx="58" ry="22" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+      <ellipse cx="0" cy="0" rx="58" ry="22" fill="none" stroke="#0ea5e9" stroke-width="2.5" transform="rotate(60)"/>
+      <ellipse cx="0" cy="0" rx="58" ry="22" fill="none" stroke="#10b981" stroke-width="2.5" transform="rotate(-60)"/>
+      <circle cx="0" cy="0" r="10" fill="#0369a1"/>
+      <circle cx="52" cy="0" r="4.5" fill="#f59e0b"/>
+      <circle cx="-28" cy="-42" r="4.5" fill="#ec4899"/>
+      <circle cx="-26" cy="44" r="4.5" fill="#10b981"/>
+    </g>
   </g>
 
-  <!-- Top Title -->
-  <text x="400" y="55" font-family="'Segoe UI', sans-serif" font-size="24" font-weight="bold" fill="#065f46" text-anchor="middle">🔬 भौतिकी, रसायन एवं जीव विज्ञान प्रयोगशाला</text>
-  <text x="400" y="85" font-family="'Segoe UI', sans-serif" font-size="15" fill="#047857" text-anchor="middle">भौतिक, रसायन एवं वनस्पति-जीव विज्ञान के व्यावहारिक प्रयोग</text>
+  <!-- Laboratory Granite Workbench -->
+  <rect x="0" y="346" width="800" height="24" fill="url(#benchTop)"/>
+  <rect x="0" y="370" width="800" height="130" fill="#f8fafc"/>
+  <rect x="44" y="390" width="214" height="90" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="293" y="390" width="214" height="90" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="542" y="390" width="214" height="90" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="132" y="408" width="38" height="6" rx="3" fill="#64748b"/>
+  <rect x="381" y="408" width="38" height="6" rx="3" fill="#64748b"/>
+  <rect x="630" y="408" width="38" height="6" rx="3" fill="#64748b"/>
 
-  <!-- Bottom Caption Badge -->
-  <rect x="30" y="430" width="370" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
-  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🧪 सुसज्जित विज्ञान प्रयोगशाला (Science Lab)</text>
+  <!-- Precision Compound Microscope (Left) -->
+  <g filter="url(#labShadow)">
+    <rect x="96" y="328" width="114" height="18" rx="6" fill="#1e293b"/>
+    <path d="M124,328 C100,280 104,216 146,196 L158,210 C126,226 122,276 140,328 Z" fill="#334155"/>
+    <rect x="128" y="280" width="76" height="10" rx="3" fill="#0f172a"/>
+    <rect x="148" y="274" width="36" height="4" rx="1" fill="#38bdf8"/>
+    <g transform="rotate(-24 162 214)">
+      <rect x="148" y="150" width="26" height="104" rx="6" fill="#0284c7"/>
+      <rect x="152" y="132" width="18" height="22" rx="3" fill="#0f172a"/>
+      <rect x="154" y="254" width="14" height="18" rx="3" fill="#94a3b8"/>
+    </g>
+    <circle cx="128" cy="242" r="10" fill="#e2e8f0" stroke="#475569" stroke-width="3"/>
+  </g>
+
+  <!-- Glowing Erlenmeyer Flasks (Center) -->
+  <g filter="url(#labShadow)">
+    <!-- Large Blue Flask -->
+    <path d="M324,200 L348,200 L348,244 L392,334 Q396,346 382,346 L290,346 Q276,346 280,334 L324,244 Z" fill="#ffffff" fill-opacity="0.86" stroke="#0284c7" stroke-width="3"/>
+    <path d="M306,286 L366,286 L388,334 Q391,342 380,342 L292,342 Q281,342 284,334 Z" fill="url(#flaskBlue)"/>
+    <circle cx="322" cy="316" r="5" fill="#bae6fd"/>
+    <circle cx="348" cy="306" r="4" fill="#ffffff" opacity="0.8"/>
+    <circle cx="336" cy="264" r="4.5" fill="#7dd3fc"/>
+    <rect x="318" y="192" width="36" height="10" rx="4" fill="#0284c7"/>
+
+    <!-- Medium Emerald Flask -->
+    <path d="M432,226 L452,226 L452,262 L486,336 Q490,346 478,346 L406,346 Q394,346 398,336 L432,262 Z" fill="#ffffff" fill-opacity="0.86" stroke="#15803d" stroke-width="3"/>
+    <path d="M416,298 L468,298 L482,336 Q485,342 475,342 L409,342 Q399,342 402,336 Z" fill="url(#flaskGreen)"/>
+    <circle cx="436" cy="322" r="4.5" fill="#bbf7d0"/>
+    <circle cx="454" cy="312" r="3.5" fill="#ffffff" opacity="0.85"/>
+    <rect x="427" y="218" width="30" height="9" rx="4" fill="#15803d"/>
+  </g>
+
+  <!-- Test Tube Rack (Right) -->
+  <g filter="url(#labShadow)">
+    <rect x="548" y="332" width="194" height="14" rx="4" fill="#92400e"/>
+    <rect x="556" y="256" width="12" height="76" fill="#b45309"/>
+    <rect x="722" y="256" width="12" height="76" fill="#b45309"/>
+    <rect x="548" y="252" width="194" height="10" rx="3" fill="#d97706"/>
+
+    <!-- 4 Colorful Test Tubes -->
+    <g>
+      <rect x="580" y="206" width="22" height="118" rx="11" fill="#ffffff" fill-opacity="0.88" stroke="#64748b" stroke-width="2"/>
+      <rect x="583" y="266" width="16" height="54" rx="8" fill="#ec4899"/>
+
+      <rect x="618" y="198" width="22" height="126" rx="11" fill="#ffffff" fill-opacity="0.88" stroke="#64748b" stroke-width="2"/>
+      <rect x="621" y="250" width="16" height="70" rx="8" fill="url(#flaskAmber)"/>
+
+      <rect x="656" y="206" width="22" height="118" rx="11" fill="#ffffff" fill-opacity="0.88" stroke="#64748b" stroke-width="2"/>
+      <rect x="659" y="262" width="16" height="58" rx="8" fill="#8b5cf6"/>
+
+      <rect x="694" y="212" width="22" height="112" rx="11" fill="#ffffff" fill-opacity="0.88" stroke="#64748b" stroke-width="2"/>
+      <rect x="697" y="270" width="16" height="50" rx="8" fill="#06b6d4"/>
+    </g>
+  </g>
 </svg>

@@ -79,36 +79,36 @@ export default function StaffPortalView({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20">
+    <div className="space-y-4 text-slate-900">
       {/* Compact Mobile-First Top Bar */}
-      <header className="sticky top-0 z-30 bg-gradient-to-r from-[#0f2b5b] to-[#1e40af] text-white shadow-md">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+      <header className="bg-gradient-to-r from-[#0f2b5b] to-[#1e40af] text-white rounded-2xl shadow-md overflow-hidden">
+        <div className="px-4 sm:px-5 py-4 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
               <UserCheck className="w-5 h-5 text-amber-300" />
             </div>
             <div className="min-w-0">
               <h1 className="text-sm sm:text-base font-extrabold leading-tight truncate m-0">
-                स्टाफ लाइव पोर्टल (Staff Portal)
+                स्टाफ लाइव पोर्टल (MDHSSS सेमरिया)
               </h1>
-              <p className="text-[11px] text-sky-100 truncate m-0">
-                {session.name} • रियल-टाइम सिंक
+              <p className="text-xs text-sky-100 truncate m-0">
+                {session.name} · रियल-टाइम Firebase सिंक
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
             <span
-              className={`hidden sm:inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full ${
+              className={`hidden sm:inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${
                 store.connectionStatus === 'online'
                   ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-400/30'
                   : 'bg-amber-500/20 text-amber-200 border border-amber-400/30'
               }`}
             >
               {store.connectionStatus === 'online' ? (
-                <Wifi className="w-3 h-3" />
+                <Wifi className="w-3.5 h-3.5" />
               ) : (
-                <WifiOff className="w-3 h-3" />
+                <WifiOff className="w-3.5 h-3.5" />
               )}
               {store.connectionStatus === 'online' ? 'लाइव' : 'ऑफलाइन'}
             </span>
@@ -143,8 +143,8 @@ export default function StaffPortalView({
           </div>
         </div>
 
-        {/* Fast Mobile Pill Tabs */}
-        <div className="max-w-3xl mx-auto px-4 pb-2.5 flex items-center gap-2 overflow-x-auto">
+        {/* Fast Mobile Tabs */}
+        <div className="px-4 sm:px-5 pb-3 flex items-center gap-2 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveSection('overview')}

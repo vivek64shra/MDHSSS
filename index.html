@@ -10,6 +10,8 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="google-site-verification" content="TbYLUGjtiUJJg9rKsbB_mpLSzjJWezCYseSOIgEb3H8" />
   <link rel="canonical" href="https://mdhsss.netlify.app/" />
+  <link rel="icon" type="image/jpeg" href="/images/school_logo.jpg" />
+  <link rel="apple-touch-icon" href="/images/school_logo.jpg" />
 
   <!-- OpenGraph Social Tags -->
   <meta property="og:title" content="MDHSSS - Maa Durga Higher Secondary School Semariya, Rewa (M.P.)" />
@@ -59,7 +61,7 @@
         "description": "MDHSSS (माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया, रीवा म.प्र.) - म.प्र. शासन एवं माध्यमिक शिक्षा मण्डल (MPBSE) से मान्यता प्राप्त अग्रणी शिक्षण संस्थान। UDISE: 23140402055, संस्था कोड: 322517.",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "Maa Durga H.S. School, Ward No. 1, Semariya",
+          "streetAddress": "Maa Durga H.S. School, Ward No. 08, Semariya",
           "addressLocality": "Semariya",
           "addressRegion": "Madhya Pradesh",
           "postalCode": "486445",
@@ -75,6 +77,8 @@
         "sameAs": [
           "https://mdhsssresult.netlify.app/",
           "https://mdhssslogin.netlify.app/",
+          "https://www.instagram.com/mdhsss2019?knvt=Yzk5czZjejFwbnVk",
+          "https://www.facebook.com/share/19AESFv8ym/",
           "https://maps.app.goo.gl/KmF2U4iMWCqCLmwi9"
         ],
         "identifier": [
@@ -219,15 +223,15 @@
 
           <!-- 6. Login Portal (Admin) -->
           <li>
-            <a href="#login" class="nav-link-btn nav-login-pill" onclick="navigateToPage('teacher'); return false;">
+            <a href="#admin" class="nav-link-btn nav-login-pill" onclick="navigateToPage('admin'); return false;">
               👑 एडमिन लॉगिन
             </a>
           </li>
 
-          <!-- 7. 3-DOT (KEBAB) MENU BUTTON TRIGGER -->
+          <!-- 7. SIDEBAR MENU BUTTON TRIGGER -->
           <li>
-            <button type="button" class="nav-3dot-btn" id="threeDotMenuBtn" onclick="openThreeDotMenu()" title="सभी मेन्यू, सेवाएं एवं सूचनाएं (All Pages & Services)">
-              <span class="three-dots-icon">⋮</span>
+            <button type="button" class="nav-3dot-btn" id="threeDotMenuBtn" onclick="openThreeDotMenu()" title="सभी मेन्यू, सेवाएं एवं सूचनाएं (All Pages & Services)" aria-label="मेन्यू खोलें">
+              <svg viewBox="0 0 24 24" style="width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round;"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
               <span class="three-dots-label">मेन्यू</span>
             </button>
           </li>
@@ -236,9 +240,10 @@
     </div>
   </nav>
 
-  <!-- 3. FULL 3-DOT SLIDE-OUT NAVIGATION DRAWER & BACKDROP -->
+  <!-- 3. CLEAN PINNED-HEADER SLIDE-OUT SIDEBAR DRAWER & BACKDROP -->
   <div class="threedot-backdrop" id="threeDotBackdrop" onclick="closeThreeDotMenu()"></div>
-  <aside class="threedot-drawer" id="threeDotDrawer" aria-label="स्कूल नेविगेशन मेन्यू">
+  <aside class="threedot-drawer" id="threeDotDrawer" aria-label="स्कूल नेविगेशन मेन्यू" aria-hidden="true">
+    <!-- Pinned Header (Never Scrolls Out of View) -->
     <div class="threedot-drawer-header">
       <div class="threedot-brand">
         <img 
@@ -246,184 +251,189 @@
           alt="MDHSSS Maa Durga School Logo"
           onerror="this.onerror=null; this.src='/images/school_building.svg';"
         />
-        <div>
-          <div class="threedot-brand-title">MDHSSS • माँ दुर्गा उच्चतर माध्यमिक विद्यालय</div>
-          <div class="threedot-brand-sub">सेमरिया, रीवा (म.प्र.) • UDISE: 23140402055</div>
+        <div style="min-width:0;">
+          <div class="threedot-brand-title">माँ दुर्गा उ.मा.वि. सेमरिया</div>
+          <div class="threedot-brand-sub">MDHSSS रीवा • UDISE: 23140402055</div>
         </div>
       </div>
-      <button type="button" class="threedot-close-btn" onclick="closeThreeDotMenu()" title="मेन्यू बंद करें (Close)">
+      <button type="button" class="threedot-close-btn" onclick="closeThreeDotMenu()" title="मेन्यू बंद करें (Close)" aria-label="बंद करें">
         ✕
       </button>
     </div>
 
+    <!-- Smooth Independently Scrollable Body -->
     <div class="threedot-drawer-body">
-      <!-- Quick Action Buttons -->
-      <div class="threedot-quick-pills">
-        <a href="tel:9200178385" class="threedot-quick-btn" style="background:#f0fdf4; color:#15803d; border:1px solid #86efac;">
-          📞 हेल्पलाइन: 9200178385
+      <!-- Top Side-by-Side Portal Logins (Student & Teacher) -->
+      <div class="threedot-gateway-grid">
+        <a id="drawerResultLinkDirect" href="https://mdhsssresult.netlify.app/" target="_blank" rel="noopener noreferrer" class="threedot-gateway-card student-gw" onclick="closeThreeDotMenu(true); openStudentResultDirect(event);">
+          <div class="threedot-gw-title">🎓 Student Login ↗</div>
+          <div class="threedot-gw-sub">छात्र परिणाम पोर्टल</div>
         </a>
-        <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="threedot-quick-btn" style="background:#eff6ff; color:#0369a1; border:1px solid #93c5fd;">
-          📸 फोटो गैलरी ↗
+        <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="threedot-gateway-card teacher-gw" onclick="closeThreeDotMenu(true);">
+          <div class="threedot-gw-title">👨‍🏫 Teacher Login ↗</div>
+          <div class="threedot-gw-sub">शिक्षक लॉगिन पोर्टल</div>
         </a>
       </div>
 
-      <!-- Group 1: मुख्य अनुभाग (Main Navigation) -->
+      <!-- Quick Social & Call Action Bar -->
+      <div class="threedot-quick-pills">
+        <a href="tel:9200178385" class="threedot-quick-btn" style="background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0;">
+          📞 कॉल करें
+        </a>
+        <a href="https://www.instagram.com/mdhsss2019?knvt=Yzk5czZjejFwbnVk" target="_blank" rel="noopener noreferrer" onclick="closeThreeDotMenu(true);" class="threedot-quick-btn" style="background:#fdf2f8; color:#be185d; border:1px solid #fbcfe8;">
+          📸 Instagram
+        </a>
+        <a href="https://www.facebook.com/share/19AESFv8ym/" target="_blank" rel="noopener noreferrer" onclick="closeThreeDotMenu(true);" class="threedot-quick-btn" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;">
+          📘 Facebook
+        </a>
+      </div>
+
+      <!-- Group 1: मुख्य अनुभाग -->
       <div class="threedot-group">
-        <div class="threedot-group-title">📌 मुख्य अनुभाग (Main Sections)</div>
+        <div class="threedot-group-title">मुख्य अनुभाग</div>
         
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('home')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon">🏠</span>
-            <div>
-              <div>मुख्य पृष्ठ (Home)</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">विद्यालय का मुख्य होमपेज व सुविधाएं</div>
+            <span class="threedot-item-icon" style="background:#e0f2fe; color:#0284c7;">🏠</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">मुख्य पृष्ठ (Home)</div>
+              <div class="threedot-item-sub">विद्यालय का मुख्य होमपेज व सेवाएं</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#e0f2fe; color:#0369a1;">Home →</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
 
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('about')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon">ℹ️</span>
-            <div>
-              <div>विद्यालय परिचय (About Us)</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">उद्देश्य, इतिहास, संकाय एवं निदेशक संदेश</div>
+            <span class="threedot-item-icon" style="background:#f1f5f9; color:#334155;">🏫</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">विद्यालय परिचय (About Us)</div>
+              <div class="threedot-item-sub">मान्यता, संकाय, इतिहास एवं संदेश</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">विवरण →</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
 
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('admission')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon">📝</span>
-            <div>
-              <div>New Admission (नया प्रवेश 2026-27)</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">Nursery से 12वीं तक नया प्रवेश आवेदन</div>
+            <span class="threedot-item-icon" style="background:#fef3c7; color:#b45309;">📝</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">New Admission (सत्र 2026-27)</div>
+              <div class="threedot-item-sub">Nursery से 12वीं तक ऑनलाइन प्रवेश</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#fef3c7; color:#b45309; font-weight:800;">सत्र 2026-27</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
 
-        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('feedback')" style="background:#f0fdf4; border-color:#86efac;">
-          <div class="threedot-item-left">
-            <span class="threedot-item-icon" style="color:#15803d;">💬</span>
-            <div>
-              <div style="color:#166534; font-weight:700;">विद्यालय सुझाव (Principal Review)</div>
-              <div style="font-size:0.75rem; color:#166534; font-weight:normal;">केवल प्राचार्य के अधीन • पूर्ण गोपनीयता का पूरा ध्यान</div>
-            </div>
-          </div>
-          <span class="threedot-item-tag" style="background:#dcfce7; color:#15803d; font-weight:700;">गोपनीय 🔒</span>
-        </button>
-
-        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openStudentResultDirect(event);" style="border-color:#fecdd3; background:#fff1f2;">
-          <div class="threedot-item-left">
-            <span class="threedot-item-icon" style="background:#ffe4e6; color:#be123c;">🎓</span>
-            <div>
-              <div style="color:#9f1239; font-weight:800;">विद्यार्थी लॉगिन पोर्टल (Student Login) ↗</div>
-              <div style="font-size:0.75rem; color:#be123c;">अधिकृत छात्र लॉगिन: mdhsssresult.netlify.app</div>
-            </div>
-          </div>
-          <span class="threedot-item-tag" style="background:#be123c; color:#ffffff;">New Tab ↗</span>
-        </button>
-
-        <!-- Teacher Login Option (Right Below Student Result) -->
-        <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="threedot-item-btn" onclick="closeThreeDotMenu();" style="border-color:#bae6fd; background:#f0f9ff; text-decoration:none;">
-          <div class="threedot-item-left">
-            <span class="threedot-item-icon" style="background:#e0f2fe; color:#0284c7;">👨‍🏫</span>
-            <div>
-              <div style="color:#0369a1; font-weight:800;">शिक्षक लॉगिन पोर्टल (Teacher Login) ↗</div>
-              <div style="font-size:0.75rem; color:#0284c7;">अधिकृत शिक्षक पोर्टल: mdhssslogin.netlify.app</div>
-            </div>
-          </div>
-          <span class="threedot-item-tag" style="background:#0284c7; color:#ffffff;">New Tab ↗</span>
-        </a>
-
-        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(); openFirstTimeNoticeManually();" style="border-color:#bae6fd; background:#f0f9ff;">
+        <button type="button" class="threedot-item-btn" onclick="closeThreeDotMenu(true); openFirstTimeNoticeManually();">
           <div class="threedot-item-left">
             <span class="threedot-item-icon" style="background:#e0f2fe; color:#0284c7;">🔔</span>
-            <div>
-              <div style="color:#0369a1; font-weight:800;">विद्यालय आवश्यक सूचनाएं (Notice Board)</div>
-              <div style="font-size:0.75rem; color:#0284c7;">सत्र 2026-27 प्रवेश, समय एवं मुख्य घोषणाएं</div>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">आवश्यक सूचनाएं (Notice Board)</div>
+              <div class="threedot-item-sub">ताज़ा विद्यालय घोषणाएं एवं अपडेट्स</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#0284c7; color:#ffffff;">Notice 🔔</span>
+          <span class="threedot-item-chevron">›</span>
+        </button>
+
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('feedback')">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="background:#dcfce7; color:#15803d;">💬</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">विद्यालय सुझाव (Principal Review)</div>
+              <div class="threedot-item-sub">पूर्ण गोपनीयता • सीधे प्राचार्य को</div>
+            </div>
+          </div>
+          <span class="threedot-item-chevron">›</span>
         </button>
       </div>
 
-      <!-- Group 2: विद्यार्थी व शैक्षणिक सेवाएं (Student Services) -->
+      <!-- Group 2: विद्यार्थी व शैक्षणिक सेवाएं -->
       <div class="threedot-group">
-        <div class="threedot-group-title">🎓 विद्यार्थी व शैक्षणिक मॉड्यूल (Student Services)</div>
+        <div class="threedot-group-title">विद्यार्थी व शैक्षणिक सेवाएं</div>
 
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('whatsapp')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon" style="color:#16a34a;">💬</span>
-            <div>
-              <div>कक्षावार व्हाट्सएप ग्रुप्स</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">Class 4th, 5th, 8th-12th ऑफिशियल लिंक्स</div>
+            <span class="threedot-item-icon" style="background:#dcfce7; color:#16a34a;">💬</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">कक्षावार व्हाट्सएप ग्रुप्स</div>
+              <div class="threedot-item-sub">Nursery, LKG, UKG से 12वीं तक क्रमबद्ध</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#dcfce7; color:#15803d;">Active 🟢</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
 
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('books')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon">📚</span>
-            <div>
-              <div>म.प्र. बोर्ड ई-बुक्स एवं नोट्स</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">कक्षा 1 से 12वीं तक की सभी पाठ्यपुस्तकें</div>
+            <span class="threedot-item-icon" style="background:#e0e7ff; color:#4338ca;">📚</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">MP Board ई-बुक्स एवं नोट्स</div>
+              <div class="threedot-item-sub">कक्षा 1 से 12वीं तक PDF पाठ्यपुस्तकें</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#e0e7ff; color:#4338ca;">PDF E-Books</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
 
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('facilities')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon">🏫</span>
-            <div>
-              <div>विद्यालय सुविधाएं (Facilities)</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">GPS स्कूल बस, स्मार्ट क्लास, कंप्यूटर एवं विज्ञान लैब</div>
+            <span class="threedot-item-icon" style="background:#fef3c7; color:#b45309;">🚌</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">विद्यालय सुविधाएं (Facilities)</div>
+              <div class="threedot-item-sub">GPS बस, स्मार्ट क्लास, लैब्स व लाइब्रेरी</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">सुविधाएं →</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
+
+        <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" onclick="closeThreeDotMenu(true);" class="threedot-item-btn">
+          <div class="threedot-item-left">
+            <span class="threedot-item-icon" style="background:#f3e8ff; color:#7c3aed;">📸</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">गूगल फोटो गैलरी ↗</div>
+              <div class="threedot-item-sub">कार्यक्रम, उत्सव एवं परिसर की तस्वीरें</div>
+            </div>
+          </div>
+          <span class="threedot-item-chevron">↗</span>
+        </a>
       </div>
 
-      <!-- Group 3: संपर्क, फीडबैक एवं लॉगिन पोर्टल (Portals & Contact) -->
+      <!-- Group 3: संपर्क एवं प्रशासन -->
       <div class="threedot-group">
-        <div class="threedot-group-title">📞 संपर्क व प्रशासनिक पोर्टल (Portals & Directory)</div>
+        <div class="threedot-group-title">संपर्क एवं प्रशासन</div>
 
         <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('staff')">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon">📞</span>
-            <div>
-              <div>स्टाफ एवं शिक्षक डायरेक्टरी</div>
-              <div style="font-size:0.75rem; color:#64748b; font-weight:normal;">प्रिंसिपल, शिक्षक एवं शाखा प्रभारियों के नंबर</div>
+            <span class="threedot-item-icon" style="background:#f1f5f9; color:#334155;">📞</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title">स्टाफ संपर्क डायरेक्टरी</div>
+              <div class="threedot-item-sub">प्रिंसिपल, निदेशक व प्रभारियों के नंबर</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#f1f5f9; color:#475569;">डायरेक्टरी →</span>
+          <span class="threedot-item-chevron">›</span>
         </button>
 
-        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('teacher')" style="background:#f0fdf4; border-color:#99f6e4;">
+        <button type="button" class="threedot-item-btn" onclick="navigateToPageAndClose('admin')" style="background:#f5f3ff; border-color:#ddd6fe;">
           <div class="threedot-item-left">
-            <span class="threedot-item-icon" style="color:#0d9488;">🔐</span>
-            <div>
-              <div style="color:#0f766e; font-weight:800;">शिक्षक एवं एडमिन लॉगिन पोर्टल</div>
-              <div style="font-size:0.75rem; color:#115e59;">उपस्थिति, परीक्षा अंक, रिजल्ट लिंक व डेटा कंट्रोल</div>
+            <span class="threedot-item-icon" style="background:#7c3aed; color:#ffffff;">👑</span>
+            <div class="threedot-item-text">
+              <div class="threedot-item-title" style="color:#5b21b6;">एडमिन पैनल (Admin Login)</div>
+              <div class="threedot-item-sub" style="color:#6d28d9;">सूचना, प्रवेश, व्हाट्सएप व क्लाउड कंट्रोल</div>
             </div>
           </div>
-          <span class="threedot-item-tag" style="background:#0d9488; color:#ffffff;">Login 🔑</span>
+          <span class="threedot-item-chevron" style="color:#7c3aed;">›</span>
         </button>
       </div>
     </div>
 
+    <!-- Compact Pinned Footer -->
     <div class="threedot-drawer-footer">
-      <div style="font-weight:700; color:#1e293b; margin-bottom:3px;">📍 माँ दुर्गा उच्चतर माध्यमिक विद्यालय</div>
-      <div>सेमरिया, जिला - रीवा (मध्य प्रदेश) - 486445</div>
-      <div>🕒 स्कूल समय: प्रातः 09:30 AM से सायं 04:00 PM</div>
-      <div style="margin-top:4px; font-weight:700; color:#0284c7;">Sanstha Code: 322517 • UDISE: 23140402055</div>
-      <div style="margin-top:8px;">
-        <a href="https://maps.app.goo.gl/KmF2U4iMWCqCLmwi9" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:5px; color:#0284c7; font-size:0.82rem; font-weight:700; text-decoration:none; background:#eff6ff; padding:4px 8px; border-radius:4px; border:1px solid #bfdbfe;">
-          🗺️ Google Maps पर देखें ↗
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:700; color:#0f172a;">वार्ड 08, सेमरिया, रीवा (म.प्र.)</div>
+          <div style="font-size:0.72rem; color:#64748b;">समय: 9:30 AM – 4:00 PM · कोड: 322517</div>
+        </div>
+        <a href="https://maps.app.goo.gl/KmF2U4iMWCqCLmwi9" target="_blank" rel="noopener noreferrer" onclick="closeThreeDotMenu(true);" style="color:#0284c7; font-size:0.76rem; font-weight:700; text-decoration:none; background:#eff6ff; padding:5px 10px; border-radius:8px; border:1px solid #bfdbfe; white-space:nowrap;">
+          🗺️ Maps ↗
         </a>
       </div>
     </div>
@@ -2132,128 +2142,166 @@
     </div>
   </div> <!-- Closes #pages-container -->
 
-  <!-- 7. COMPACT & SLEEK MAIN HOMEPAGE CONTENT -->
+  <!-- 7. REFINED & DISTINGUISHED MAIN HOMEPAGE CONTENT -->
   <main id="home-main-section" style="display: block;">
     <div class="container">
 
-      <!-- COMPACT HERO BANNER -->
-      <section class="hero-container" style="margin-bottom:1.35rem;">
-        <div class="hero-glass-panel glass-card" style="padding: 1.35rem 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.75rem;">
-            <div class="hero-badge-tag" style="margin-bottom:0; font-size:0.8rem; padding:4px 10px;">
-              ✨ विद्या ददाति विनयं • ज्ञान, संस्कार व सफलता
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <span class="page-badge-pill" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:0.78rem; font-weight:700;">
-                🕒 9:30 AM - 4:00 PM
-              </span>
-              <!-- Small Notification Bell Icon for Home Screen -->
-              <button type="button" class="home-mini-bell-btn" onclick="openFirstTimeNoticeManually()" title="विद्यालय नवीन सूचनाएं (Notice & Announcements)" aria-label="School Announcements">
-                <span class="mini-bell-icon">🔔</span>
-                <span class="mini-bell-dot"></span>
-              </button>
-            </div>
-          </div>
+      <!-- FLAGSHIP SCHOOL HERO BANNER (2-COLUMN CAMPUS SHOWCASE) -->
+      <section class="hero-container" style="margin-bottom:1.5rem;">
+        <div class="hero-glass-panel glass-card" style="padding: 1.55rem 1.5rem; border: 1.5px solid #cbd5e1; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 60%, #eff6ff 100%); box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);">
 
-          <h2 class="hero-main-title" style="font-size:1.85rem; margin-bottom:0.45rem; line-height:1.25;">
-            माँ दुर्गा उच्चतर माध्यमिक विद्यालय, <span>सेमरिया (रीवा)</span>
-          </h2>
-          <p class="hero-sub-description" style="font-size:0.95rem; margin-bottom:1rem; line-height:1.55; color:#475569;">
-            म.प्र. बोर्ड (MPBSE) मान्यता प्राप्त • UDISE: 23140402055 | संस्था कोड: 322517 • नर्सरी से 12वीं तक (गणित, विज्ञान, वाणिज्य संकाय) उत्कृष्ट एवं अनुशासित शिक्षा।
-          </p>
-
-          <!-- TOP PORTAL GATEWAYS: STUDENT LOGIN & TEACHER LOGIN (SIDE-BY-SIDE / AGAL-BAGAL) -->
-          <div class="hero-login-gateways-box" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:0.65rem; margin-bottom:1.15rem; width:100%; max-width:620px;">
-            <!-- 1. Student Login -->
-            <a href="https://mdhsssresult.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-hero-gateway gateway-student-btn" onclick="openStudentResultDirect(event)" title="अधिकृत छात्र लॉगिन पोर्टल (mdhsssresult.netlify.app)" style="padding:0.65rem 0.95rem;">
-              <div class="gateway-btn-left">
-                <span class="gateway-emoji" style="font-size:1.35rem;">🎓</span>
-                <div class="gateway-text-wrap">
-                  <div class="gateway-title" style="font-size:0.95rem;">विद्यार्थी लॉगिन (Student Login) ↗</div>
-                  <div class="gateway-sub" style="font-size:0.72rem;">ऑनलाइन परीक्षा परिणाम व अंकपत्र</div>
+          <div class="hero-split-grid">
+            <!-- Left Column: Institutional Identity, Headline & Quick Logins -->
+            <div style="min-width:0;">
+              <!-- Top Official Identity Row -->
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:0.95rem; padding-bottom:0.8rem; border-bottom:1px solid #e2e8f0;">
+                <img
+                  src="/images/school_logo.jpg"
+                  alt="MDHSSS School Emblem"
+                  onerror="this.onerror=null; this.src='/images/school_building.svg';"
+                  style="width:52px; height:52px; border-radius:14px; border:2px solid #0284c7; object-fit:cover; box-shadow:0 4px 12px rgba(2,132,199,0.2); flex-shrink:0;"
+                />
+                <div style="min-width:0;">
+                  <div style="font-size:0.78rem; font-weight:800; color:#0369a1; letter-spacing:0.01em;">
+                    विद्या ददाति विनयं · म.प्र. बोर्ड (MPBSE) मान्यता प्राप्त
+                  </div>
+                  <div style="font-size:0.75rem; color:#475569; font-weight:600; margin-top:2px;">
+                    UDISE: 23140402055 · संस्था कोड: 322517 · 9:30 AM – 4:00 PM
+                  </div>
                 </div>
               </div>
-              <span class="gateway-badge" style="font-size:0.72rem; padding:3px 8px;">लॉगिन ↗</span>
-            </a>
 
-            <!-- 2. Teacher Login (Agal-Bagal / Side-by-Side) -->
-            <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-hero-gateway gateway-teacher-btn" title="अधिकृत शिक्षक लॉगिन पोर्टल (mdhssslogin.netlify.app)" style="padding:0.65rem 0.95rem;">
-              <div class="gateway-btn-left">
-                <span class="gateway-emoji" style="font-size:1.35rem;">👨‍🏫</span>
-                <div class="gateway-text-wrap">
-                  <div class="gateway-title" style="font-size:0.95rem;">शिक्षक लॉगिन (Teacher Login) ↗</div>
-                  <div class="gateway-sub" style="font-size:0.72rem;">अध्यापक व प्रशासन अधिकृत पोर्टल</div>
+              <!-- Main Headline & Value Proposition -->
+              <h2 class="hero-main-title" style="font-size:clamp(1.5rem, 3vw, 2.15rem); margin-bottom:0.55rem; line-height:1.25; text-wrap:balance;">
+                माँ दुर्गा उच्चतर माध्यमिक विद्यालय, <span>सेमरिया (रीवा)</span>
+              </h2>
+              <p class="hero-sub-description" style="font-size:0.94rem; margin-bottom:1.1rem; line-height:1.65; color:#334155;">
+                नर्सरी से 12वीं तक (गणित, जीव विज्ञान, वाणिज्य व कला संकाय) अनुशासित परिवेश, आधुनिक प्रयोगशालाएं, 100% बोर्ड परिणाम एवं सुरक्षित GPS बस सेवा के साथ विद्यार्थियों के उज्ज्वल भविष्य का निर्माण।
+              </p>
+
+              <!-- TOP PORTAL GATEWAYS: STUDENT LOGIN & TEACHER LOGIN (SIDE-BY-SIDE / AGAL-BAGAL) -->
+              <div class="hero-login-gateways-box" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap:0.7rem; margin-bottom:1.1rem; width:100%; max-width:100%;">
+                <!-- 1. Student Login -->
+                <a id="heroStudentLoginLink" href="https://mdhsssresult.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-hero-gateway gateway-student-btn" onclick="openStudentResultDirect(event)" title="अधिकृत छात्र लॉगिन पोर्टल (mdhsssresult.netlify.app)" style="padding:0.72rem 0.95rem;">
+                  <div class="gateway-btn-left">
+                    <span class="gateway-emoji" style="font-size:1.35rem;">🎓</span>
+                    <div class="gateway-text-wrap">
+                      <div class="gateway-title" style="font-size:0.94rem;">Student Login ↗</div>
+                      <div class="gateway-sub" style="font-size:0.73rem;">छात्र परिणाम व अंकपत्र</div>
+                    </div>
+                  </div>
+                  <span class="gateway-badge" style="font-size:0.7rem; padding:4px 8px;">लॉगिन ↗</span>
+                </a>
+
+                <!-- 2. Teacher Login (Agal-Bagal / Side-by-Side) -->
+                <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-hero-gateway gateway-teacher-btn" title="अधिकृत शिक्षक लॉगिन पोर्टल (mdhssslogin.netlify.app)" style="padding:0.72rem 0.95rem;">
+                  <div class="gateway-btn-left">
+                    <span class="gateway-emoji" style="font-size:1.35rem;">👨‍🏫</span>
+                    <div class="gateway-text-wrap">
+                      <div class="gateway-title" style="font-size:0.94rem;">Teacher Login ↗</div>
+                      <div class="gateway-sub" style="font-size:0.73rem;">शिक्षक व स्टाफ पोर्टल</div>
+                    </div>
+                  </div>
+                  <span class="gateway-badge" style="font-size:0.7rem; padding:4px 8px;">लॉगिन ↗</span>
+                </a>
+              </div>
+
+              <!-- Primary & Quick Action Strip -->
+              <div class="hero-action-buttons" style="gap:8px;">
+                <button class="btn-hero-pri" onclick="navigateToPage('admission')" style="font-size:0.86rem; padding:0.58rem 1.15rem;">
+                  ✍️ New Admission 2026-27
+                </button>
+                <button class="btn-hero-sec" style="background:#f0fdf4; color:#15803d; border-color:#86efac; font-weight:700; font-size:0.84rem; padding:0.54rem 0.95rem;" onclick="navigateToPage('feedback')" title="विद्यालय के लिए सुझाव (Under Principal Review)">
+                  💬 विद्यालय सुझाव
+                </button>
+                <button class="btn-hero-sec" style="background:#dcfce7; color:#15803d; border-color:#86efac; font-size:0.84rem; padding:0.54rem 0.95rem;" onclick="navigateToPage('whatsapp')">
+                  💬 WhatsApp ग्रुप्स
+                </button>
+                <a href="https://mpboardbooks.com/" target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="background:#fffbeb; color:#b45309; border-color:#fde68a; font-size:0.84rem; padding:0.54rem 0.95rem;">
+                  📚 MP Board Books ↗
+                </a>
+                <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.84rem; padding:0.54rem 0.95rem;">
+                  📸 स्कूल गैलरी ↗
+                </a>
+                <a href="https://maps.app.goo.gl/KmF2U4iMWCqCLmwi9" target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="background:#f0f9ff; color:#0369a1; border-color:#bae6fd; font-size:0.84rem; padding:0.54rem 0.95rem;">
+                  🗺️ लोकेशन ↗
+                </a>
+              </div>
+            </div>
+
+            <!-- Right Column: Flagship Campus Visual Card -->
+            <div class="hero-campus-showcase">
+              <div class="hero-campus-frame">
+                <img
+                  src="/images/school_building.svg"
+                  alt="MDHSSS माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया परिसर"
+                />
+              </div>
+              <div class="hero-campus-meta">
+                <div style="min-width:0;">
+                  <div style="font-size:0.82rem; font-weight:800; color:#0f172a;">भव्य विद्यालय परिसर, सेमरिया</div>
+                  <div style="font-size:0.72rem; color:#64748b; font-weight:600;">वार्ड 08, रीवा · 100% CCTV सुरक्षित</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                  <a href="https://www.instagram.com/mdhsss2019?knvt=Yzk5czZjejFwbnVk" target="_blank" rel="noopener noreferrer" title="Instagram @mdhsss2019" aria-label="Instagram" style="width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af); color:#fff; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(221,42,123,0.28);">
+                    <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:#ffffff;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  </a>
+                  <a href="https://www.facebook.com/share/19AESFv8ym/" target="_blank" rel="noopener noreferrer" title="Facebook Official Page" aria-label="Facebook" style="width:34px; height:34px; border-radius:9px; background:#1877f2; color:#fff; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(24,119,242,0.28);">
+                    <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:#ffffff;"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                  </a>
+                  <button type="button" class="home-mini-bell-btn" onclick="openFirstTimeNoticeManually()" title="विद्यालय नवीन सूचनाएं (Notice & Announcements)" aria-label="School Announcements" style="width:34px; height:34px;">
+                    <span class="mini-bell-icon">🔔</span>
+                    <span class="mini-bell-dot"></span>
+                  </button>
                 </div>
               </div>
-              <span class="gateway-badge" style="font-size:0.72rem; padding:3px 8px;">लॉगिन ↗</span>
-            </a>
-          </div>
-          
-          <div class="hero-action-buttons" style="gap:8px;">
-            <button class="btn-hero-pri" onclick="navigateToPage('admission')" style="font-size:0.86rem; padding:0.55rem 1.05rem;">
-              ✍️ New Admission
-            </button>
-            <button class="btn-hero-sec" style="background:#f0fdf4; color:#15803d; border-color:#86efac; font-weight:700; font-size:0.86rem; padding:0.55rem 1.05rem;" onclick="navigateToPage('feedback')" title="विद्यालय के लिए सुझाव (Under Principal Review)">
-              💬 विद्यालय सुझाव (Principal Review)
-            </button>
-            <button class="btn-hero-sec" style="background:#dcfce7; color:#15803d; border-color:#86efac; font-size:0.86rem; padding:0.55rem 1.05rem;" onclick="navigateToPage('whatsapp')">
-              💬 WhatsApp ग्रुप्स
-            </button>
-            <a href="https://mpboardbooks.com/" target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="background:#fffbeb; color:#b45309; border-color:#fde68a; font-size:0.86rem; padding:0.55rem 1.05rem;">
-              📚 MP Board Books ↗
-            </a>
-            <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.86rem; padding:0.55rem 1.05rem;">
-              📸 स्कूल गैलरी ↗
-            </a>
-            <a href="https://maps.app.goo.gl/KmF2U4iMWCqCLmwi9" target="_blank" rel="noopener noreferrer" class="btn-hero-sec" style="background:#f0f9ff; color:#0369a1; border-color:#bae6fd; font-size:0.86rem; padding:0.55rem 1.05rem;">
-              🗺️ स्कूल लोकेशन (Maps) ↗
-            </a>
+            </div>
           </div>
 
-          <!-- Quick Stats Ribbon (Compact & Medium) -->
-          <div class="hero-stats-row" style="margin-top:1.15rem; padding-top:1rem;">
-            <div class="stat-box" onclick="navigateToPage('about')" style="cursor:pointer; padding:7px 10px;" title="कक्षा विवरण देखें">
-              <div class="stat-number" style="font-size:1.15rem;">🎓 Nursery-12th</div>
-              <div class="stat-label" style="font-size:0.74rem;">गणित, बायो, कॉमर्स संकाय</div>
+          <!-- Quick Institutional Proof Strip -->
+          <div class="hero-stats-row" style="margin-top:1.25rem; padding-top:1rem;">
+            <div class="stat-box" onclick="navigateToPage('about')" style="cursor:pointer; padding:10px 12px;" title="कक्षा विवरण देखें">
+              <div class="stat-number" style="font-size:1.15rem;">🎓 Nursery–12th</div>
+              <div class="stat-label" style="font-size:0.75rem;">गणित, बायो, कॉमर्स, कला</div>
             </div>
-            <div class="stat-box" onclick="navigateToPage('student')" style="cursor:pointer; padding:7px 10px;" title="रिजल्ट देखें">
-              <div class="stat-number" style="font-size:1.15rem;">🏆 100%</div>
-              <div class="stat-label" style="font-size:0.74rem;">उत्कृष्ट बोर्ड परिणाम</div>
+            <div class="stat-box" onclick="navigateToPage('student')" style="cursor:pointer; padding:10px 12px;" title="रिजल्ट देखें">
+              <div class="stat-number" style="font-size:1.15rem;">🏆 100% परिणाम</div>
+              <div class="stat-label" style="font-size:0.75rem;">10+ वर्षों की उत्कृष्ट प्रतिष्ठा</div>
             </div>
-            <div class="stat-box" onclick="navigateToPage('staff')" style="cursor:pointer; padding:7px 10px;" title="स्टाफ देखें">
-              <div class="stat-number" style="font-size:1.15rem;">👨‍🏫 35+</div>
-              <div class="stat-label" style="font-size:0.74rem;">35+ अनुभवी शिक्षक</div>
+            <div class="stat-box" onclick="navigateToPage('staff')" style="cursor:pointer; padding:10px 12px;" title="स्टाफ देखें">
+              <div class="stat-number" style="font-size:1.15rem;">👨‍🏫 35+ शिक्षक</div>
+              <div class="stat-label" style="font-size:0.75rem;">अनुभवी एवं विषय विशेषज्ञ</div>
             </div>
-            <div class="stat-box" onclick="navigateToPage('facilities')" style="cursor:pointer; padding:7px 10px;" title="सुविधाएं देखें">
+            <div class="stat-box" onclick="navigateToPage('facilities')" style="cursor:pointer; padding:10px 12px;" title="सुविधाएं देखें">
               <div class="stat-number" style="font-size:1.15rem;">🚌 100% CCTV</div>
-              <div class="stat-label" style="font-size:0.74rem;">सुरक्षित कैंपस व बस</div>
+              <div class="stat-label" style="font-size:0.75rem;">सुरक्षित परिसर व GPS बस</div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ==================== HOME PAGE COMPACT ABOUT PREVIEW ==================== -->
-      <section class="section-wrapper" id="home-about-section" style="margin-bottom:1.5rem;">
-        <div class="glass-card page-card-body" style="padding: 1.1rem 1.15rem; border: 1.5px solid #bae6fd; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); border-radius: var(--radius-md); box-shadow: 0 4px 18px rgba(2,132,199,0.07);">
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:0.65rem;">
+      <section class="section-wrapper" id="home-about-section" style="margin-bottom:1.65rem;">
+        <div class="glass-card page-card-body" style="padding: 1.25rem 1.35rem; border: 1.5px solid #bae6fd; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); border-radius: var(--radius-md); box-shadow: 0 6px 20px rgba(2,132,199,0.08);">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:0.7rem;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:1.25rem;">ℹ️</span>
-              <h3 style="margin:0; font-size:1.15rem; color:#0f172a; font-weight:800;">विद्यालय परिचय (About Us)</h3>
+              <span style="font-size:1.25rem;">🏫</span>
+              <h3 style="margin:0; font-size:1.18rem; color:#0f172a; font-weight:800;">विद्यालय परिचय (About Us)</h3>
             </div>
-            <span class="section-chip" style="background:#eff6ff; color:#0284c7; border-color:#93c5fd; font-weight:800; margin:0; font-size:0.75rem;">
-              🏆 सेमरिया अंचल का #1 प्रतिष्ठित संस्थान
+            <span style="color:#0369a1; font-weight:800; font-size:0.78rem;">
+              सेमरिया अंचल का प्रतिष्ठित शिक्षण संस्थान
             </span>
           </div>
 
-          <p style="font-size:0.9rem; line-height:1.65; color:#334155; margin:0 0 0.85rem 0;">
+          <p style="font-size:0.92rem; line-height:1.7; color:#334155; margin:0 0 0.9rem 0;">
             माँ दुर्गा उच्चतर माध्यमिक विद्यालय सेमरिया (रीवा, म.प्र. • UDISE: <strong>23140402055</strong>, संस्था कोड: <strong>322517</strong>) म.प्र. शासन एवं माध्यमिक शिक्षा मण्डल (MPBSE) भोपाल से पूर्ण मान्यता प्राप्त अग्रणी शिक्षण संस्थान है। विगत 10+ वर्षों से 100% बोर्ड परीक्षा परिणाम, सुसज्जित भौतिकी/रसायन/जीवविज्ञान/कंप्यूटर लैब्स, 35+ ग्रामों तक सुरक्षित GPS स्कूल बस सेवा, 100% CCTV सुरक्षित परिसर, अनुशासन एवं उच्च संस्कारों के साथ नर्सरी से 12वीं तक (गणित, विज्ञान, वाणिज्य एवं कला संकाय) में उत्कृष्ट एवं मूल्यपरक शिक्षा प्रदान कर रहा है।
           </p>
 
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding-top:0.65rem; border-top:1px solid #e0f2fe;">
-            <div style="font-size:0.82rem; color:#64748b; font-weight:600;">
-              🕒 स्कूल समय: प्रातः 09:30 AM से 04:00 PM • सोमवार - शनिवार
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding-top:0.75rem; border-top:1px solid #e0f2fe;">
+            <div style="font-size:0.82rem; color:#475569; font-weight:600;">
+              प्रातः 09:30 AM से 04:00 PM · सोमवार से शनिवार · सेमरिया, रीवा (म.प्र.)
             </div>
-            <button type="button" class="btn-hero-pri" onclick="navigateToPage('about')" style="font-size:0.84rem; padding:0.45rem 1rem; background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-radius:8px; box-shadow:0 3px 10px rgba(2,132,199,0.25); cursor:pointer; font-weight:700;">
+            <button type="button" class="btn-hero-pri" onclick="navigateToPage('about')" style="font-size:0.84rem; padding:0.5rem 1.1rem; background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-radius:10px; box-shadow:0 4px 12px rgba(2,132,199,0.25); cursor:pointer; font-weight:700;">
               और देखें... (विस्तार से पढ़ें →)
             </button>
           </div>
@@ -2262,9 +2310,9 @@
 
       <!-- BENTO GRID PORTAL HUB (COMPACT QUICK ACCESS TO ALL PAGES) -->
       <section class="section-wrapper" style="margin-bottom:2rem;">
-        <div class="section-heading-box" style="margin-bottom:1.25rem;">
-          <span class="section-chip">🚀 त्वरित सेवाएं एवं पोर्टल्स</span>
-          <h3 class="section-main-title" style="font-size:1.65rem;">मुख्य पोर्टल एवं पेज डायरेक्टरी</h3>
+        <div class="section-heading-box" style="margin-bottom:1.15rem;">
+          <div style="font-size:0.8rem; font-weight:800; color:#0284c7; margin-bottom:3px;">त्वरित सेवाएं एवं ऑनलाइन पोर्टल्स</div>
+          <h3 class="section-main-title" style="font-size:1.55rem;">मुख्य पोर्टल एवं पेज डायरेक्टरी</h3>
         </div>
 
         <div class="quick-hub-grid">
@@ -2273,7 +2321,7 @@
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff;">📝</div>
             <div class="hub-content">
               <h4>New Admission (नया प्रवेश 2026-27)</h4>
-              <p>Nursery से 12वीं (गणित, जीव विज्ञान, वाणिज्य संकाय) नवीन प्रवेश आवेदन।</p>
+              <p>Nursery से 12वीं (गणित, जीव विज्ञान, वाणिज्य व कला) नवीन प्रवेश आवेदन।</p>
               <span class="hub-link-tag">प्रवेश फॉर्म खोलें →</span>
             </div>
           </div>
@@ -2295,7 +2343,7 @@
             </div>
             <div class="hub-content">
               <h4>कक्षावार व्हाट्सएप ग्रुप्स</h4>
-              <p>Class 4th, 5th, 8th, 9th, 10th, 11th, 12th के आधिकारिक लिंक्स।</p>
+              <p>Nursery, LKG, UKG से 12वीं तक के क्रमबद्ध आधिकारिक व्हाट्सएप लिंक्स।</p>
               <span class="hub-link-tag" style="background:#dcfce7; color:#15803d; border-color:#86efac;">ग्रुप्स देखें →</span>
             </div>
           </div>
@@ -2310,25 +2358,25 @@
             </div>
           </div>
 
-          <!-- Hub 5: Student Login Portal (DIRECT ONE-CLICK EXTERNAL GATEWAY) -->
-          <div class="quick-hub-card glass-card" onclick="openStudentResultDirect(event)" style="cursor:pointer; border:1.5px solid #fecdd3; background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);">
+          <!-- Hub 5: Student Login Portal (DIRECT NATIVE LINK) -->
+          <a id="hubStudentLoginLink" href="https://mdhsssresult.netlify.app/" target="_blank" rel="noopener noreferrer" onclick="openStudentResultDirect(event)" class="quick-hub-card glass-card" style="cursor:pointer; text-decoration:none; border:1.5px solid #fecdd3; background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);">
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #e11d48, #be123c); color:#fff;">🎓</div>
             <div class="hub-content">
               <h4 style="color:#9f1239;">Student Login Portal ↗</h4>
               <p>अधिकृत छात्र लॉगिन पोर्टल (ऑनलाइन अंकपत्र व परिणाम) सीधे खोलें।</p>
               <span class="hub-link-tag" style="background:#ffe4e6; color:#be123c; border-color:#fecdd3; font-weight:700;">छात्र लॉगिन ↗</span>
             </div>
-          </div>
+          </a>
 
-          <!-- Teacher Login Portal (DIRECTLY UNDER STUDENT RESULT) -->
-          <div class="quick-hub-card glass-card" onclick="window.open('https://mdhssslogin.netlify.app/', '_blank', 'noopener,noreferrer')" style="cursor:pointer; border:1.5px solid #bae6fd; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
+          <!-- Teacher Login Portal (DIRECT NATIVE LINK RIGHT BELOW STUDENT LOGIN) -->
+          <a href="https://mdhssslogin.netlify.app/" target="_blank" rel="noopener noreferrer" class="quick-hub-card glass-card" style="cursor:pointer; text-decoration:none; border:1.5px solid #bae6fd; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
             <div class="hub-icon-circle hub-teacher" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff;">👨‍🏫</div>
             <div class="hub-content">
               <h4 style="color:#0369a1;">Teacher Login Portal ↗</h4>
               <p>अधिकृत शिक्षक लॉगिन पोर्टल (mdhssslogin.netlify.app) सीधे खोलें।</p>
               <span class="hub-link-tag" style="background:#e0f2fe; color:#0284c7; border-color:#bae6fd; font-weight:700;">शिक्षक लॉगिन ↗</span>
             </div>
-          </div>
+          </a>
 
           <!-- Hub 6: About School -->
           <div class="quick-hub-card glass-card" onclick="navigateToPage('about')" style="cursor:pointer;">
@@ -2355,7 +2403,7 @@
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#fff;">👑</div>
             <div class="hub-content">
               <h4 style="color:#6d28d9;">School Admin Control</h4>
-              <p>प्रवेश आवेदन, परीक्षा अंक रिकॉर्ड्स एवं डिजिटल कंट्रोल पैनल।</p>
+              <p>प्रवेश आवेदन, सूचना पॉपअप, व्हाट्सएप व क्लाउड कंट्रोल पैनल।</p>
               <span class="hub-link-tag" style="background:#f3e8ff; color:#7e22ce; border-color:#d8b4fe; font-weight:700;">एडमिन पैनल खोलें →</span>
             </div>
           </div>
@@ -2365,75 +2413,127 @@
             <div class="hub-icon-circle" style="background:linear-gradient(135deg, #0ea5e9, #0284c7); color:#fff;">🗺️</div>
             <div class="hub-content">
               <h4 style="color:#0369a1;">गूगल मैप लोकेशन (Google Maps) ↗</h4>
-              <p>सेमरिया, रीवा स्कूल परिसर का सटीक गूगल मैप्स नेविगेशन व दिशा-निर्देश प्राप्त करें।</p>
+              <p>सेमरिया, रीवा स्कूल परिसर का सटीक गूगल मैप्स नेविगेशन प्राप्त करें।</p>
               <span class="hub-link-tag" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd; font-weight:700;">गूगल मैप्स पर देखें ↗</span>
             </div>
           </a>
         </div>
       </section>
 
+      <!-- OFFICIAL SOCIAL MEDIA & SCHOOL COMMUNITY CONNECT -->
+      <section class="section-wrapper" id="home-social-section" style="margin-bottom:2rem;">
+        <div class="section-heading-box" style="margin-bottom:1rem;">
+          <div style="font-size:0.8rem; font-weight:800; color:#be185d; margin-bottom:3px;">आधिकारिक सोशल मीडिया व विद्यालय अपडेट्स</div>
+          <h3 class="section-main-title" style="font-size:1.5rem;">MDHSSS से सोशल मीडिया पर जुड़ें</h3>
+        </div>
+
+        <div class="social-connect-grid">
+          <!-- Official Instagram -->
+          <a href="https://www.instagram.com/mdhsss2019?knvt=Yzk5czZjejFwbnVk" target="_blank" rel="noopener noreferrer" class="social-connect-card ig-card">
+            <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+              <div class="social-icon-box ig-bg">
+                <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:#ffffff;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+              <div style="min-width:0;">
+                <div style="font-size:1rem; font-weight:800; color:#9d174d;">Instagram (@mdhsss2019)</div>
+                <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">वार्षिक उत्सव, रील्स, विज्ञान प्रदर्शनी व फोटो</div>
+              </div>
+            </div>
+            <span class="social-follow-cta" style="background:#db2777; color:#ffffff;">Follow ↗</span>
+          </a>
+
+          <!-- Official Facebook Page -->
+          <a href="https://www.facebook.com/share/19AESFv8ym/" target="_blank" rel="noopener noreferrer" class="social-connect-card fb-card">
+            <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+              <div class="social-icon-box fb-bg">
+                <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:#ffffff;"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+              </div>
+              <div style="min-width:0;">
+                <div style="font-size:1rem; font-weight:800; color:#1e40af;">Facebook Official Page</div>
+                <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">टॉपर्स सम्मान, सूचनाएं एवं विद्यालय समाचार</div>
+              </div>
+            </div>
+            <span class="social-follow-cta" style="background:#1877f2; color:#ffffff;">Like & Follow ↗</span>
+          </a>
+
+          <!-- Official WhatsApp Classes -->
+          <button type="button" onclick="navigateToPage('whatsapp')" class="social-connect-card wa-card" style="cursor:pointer; text-align:left; width:100%;">
+            <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+              <div class="social-icon-box wa-bg">
+                <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:#ffffff;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.126-.525-1.704-.7-2.779-2.42-2.864-2.535-.086-.115-.691-.92-1.077-.92-.387 0-.58.077-.788.286-.208.208-.795.777-.795 1.895 0 1.118.814 2.197.928 2.35.114.153 1.589 2.426 3.849 3.401.538.232.958.371 1.286.475.541.172 1.033.148 1.423.09.435-.065 1.336-.546 1.527-1.072.191-.527.191-.979.134-1.073-.058-.094-.211-.153-.443-.269z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.176L2 22l4.98-1.398A9.957 9.957 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.167c-1.636 0-3.16-.487-4.437-1.326l-.318-.21-2.96.83.844-2.884-.23-.332A8.12 8.12 0 0 1 3.833 12c0-4.503 3.664-8.167 8.167-8.167 4.503 0 8.167 3.664 8.167 8.167 0 4.503-3.664 8.167-8.167 8.167z"/></svg>
+              </div>
+              <div style="min-width:0;">
+                <div style="font-size:1rem; font-weight:800; color:#166534;">WhatsApp Class Groups</div>
+                <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">Nursery से 12वीं तक दैनिक होमवर्क व सूचना</div>
+              </div>
+            </div>
+            <span class="social-follow-cta" style="background:#16a34a; color:#ffffff;">ग्रुप्स देखें →</span>
+          </button>
+        </div>
+      </section>
+
       <!-- AUTO-SCROLLING VISUAL IMAGE GALLERY (MANAGED VIA ADMIN PANEL) -->
       <section class="section-wrapper auto-gallery-section" id="homeAutoGallerySection">
-        <div class="section-heading-box" style="margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div class="section-heading-box" style="margin-bottom:1.15rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div>
-            <span class="section-chip">📸 स्कूल फोटो व गतिविधि गैलरी</span>
-            <h3 class="section-main-title" style="font-size:1.65rem;">कैंपस, लैब्स एवं शैक्षणिक गतिविधियां (Auto-Scrolling Gallery)</h3>
+            <div style="font-size:0.8rem; font-weight:800; color:#0284c7; margin-bottom:3px;">स्कूल फोटो व गतिविधि गैलरी</div>
+            <h3 class="section-main-title" style="font-size:1.55rem;">कैंपस, लैब्स एवं शैक्षणिक गतिविधियां</h3>
             <p style="font-size:0.9rem; color:#64748b; margin-top:4px;">हमारे विद्यालय का आधुनिक परिवेश, स्मार्ट क्लासरूम, प्रयोगशालाएं एवं खेल गतिविधियां</p>
           </div>
           <div style="display:flex; gap:8px;">
-            <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.85rem; padding:0.45rem 1rem;">📸 गूगल एलबम ↗</a>
+            <a href="https://photos.app.goo.gl/6QyFBm743pfUthJk8" target="_blank" rel="noopener noreferrer" class="btn-hero-photos" style="font-size:0.85rem; padding:0.5rem 1.05rem;">📸 गूगल एलबम ↗</a>
           </div>
         </div>
 
         <div class="gallery-marquee-wrapper" id="galleryMarqueeWrapper">
           <div class="gallery-track" id="galleryTrack">
-            <!-- Dynamically populated from /images/ & localStorage -->
+            <!-- Dynamically populated from Firebase & local defaults -->
           </div>
         </div>
       </section>
 
       <!-- COMPACT HIGHLIGHTS SUMMARY -->
-      <section class="section-wrapper" style="margin-bottom:1.5rem;">
+      <section class="section-wrapper" style="margin-bottom:1.75rem;">
         <div class="section-heading-box" style="margin-bottom:1rem;">
-          <span class="section-chip">🌟 विद्यालय की विशेषताएं</span>
+          <div style="font-size:0.8rem; font-weight:800; color:#0284c7; margin-bottom:3px;">विद्यालय की प्रमुख विशेषताएं</div>
           <h3 class="section-main-title" style="font-size:1.5rem;">अनुशासन, संस्कार एवं उत्कृष्ट शिक्षा</h3>
         </div>
 
         <div class="features-grid-4">
           <div class="feature-glass-box glass-card" style="padding:1.25rem;">
             <div class="feature-badge-icon icon-palette-1" style="width:42px; height:42px; font-size:1.2rem;">📚</div>
-            <h4 class="feature-box-title" style="font-size:1.1rem;">कक्षाएं एवं संकाय</h4>
-            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.75rem;">
-              नर्सरी से 12वीं तक हिंदी व अंग्रेजी माध्यम (गणित, बायो, कॉमर्स संकाय)।
+            <h4 class="feature-box-title" style="font-size:1.08rem;">कक्षाएं एवं संकाय</h4>
+            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.8rem;">
+              नर्सरी से 12वीं तक हिंदी व अंग्रेजी माध्यम (गणित, बायो, कॉमर्स व कला संकाय)।
             </p>
-            <button class="btn-return-home" style="font-size:0.78rem; padding:0.35rem 0.85rem;" onclick="navigateToPage('about')">विवरण देखें →</button>
+            <button class="btn-return-home" style="font-size:0.78rem; padding:0.38rem 0.9rem;" onclick="navigateToPage('about')">विवरण देखें →</button>
           </div>
 
           <div class="feature-glass-box glass-card" style="padding:1.25rem;">
             <div class="feature-badge-icon icon-palette-2" style="width:42px; height:42px; font-size:1.2rem;">🛡️</div>
-            <h4 class="feature-box-title" style="font-size:1.1rem;">सुरक्षा और वाहन</h4>
-            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.75rem;">
+            <h4 class="feature-box-title" style="font-size:1.08rem;">सुरक्षा और वाहन</h4>
+            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.8rem;">
               100% CCTV सुरक्षित कैंपस, RO पेयजल, एवं GPS युक्त स्कूल बस सेवा।
             </p>
-            <button class="btn-return-home" style="font-size:0.78rem; padding:0.35rem 0.85rem;" onclick="navigateToPage('facilities')">विवरण देखें →</button>
+            <button class="btn-return-home" style="font-size:0.78rem; padding:0.38rem 0.9rem;" onclick="navigateToPage('facilities')">विवरण देखें →</button>
           </div>
 
           <div class="feature-glass-box glass-card" style="padding:1.25rem;">
             <div class="feature-badge-icon icon-palette-3" style="width:42px; height:42px; font-size:1.2rem;">🏆</div>
-            <h4 class="feature-box-title" style="font-size:1.1rem;">सम्पूर्ण व्यक्तित्व विकास</h4>
-            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.75rem;">
+            <h4 class="feature-box-title" style="font-size:1.08rem;">सम्पूर्ण व्यक्तित्व विकास</h4>
+            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.8rem;">
               खेलकूद, योग, सांस्कृतिक कार्यक्रम, विज्ञान प्रदर्शनी एवं नैतिक शिक्षा।
             </p>
-            <button class="btn-return-home" style="font-size:0.78rem; padding:0.35rem 0.85rem;" onclick="navigateToPage('about')">विवरण देखें →</button>
+            <button class="btn-return-home" style="font-size:0.78rem; padding:0.38rem 0.9rem;" onclick="navigateToPage('about')">विवरण देखें →</button>
           </div>
 
           <div class="feature-glass-box glass-card" style="padding:1.25rem;">
             <div class="feature-badge-icon icon-palette-4" style="width:42px; height:42px; font-size:1.2rem;">💡</div>
-            <h4 class="feature-box-title" style="font-size:1.1rem;">डिजिटल स्टडी मैटेरियल</h4>
-            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.75rem;">
+            <h4 class="feature-box-title" style="font-size:1.08rem;">डिजिटल स्टडी मैटेरियल</h4>
+            <p class="feature-box-desc" style="font-size:0.88rem; margin-bottom:0.8rem;">
               MP Board Books एवं विषयवार मॉडल प्रश्न पत्रों का ऑनलाइन संग्रह।
             </p>
-            <button class="btn-return-home" style="font-size:0.78rem; padding:0.35rem 0.85rem;" onclick="navigateToPage('books')">बुक्स देखें →</button>
+            <button class="btn-return-home" style="font-size:0.78rem; padding:0.38rem 0.9rem;" onclick="navigateToPage('books')">बुक्स देखें →</button>
           </div>
         </div>
       </section>
@@ -2441,11 +2541,11 @@
     </div>
   </main>
 
-  <!-- 8. SITE FOOTER (SAMPARK & PATA ONLY) -->
+  <!-- 8. SITE FOOTER (SAMPARK, SOCIAL CONNECT & PATA) -->
   <footer class="school-footer">
     <div class="container">
       <div class="footer-columns-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 0.85rem;">
-        <!-- Col 1: केवल संपर्क (Contact Details Only) -->
+        <!-- Col 1: संपर्क (Contact Details & Official Social Links) -->
         <div class="footer-col-item">
           <h4 style="color: #38bdf8; font-size: 1.05rem; font-weight: 800; margin-bottom: 0.75rem;">
             📞 संपर्क (Contact Helpline)
@@ -2459,12 +2559,23 @@
           <div class="footer-contact-row" style="margin-bottom: 0.5rem; font-size: 0.88rem;">
             <span>✉️ <strong>ईमेल:</strong> <a href="mailto:maadurgahrsecschool@gmail.com" style="color:#bae6fd; text-decoration:none; font-weight:600;">maadurgahrsecschool@gmail.com</a></span>
           </div>
-          <div class="footer-contact-row" style="margin-bottom: 0.5rem; font-size: 0.88rem;">
+          <div class="footer-contact-row" style="margin-bottom: 0.7rem; font-size: 0.88rem;">
             <span>🕒 <strong>कार्यालय समय:</strong> प्रातः 09:30 AM से सायं 04:00 PM (सोमवार - शनिवार)</span>
+          </div>
+          <!-- Official Instagram & Facebook Links -->
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <a href="https://www.instagram.com/mdhsss2019?knvt=Yzk5czZjejFwbnVk" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af); color:#ffffff; font-size:0.8rem; font-weight:700; padding:5px 12px; border-radius:8px; text-decoration:none;">
+              <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:#ffffff;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              Instagram ↗
+            </a>
+            <a href="https://www.facebook.com/share/19AESFv8ym/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; background:#1877f2; color:#ffffff; font-size:0.8rem; font-weight:700; padding:5px 12px; border-radius:8px; text-decoration:none;">
+              <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:#ffffff;"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+              Facebook ↗
+            </a>
           </div>
         </div>
 
-        <!-- Col 2: केवल पता (Address & Location Only) -->
+        <!-- Col 2: पता (Address & Location Only) -->
         <div class="footer-col-item">
           <h4 style="color: #38bdf8; font-size: 1.05rem; font-weight: 800; margin-bottom: 0.75rem;">
             📍 पता (School Campus Address)

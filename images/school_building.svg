@@ -1,68 +1,160 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
-    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="60%" stop-color="#bae6fd"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="48%" stop-color="#7dd3fc"/>
       <stop offset="100%" stop-color="#f0f9ff"/>
     </linearGradient>
-    <linearGradient id="bldgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#e0f2fe"/>
+    <linearGradient id="sunGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#0284c7"/>
+    <linearGradient id="facade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="wingFacade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0c4a6e"/>
       <stop offset="50%" stop-color="#0369a1"/>
       <stop offset="100%" stop-color="#075985"/>
     </linearGradient>
-    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#4ade80"/>
+    <linearGradient id="lawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
       <stop offset="100%" stop-color="#15803d"/>
     </linearGradient>
+    <linearGradient id="glassWin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="55%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.16"/>
+    </filter>
   </defs>
-  <rect width="800" height="500" fill="url(#skyGrad)"/>
-  <!-- Sun & Clouds -->
-  <circle cx="700" cy="90" r="50" fill="#fde047" opacity="0.9"/>
-  <path d="M120,80 Q140,50 170,70 Q200,50 230,70 Q250,90 230,110 Q120,110 120,80 Z" fill="#ffffff" opacity="0.8"/>
-  <path d="M480,90 Q500,65 530,85 Q560,65 590,85 Q610,105 590,120 Q480,120 480,90 Z" fill="#ffffff" opacity="0.8"/>
-  
-  <!-- Ground -->
-  <rect x="0" y="380" width="800" height="120" fill="url(#grassGrad)"/>
-  <path d="M 0,380 Q 200,365 400,380 T 800,380 L 800,500 L 0,500 Z" fill="#22c55e" opacity="0.4"/>
-  
-  <!-- Main School Building -->
-  <polygon points="400,130 200,210 600,210" fill="url(#roofGrad)"/>
-  <rect x="220" y="210" width="360" height="170" fill="url(#bldgGrad)" stroke="#0284c7" stroke-width="3" rx="4"/>
-  
-  <!-- Side Wings -->
-  <rect x="100" y="240" width="120" height="140" fill="#f8fafc" stroke="#0284c7" stroke-width="2" rx="4"/>
-  <rect x="580" y="240" width="120" height="140" fill="#f8fafc" stroke="#0284c7" stroke-width="2" rx="4"/>
-  
-  <!-- Pillars & Arch Door -->
-  <rect x="250" y="220" width="20" height="160" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
-  <rect x="530" y="220" width="20" height="160" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
-  <path d="M360,380 L360,300 Q400,270 440,300 L440,380 Z" fill="#0369a1"/>
-  
-  <!-- Windows -->
-  <g fill="#38bdf8" stroke="#0284c7" stroke-width="1.5">
-    <rect x="280" y="230" width="35" height="40" rx="3"/>
-    <rect x="330" y="230" width="35" height="40" rx="3"/>
-    <rect x="435" y="230" width="35" height="40" rx="3"/>
-    <rect x="485" y="230" width="35" height="40" rx="3"/>
-    <rect x="120" y="260" width="35" height="35" rx="3"/>
-    <rect x="165" y="260" width="35" height="35" rx="3"/>
-    <rect x="600" y="260" width="35" height="35" rx="3"/>
-    <rect x="645" y="260" width="35" height="35" rx="3"/>
+
+  <!-- Sky & Sun -->
+  <rect width="800" height="500" fill="url(#sky)"/>
+  <circle cx="675" cy="88" r="76" fill="url(#sunGlow)" opacity="0.55"/>
+  <circle cx="675" cy="88" r="34" fill="#fef08a"/>
+
+  <!-- Soft Layered Clouds -->
+  <g fill="#ffffff" opacity="0.88">
+    <path d="M90,108 Q105,78 138,88 Q162,62 198,84 Q224,78 232,102 Q242,118 220,120 L98,120 Q82,118 90,108 Z"/>
+    <path d="M475,86 Q492,64 520,74 Q544,54 574,72 Q595,68 602,88 Q606,100 590,102 L485,102 Q470,100 475,86 Z"/>
   </g>
-  
-  <!-- School Flag -->
-  <line x1="400" y1="130" x2="400" y2="70" stroke="#475569" stroke-width="4"/>
-  <polygon points="400,70 460,85 400,100" fill="#ea580c"/>
-  
-  <!-- Banner Text -->
-  <rect x="250" y="185" width="300" height="32" fill="#ffffff" rx="16" filter="drop-shadow(0 2px 5px rgba(0,0,0,0.15))"/>
-  <text x="400" y="206" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="bold" fill="#0369a1" text-anchor="middle">MAA DURGA H.S. SCHOOL SEMARIYA</text>
-  
-  <!-- Bottom Caption Badge -->
-  <rect x="30" y="430" width="340" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
-  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🏫 भव्य विद्यालय परिसर (Campus View)</text>
+
+  <!-- Distant Hills & Trees -->
+  <path d="M0,375 Q180,320 390,358 T800,342 L800,400 L0,400 Z" fill="#86efac" opacity="0.55"/>
+
+  <!-- Lawn & Walkway -->
+  <rect x="0" y="378" width="800" height="122" fill="url(#lawn)"/>
+  <path d="M0,392 Q260,376 520,394 T800,384 L800,500 L0,500 Z" fill="#16a34a" opacity="0.45"/>
+  <polygon points="355,382 445,382 515,500 285,500" fill="url(#pathGrad)"/>
+  <polygon points="365,382 435,382 496,500 304,500" fill="#f1f5f9" opacity="0.72"/>
+
+  <!-- Side Trees -->
+  <g>
+    <rect x="54" y="315" width="12" height="72" rx="4" fill="#78350f"/>
+    <circle cx="60" cy="296" r="34" fill="#15803d"/>
+    <circle cx="44" cy="312" r="24" fill="#16a34a"/>
+    <circle cx="76" cy="312" r="24" fill="#22c55e"/>
+    <rect x="734" y="312" width="12" height="75" rx="4" fill="#78350f"/>
+    <circle cx="740" cy="292" r="36" fill="#15803d"/>
+    <circle cx="722" cy="310" r="25" fill="#22c55e"/>
+    <circle cx="758" cy="310" r="25" fill="#16a34a"/>
+  </g>
+
+  <!-- Left & Right Academic Wings -->
+  <g filter="url(#softShadow)">
+    <rect x="96" y="236" width="144" height="148" rx="4" fill="url(#wingFacade)" stroke="#94a3b8" stroke-width="1.5"/>
+    <rect x="90" y="226" width="156" height="14" rx="3" fill="url(#roof)"/>
+    <rect x="560" y="236" width="144" height="148" rx="4" fill="url(#wingFacade)" stroke="#94a3b8" stroke-width="1.5"/>
+    <rect x="554" y="226" width="156" height="14" rx="3" fill="url(#roof)"/>
+  </g>
+
+  <!-- Wing Windows (2 floors) -->
+  <g fill="url(#glassWin)" stroke="#0284c7" stroke-width="1.5">
+    <rect x="116" y="254" width="32" height="38" rx="3"/>
+    <rect x="160" y="254" width="32" height="38" rx="3"/>
+    <rect x="202" y="254" width="24" height="38" rx="3"/>
+    <rect x="116" y="310" width="32" height="44" rx="3"/>
+    <rect x="160" y="310" width="32" height="44" rx="3"/>
+    <rect x="202" y="310" width="24" height="44" rx="3"/>
+
+    <rect x="574" y="254" width="24" height="38" rx="3"/>
+    <rect x="608" y="254" width="32" height="38" rx="3"/>
+    <rect x="652" y="254" width="32" height="38" rx="3"/>
+    <rect x="574" y="310" width="24" height="44" rx="3"/>
+    <rect x="608" y="310" width="32" height="44" rx="3"/>
+    <rect x="652" y="310" width="32" height="44" rx="3"/>
+  </g>
+
+  <!-- Central Grand Building -->
+  <g filter="url(#softShadow)">
+    <rect x="232" y="192" width="336" height="192" rx="4" fill="url(#facade)" stroke="#cbd5e1" stroke-width="2"/>
+    <polygon points="400,114 214,196 586,196" fill="url(#roof)"/>
+    <polygon points="400,126 244,192 556,192" fill="#0284c7" opacity="0.45"/>
+  </g>
+
+  <!-- Clock Medallion on Pediment -->
+  <circle cx="400" cy="160" r="20" fill="#ffffff" stroke="#f59e0b" stroke-width="3"/>
+  <circle cx="400" cy="160" r="2.5" fill="#0f172a"/>
+  <line x1="400" y1="160" x2="400" y2="148" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="400" y1="160" x2="409" y2="164" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Indian Tricolor Flag on Roof -->
+  <line x1="400" y1="115" x2="400" y2="48" stroke="#475569" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="400" cy="46" r="4" fill="#f59e0b"/>
+  <rect x="402" y="50" width="44" height="9" fill="#ff9933"/>
+  <rect x="402" y="59" width="44" height="9" fill="#ffffff"/>
+  <rect x="402" y="68" width="44" height="9" fill="#138808"/>
+  <circle cx="424" cy="63.5" r="3.4" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+
+  <!-- Central Fascia Nameplate -->
+  <rect x="268" y="198" width="264" height="28" rx="14" fill="#0f172a"/>
+  <rect x="270" y="200" width="260" height="24" rx="12" fill="none" stroke="#38bdf8" stroke-width="1.2"/>
+  <text x="400" y="216" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1.2">MDHSSS • SEMARIYA (REWA)</text>
+
+  <!-- Architectural Columns -->
+  <g fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2">
+    <rect x="256" y="236" width="18" height="148"/>
+    <rect x="322" y="236" width="18" height="148"/>
+    <rect x="460" y="236" width="18" height="148"/>
+    <rect x="526" y="236" width="18" height="148"/>
+  </g>
+
+  <!-- Central Arched Portal & Steps -->
+  <path d="M358,384 L358,296 Q400,262 442,296 L442,384 Z" fill="#0c4a6e"/>
+  <path d="M366,384 L366,301 Q400,274 434,301 L434,384 Z" fill="#0284c7"/>
+  <line x1="400" y1="286" x2="400" y2="384" stroke="#bae6fd" stroke-width="2"/>
+  <rect x="344" y="378" width="112" height="8" rx="2" fill="#e2e8f0"/>
+  <rect x="334" y="385" width="132" height="8" rx="2" fill="#cbd5e1"/>
+
+  <!-- Central Side Windows -->
+  <g fill="url(#glassWin)" stroke="#0284c7" stroke-width="1.5">
+    <rect x="282" y="246" width="32" height="42" rx="3"/>
+    <rect x="282" y="304" width="32" height="48" rx="3"/>
+    <rect x="486" y="246" width="32" height="42" rx="3"/>
+    <rect x="486" y="304" width="32" height="48" rx="3"/>
+  </g>
+
+  <!-- Shrubs & Garden Borders -->
+  <g fill="#15803d">
+    <ellipse cx="148" cy="386" rx="46" ry="12"/>
+    <ellipse cx="268" cy="386" rx="44" ry="11"/>
+    <ellipse cx="532" cy="386" rx="44" ry="11"/>
+    <ellipse cx="652" cy="386" rx="46" ry="12"/>
+  </g>
+  <g fill="#fbbf24">
+    <circle cx="132" cy="384" r="3"/><circle cx="155" cy="382" r="3"/><circle cx="264" cy="383" r="3"/>
+    <circle cx="534" cy="383" r="3"/><circle cx="645" cy="382" r="3"/><circle cx="668" cy="384" r="3"/>
+  </g>
 </svg>

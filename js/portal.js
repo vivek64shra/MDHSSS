@@ -184,24 +184,39 @@
       try { if (typeof initBrowserHistoryRouting === 'function') initBrowserHistoryRouting(); } catch (e) { console.warn(e); }
     });
 
-    // 2. Mobile Menu, 3-Dot Drawer & Navigation Functions
+    // 2. Mobile Menu, Sidebar Drawer & Navigation Functions
     function openThreeDotMenu() {
       const drawer = document.getElementById('threeDotDrawer');
       const backdrop = document.getElementById('threeDotBackdrop');
-      if (drawer) drawer.classList.add('active');
+      if (!drawer) return;
+      const alreadyOpen = drawer.classList.contains('active');
+      drawer.classList.add('active');
+      drawer.setAttribute('aria-hidden', 'false');
       if (backdrop) backdrop.classList.add('active');
+      document.documentElement.classList.add('drawer-open');
+      document.body.classList.add('drawer-open');
       document.body.style.overflow = 'hidden';
-      window.history.pushState({ modal: 'threeDotDrawer', page: window._currentAppPage || 'home' }, '', window.location.hash || '#menu');
+      const drawerBody = drawer.querySelector('.threedot-drawer-body');
+      if (drawerBody && !alreadyOpen) drawerBody.scrollTop = 0;
+      if (!alreadyOpen && !(window.history.state && window.history.state.modal === 'threeDotDrawer')) {
+        window.history.pushState({ modal: 'threeDotDrawer', page: window._currentAppPage || 'home' }, '', window.location.hash || '#menu');
+      }
     }
     window.openThreeDotMenu = openThreeDotMenu;
 
     function closeThreeDotMenu(fromPopState = false) {
       const drawer = document.getElementById('threeDotDrawer');
       const backdrop = document.getElementById('threeDotBackdrop');
-      if (drawer) drawer.classList.remove('active');
+      const wasOpen = drawer ? drawer.classList.contains('active') : false;
+      if (drawer) {
+        drawer.classList.remove('active');
+        drawer.setAttribute('aria-hidden', 'true');
+      }
       if (backdrop) backdrop.classList.remove('active');
+      document.documentElement.classList.remove('drawer-open');
+      document.body.classList.remove('drawer-open');
       document.body.style.overflow = '';
-      if (!fromPopState && window.history.state && window.history.state.modal === 'threeDotDrawer') {
+      if (wasOpen && !fromPopState && window.history.state && window.history.state.modal === 'threeDotDrawer') {
         window.history.back();
       }
     }
@@ -213,7 +228,7 @@
     }
     window.navigateToPageAndClose = navigateToPageAndClose;
 
-    // Close 3-Dot Drawer on Escape key
+    // Close Sidebar Drawer on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeThreeDotMenu();
@@ -232,18 +247,28 @@
     window.toggleMobileNavMenu = toggleMobileNavMenu;
 
     function openStudentResultDirect(event) {
-      if (event && event.preventDefault) event.preventDefault();
-      let resultUrl = 'https://mdhsssresult.netlify.app/';
-      try {
-        const saved = localStorage.getItem('mdhss_result_link_config');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed && parsed.url && parsed.url.trim() && !parsed.url.includes('online.edumentsolution.com')) {
-            resultUrl = parsed.url.trim();
+      let resultUrl = window.mdhssCloud?.getSnapshot?.()?.resultLinkConfig?.url || 'https://mdhsssresult.netlify.app/';
+      if (!resultUrl || resultUrl.includes('online.edumentsolution.com')) {
+        try {
+          const saved = localStorage.getItem('mdhss_result_link_config');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.url && parsed.url.trim() && !parsed.url.includes('online.edumentsolution.com')) {
+              resultUrl = parsed.url.trim();
+            }
           }
-        }
-      } catch (e) {}
-      window.open(resultUrl, '_blank');
+        } catch (e) {}
+      }
+
+      const anchor = event?.currentTarget?.tagName === 'A' ? event.currentTarget : null;
+      if (anchor) {
+        anchor.href = resultUrl;
+        return true;
+      }
+
+      if (event && event.preventDefault) event.preventDefault();
+      window.open(resultUrl, '_blank', 'noopener,noreferrer');
+      return false;
     }
     window.openStudentResultDirect = openStudentResultDirect;
 
@@ -251,7 +276,7 @@
     const PAGE_TITLES = {
       'about': { title: 'विद्यालय परिचय (About Us)', pill: '🏫 UDISE: 23140402055 | कोड: 322517' },
       'admission': { title: 'ऑनलाइन प्रवेश फॉर्म 2026-27 (Admission Form)', pill: '📝 सत्र 2026-27 प्रवेश प्रारंभ' },
-      'whatsapp': { title: 'कक्षावार आधिकारिक व्हाट्सएप ग्रुप्स (WhatsApp Groups)', pill: '💬 Class 4th, 5th, 8th-12th' },
+      'whatsapp': { title: 'कक्षावार आधिकारिक व्हाट्सएप ग्रुप्स (WhatsApp Groups)', pill: '💬 Nursery से 12वीं तक (क्रमबद्ध)' },
       'books': { title: 'म.प्र. बोर्ड ई-बुक्स एवं अध्ययन सामग्री (MP Board Books)', pill: '📚 All Books (mpboardbooks.com)' },
       'feedback': { title: 'विद्यालय सुधार हेतु प्रतिक्रिया व सुझाव (Feedback)', pill: '⭐ रेटिंग व बहुमूल्य सुझाव' },
       'staff': { title: 'शिक्षक एवं स्टाफ संपर्क डायरेक्टरी (Staff Directory)', pill: '📞 डायरेक्टरी व हेल्पलाइन' },
@@ -264,7 +289,7 @@
     function navigateToPage(pageId, pushState = true) {
       // Normalize pageId
       if (!pageId || pageId === '') pageId = 'home';
-      if (pageId === 'login') pageId = 'teacher';
+      if (pageId === 'login' || pageId === 'teacher') pageId = 'admin';
 
       const homeSection = document.getElementById('home-main-section');
       const pagesContainer = document.getElementById('pages-container');

@@ -296,6 +296,11 @@ export function applyResultLinkToPublicDom(config: ResultLinkConfig | null) {
   if (tagEl) tagEl.textContent = merged.tag;
   if (noteEl) noteEl.textContent = merged.note;
   if (navResultLink) navResultLink.href = merged.url;
+
+  ['heroStudentLoginLink', 'hubStudentLoginLink', 'drawerResultLinkDirect'].forEach((id) => {
+    const el = document.getElementById(id) as HTMLAnchorElement | null;
+    if (el) el.href = merged.url;
+  });
 }
 
 export function syncAllPublicDom(snapshot: PortalStoreSnapshot) {

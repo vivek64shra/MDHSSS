@@ -1,86 +1,129 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
-    <linearGradient id="libWall" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#fffbeb"/>
-      <stop offset="100%" stop-color="#fef3c7"/>
+    <linearGradient id="libWall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fefce8"/>
+      <stop offset="100%" stop-color="#fde68a"/>
     </linearGradient>
-    <linearGradient id="woodShelf" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="oakWood" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#92400e"/>
+      <stop offset="50%" stop-color="#b45309"/>
       <stop offset="100%" stop-color="#78350f"/>
     </linearGradient>
+    <linearGradient id="lampGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#fef08a" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="libShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#451a03" flood-opacity="0.22"/>
+    </filter>
   </defs>
+
+  <!-- Warm Sunlit Library Background -->
   <rect width="800" height="500" fill="url(#libWall)"/>
-  <rect x="0" y="380" width="800" height="120" fill="#fed7aa"/>
 
-  <!-- Bookshelf Structure -->
-  <rect x="100" y="80" width="600" height="280" fill="#b45309" stroke="#78350f" stroke-width="6" rx="4"/>
-  <!-- Shelves -->
-  <rect x="100" y="170" width="600" height="14" fill="url(#woodShelf)"/>
-  <rect x="100" y="260" width="600" height="14" fill="url(#woodShelf)"/>
-  <rect x="100" y="350" width="600" height="16" fill="url(#woodShelf)"/>
+  <!-- Central Arched Window -->
+  <path d="M316,330 L316,134 Q400,52 484,134 L484,330 Z" fill="#e0f2fe" stroke="#b45309" stroke-width="8"/>
+  <path d="M324,330 L324,138 Q400,64 476,138 L476,330 Z" fill="#bae6fd"/>
+  <circle cx="436" cy="136" r="24" fill="#fef08a"/>
+  <line x1="400" y1="74" x2="400" y2="330" stroke="#ffffff" stroke-width="5"/>
+  <line x1="322" y1="204" x2="478" y2="204" stroke="#ffffff" stroke-width="5"/>
 
-  <!-- Row 1 Books -->
-  <g transform="translate(130, 95)">
-    <rect x="0" y="0" width="22" height="75" fill="#ef4444" rx="2"/>
-    <rect x="24" y="5" width="20" height="70" fill="#3b82f6" rx="2"/>
-    <rect x="46" y="0" width="25" height="75" fill="#10b981" rx="2"/>
-    <rect x="73" y="10" width="18" height="65" fill="#f59e0b" rx="2"/>
-    <rect x="93" y="0" width="24" height="75" fill="#8b5cf6" rx="2"/>
-    <rect x="119" y="8" width="22" height="67" fill="#ec4899" rx="2"/>
-    <rect x="143" y="0" width="26" height="75" fill="#06b6d4" rx="2"/>
-    <rect x="220" y="0" width="22" height="75" fill="#ef4444" rx="2"/>
-    <rect x="244" y="5" width="25" height="70" fill="#10b981" rx="2"/>
-    <rect x="271" y="0" width="20" height="75" fill="#f59e0b" rx="2"/>
-    <rect x="340" y="0" width="28" height="75" fill="#3b82f6" rx="2"/>
-    <rect x="370" y="5" width="22" height="70" fill="#8b5cf6" rx="2"/>
-    <rect x="440" y="0" width="24" height="75" fill="#0284c7" rx="2"/>
-    <rect x="466" y="8" width="20" height="67" fill="#15803d" rx="2"/>
-    <rect x="488" y="0" width="25" height="75" fill="#d97706" rx="2"/>
+  <!-- Left Tall Oak Bookshelf -->
+  <g filter="url(#libShadow)">
+    <rect x="34" y="48" width="234" height="316" rx="8" fill="url(#oakWood)"/>
+    <rect x="48" y="64" width="206" height="66" rx="4" fill="#451a03"/>
+    <rect x="48" y="142" width="206" height="66" rx="4" fill="#451a03"/>
+    <rect x="48" y="220" width="206" height="66" rx="4" fill="#451a03"/>
+    <rect x="48" y="298" width="206" height="54" rx="4" fill="#451a03"/>
+    <!-- Books Row 1 -->
+    <rect x="56" y="76" width="18" height="54" rx="2" fill="#0284c7"/>
+    <rect x="77" y="82" width="16" height="48" rx="2" fill="#dc2626"/>
+    <rect x="96" y="72" width="20" height="58" rx="2" fill="#16a34a"/>
+    <rect x="119" y="80" width="15" height="50" rx="2" fill="#f59e0b"/>
+    <rect x="137" y="74" width="22" height="56" rx="2" fill="#7c3aed"/>
+    <rect x="162" y="84" width="16" height="46" rx="2" fill="#0d9488"/>
+    <rect x="181" y="76" width="18" height="54" rx="2" fill="#2563eb"/>
+    <rect x="202" y="80" width="20" height="50" rx="2" fill="#e11d48"/>
+    <rect x="225" y="74" width="20" height="56" rx="2" fill="#0284c7"/>
+    <!-- Books Row 2 -->
+    <rect x="56" y="152" width="20" height="56" rx="2" fill="#15803d"/>
+    <rect x="79" y="160" width="16" height="48" rx="2" fill="#0284c7"/>
+    <rect x="98" y="150" width="22" height="58" rx="2" fill="#d97706"/>
+    <rect x="123" y="156" width="18" height="52" rx="2" fill="#6366f1"/>
+    <rect x="144" y="162" width="16" height="46" rx="2" fill="#ec4899"/>
+    <rect x="164" y="154" width="22" height="54" rx="2" fill="#0891b2"/>
+    <rect x="190" y="158" width="18" height="50" rx="2" fill="#ea580c"/>
+    <rect x="212" y="150" width="24" height="58" rx="2" fill="#1d4ed8"/>
+    <!-- Books Row 3 -->
+    <rect x="56" y="232" width="18" height="54" rx="2" fill="#9333ea"/>
+    <rect x="78" y="238" width="20" height="48" rx="2" fill="#16a34a"/>
+    <rect x="102" y="228" width="20" height="58" rx="2" fill="#0284c7"/>
+    <rect x="126" y="236" width="16" height="50" rx="2" fill="#f59e0b"/>
+    <rect x="146" y="230" width="22" height="56" rx="2" fill="#be123c"/>
+    <rect x="172" y="238" width="18" height="48" rx="2" fill="#0d9488"/>
+    <rect x="194" y="232" width="20" height="54" rx="2" fill="#2563eb"/>
+    <rect x="218" y="236" width="24" height="50" rx="2" fill="#ca8a04"/>
   </g>
 
-  <!-- Row 2 Books -->
-  <g transform="translate(130, 185)">
-    <rect x="0" y="0" width="28" height="75" fill="#0284c7" rx="2"/>
-    <rect x="30" y="5" width="22" height="70" fill="#ea580c" rx="2"/>
-    <rect x="54" y="0" width="26" height="75" fill="#16a34a" rx="2"/>
-    <rect x="82" y="8" width="20" height="67" fill="#9333ea" rx="2"/>
-    <rect x="160" y="0" width="24" height="75" fill="#f43f5e" rx="2"/>
-    <rect x="186" y="5" width="26" height="70" fill="#0284c7" rx="2"/>
-    <rect x="270" y="0" width="30" height="75" fill="#15803d" rx="2"/>
-    <rect x="302" y="5" width="20" height="70" fill="#b45309" rx="2"/>
-    <rect x="380" y="0" width="25" height="75" fill="#0891b2" rx="2"/>
-    <rect x="407" y="5" width="22" height="70" fill="#e11d48" rx="2"/>
-    <rect x="431" y="0" width="26" height="75" fill="#4f46e5" rx="2"/>
-    <rect x="459" y="8" width="20" height="67" fill="#16a34a" rx="2"/>
-    <rect x="481" y="0" width="25" height="75" fill="#d97706" rx="2"/>
+  <!-- Right Tall Oak Bookshelf -->
+  <g filter="url(#libShadow)">
+    <rect x="532" y="48" width="234" height="316" rx="8" fill="url(#oakWood)"/>
+    <rect x="546" y="64" width="206" height="66" rx="4" fill="#451a03"/>
+    <rect x="546" y="142" width="206" height="66" rx="4" fill="#451a03"/>
+    <rect x="546" y="220" width="206" height="66" rx="4" fill="#451a03"/>
+    <rect x="546" y="298" width="206" height="54" rx="4" fill="#451a03"/>
+    <!-- Books Right Shelf -->
+    <rect x="554" y="76" width="20" height="54" rx="2" fill="#be123c"/>
+    <rect x="577" y="82" width="18" height="48" rx="2" fill="#0284c7"/>
+    <rect x="598" y="72" width="20" height="58" rx="2" fill="#ca8a04"/>
+    <rect x="622" y="78" width="18" height="52" rx="2" fill="#16a34a"/>
+    <rect x="644" y="74" width="22" height="56" rx="2" fill="#4f46e5"/>
+    <rect x="670" y="82" width="18" height="48" rx="2" fill="#0891b2"/>
+    <rect x="692" y="74" width="22" height="56" rx="2" fill="#ea580c"/>
+    <rect x="718" y="78" width="24" height="52" rx="2" fill="#0369a1"/>
+
+    <rect x="554" y="152" width="18" height="56" rx="2" fill="#0d9488"/>
+    <rect x="576" y="158" width="22" height="50" rx="2" fill="#7c3aed"/>
+    <rect x="602" y="150" width="18" height="58" rx="2" fill="#dc2626"/>
+    <rect x="624" y="156" width="22" height="52" rx="2" fill="#0284c7"/>
+    <rect x="650" y="160" width="18" height="48" rx="2" fill="#16a34a"/>
+    <rect x="672" y="152" width="20" height="56" rx="2" fill="#f59e0b"/>
+    <rect x="696" y="158" width="22" height="50" rx="2" fill="#2563eb"/>
+    <rect x="722" y="154" width="20" height="54" rx="2" fill="#db2777"/>
+
+    <rect x="554" y="230" width="22" height="56" rx="2" fill="#1d4ed8"/>
+    <rect x="580" y="236" width="18" height="50" rx="2" fill="#d97706"/>
+    <rect x="602" y="228" width="22" height="58" rx="2" fill="#15803d"/>
+    <rect x="628" y="238" width="18" height="48" rx="2" fill="#e11d48"/>
+    <rect x="650" y="232" width="20" height="54" rx="2" fill="#0284c7"/>
+    <rect x="674" y="236" width="20" height="50" rx="2" fill="#9333ea"/>
+    <rect x="698" y="230" width="22" height="56" rx="2" fill="#0f766e"/>
+    <rect x="724" y="238" width="18" height="48" rx="2" fill="#b45309"/>
   </g>
 
-  <!-- Row 3 Books -->
-  <g transform="translate(130, 275)">
-    <rect x="0" y="0" width="25" height="75" fill="#dc2626" rx="2"/>
-    <rect x="27" y="5" width="24" height="70" fill="#2563eb" rx="2"/>
-    <rect x="53" y="0" width="28" height="75" fill="#059669" rx="2"/>
-    <rect x="120" y="0" width="26" height="75" fill="#7c3aed" rx="2"/>
-    <rect x="148" y="5" width="20" height="70" fill="#d97706" rx="2"/>
-    <rect x="230" y="0" width="28" height="75" fill="#0284c7" rx="2"/>
-    <rect x="330" y="0" width="25" height="75" fill="#16a34a" rx="2"/>
-    <rect x="357" y="5" width="25" height="70" fill="#e11d48" rx="2"/>
-    <rect x="430" y="0" width="30" height="75" fill="#9333ea" rx="2"/>
-    <rect x="462" y="5" width="22" height="70" fill="#0284c7" rx="2"/>
-    <rect x="486" y="0" width="25" height="75" fill="#ea580c" rx="2"/>
+  <!-- Central Study Reading Table -->
+  <rect x="148" y="362" width="504" height="22" rx="6" fill="url(#oakWood)"/>
+  <rect x="174" y="384" width="16" height="116" fill="#78350f"/>
+  <rect x="610" y="384" width="16" height="116" fill="#78350f"/>
+  <rect x="148" y="458" width="504" height="42" fill="#d97706" opacity="0.22"/>
+
+  <!-- Warm Desk Reading Lamp -->
+  <polygon points="240,296 292,296 322,362 210,362" fill="url(#lampGlow)"/>
+  <rect x="236" y="352" width="60" height="10" rx="5" fill="#1e293b"/>
+  <rect x="262" y="294" width="8" height="58" fill="#475569"/>
+  <path d="M236,296 Q266,262 296,296 Z" fill="#15803d"/>
+
+  <!-- Open Textbook on Desk -->
+  <g filter="url(#libShadow)">
+    <path d="M326,356 Q364,334 400,350 Q436,334 474,356 L474,362 L326,362 Z" fill="#0284c7"/>
+    <path d="M332,354 Q366,326 400,344 Q434,326 468,354 L468,358 L332,358 Z" fill="#ffffff"/>
+    <line x1="400" y1="344" x2="400" y2="358" stroke="#94a3b8" stroke-width="2"/>
   </g>
 
-  <!-- Large Open Book on Reading Table -->
-  <g transform="translate(300, 370)">
-    <polygon points="0,50 100,60 100,20 0,10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <polygon points="200,50 100,60 100,20 200,10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
-    <path d="M 0,50 Q 100,75 200,50" fill="none" stroke="#92400e" stroke-width="6"/>
+  <!-- Stack of Reference Books on Right of Table -->
+  <g filter="url(#libShadow)">
+    <rect x="506" y="346" width="86" height="16" rx="3" fill="#be123c"/>
+    <rect x="514" y="330" width="76" height="16" rx="3" fill="#0284c7"/>
+    <rect x="522" y="315" width="64" height="15" rx="3" fill="#16a34a"/>
   </g>
-
-  <!-- Top Title -->
-  <text x="400" y="50" font-family="'Segoe UI', sans-serif" font-size="24" font-weight="bold" fill="#92400e" text-anchor="middle">📚 समृद्ध पुस्तकालय एवं वाचनालय (Library)</text>
-  
-  <!-- Bottom Caption Badge -->
-  <rect x="30" y="430" width="370" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
-  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">📖 5000+ पुस्तकों का विशाल संग्रह</text>
 </svg>

@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   Award,
   Bell,
+  Cloud,
   Database,
   ExternalLink,
-  Home,
+  Flame,
   Image as ImageIcon,
   Lock,
   LogOut,
   Megaphone,
-  Menu,
   MessageCircle,
   MessageSquare,
   RefreshCw,
@@ -19,7 +19,6 @@ import {
   UserPlus,
   Wifi,
   WifiOff,
-  X,
 } from 'lucide-react';
 import { refreshAllFromCloud, usePortalStore } from '../../firebase';
 import { AdminSession, isValidActiveNotice, PortalRole } from '../../types/portal';
@@ -35,13 +34,13 @@ import FirebaseExplorerTab from './tabs/FirebaseExplorerTab';
 import StaffPortalView from './StaffPortalView';
 
 type AdminTabId =
-  | 'notice'
-  | 'ticker'
-  | 'whatsapp'
   | 'admissions'
   | 'feedbacks'
+  | 'notice'
+  | 'ticker'
   | 'gallery'
   | 'result'
+  | 'whatsapp'
   | 'firebase';
 
 const SESSION_KEY = 'mdhss_admin_session';
@@ -55,7 +54,7 @@ function readSession(): AdminSession | null {
     const raw = sessionStorage.getItem(SESSION_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<AdminSession>;
-    if (!parsed || !parsed.role) return null;
+    if (!parsed || (!parsed.role && !parsed.name)) return null;
     return {
       role: parsed.role === 'staff' ? 'staff' : 'admin',
       name: parsed.name || 'निर्मल कुमार द्विवेदी / मुरलीधर शर्मा (रन्नू सर)',
@@ -69,8 +68,7 @@ function readSession(): AdminSession | null {
 export default function AdminPortalApp() {
   const store = usePortalStore();
   const [session, setSession] = useState<AdminSession | null>(() => readSession());
-  const [activeTab, setActiveTab] = useState<AdminTabId>('notice');
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<AdminTabId>('admissions');
   const [previewAsStaff, setPreviewAsStaff] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
@@ -144,7 +142,8 @@ export default function AdminPortalApp() {
       const uid = adminUserId.trim();
       const pwd = adminPassword.trim();
       const valid =
-        (uid === VALID_ADMIN_USER && pwd === VALID_ADMIN_PASS) ||
+        (uid.toLowerCase() === VALID_ADMIN_USER.toLowerCase() && pwd === VALID_ADMIN_PASS) ||
+        (uid === VALID_ADMIN_PASS && pwd.toLowerCase() === VALID_ADMIN_USER.toLowerCase()) ||
         LEGACY_PINS.includes(pwd) ||
         LEGACY_PINS.includes(uid);
 
@@ -163,7 +162,7 @@ export default function AdminPortalApp() {
       setAdminUserId('');
       setAdminPassword('');
       window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
-      pushToast('success', '✅ एडमिन पोर्टल में स्वागत है! रियल-टाइम Firebase सिंक सक्रिय है।');
+      pushToast('success', '✅ एडमिन डैशबोर्ड खुल गया! Firebase रियल-टाइम सिंक सक्रिय है।');
       refreshAllFromCloud();
     } else {
       const code = staffCode.trim();
@@ -189,7 +188,6 @@ export default function AdminPortalApp() {
     sessionStorage.removeItem(SESSION_KEY);
     setSession(null);
     setPreviewAsStaff(false);
-    setDrawerOpen(false);
     window.dispatchEvent(new Event('mdhss_admin_auth_changed'));
     pushToast('info', '🔒 आप सफलतापूर्वक लॉगआउट हो गए हैं।');
   };
@@ -199,49 +197,51 @@ export default function AdminPortalApp() {
     const ok = await refreshAllFromCloud();
     setSyncing(false);
     if (ok) {
-      pushToast('success', '✅ Firebase Firestore से सभी डेटा तुरंत सिंक हो गया!');
+      pushToast('success', '✅ क्लाउड सिंक सफल — सभी डिवाइसेज का डेटा लाइव अपडेटेड!');
     } else {
       pushToast('info', '⚠️ ऑफलाइन मोड: स्थानीय कैश डेटा दिखाया जा रहा है।');
     }
   };
 
   // ==========================================
-  // 1. ROLE-BASED LOGIN SCREEN (When Logged Out)
+  // 1. CLASSIC ADMIN / STAFF LOGIN CARD (Inside .glass-card.page-card-body)
   // ==========================================
   if (!session) {
     return (
-      <div className="min-h-[82vh] bg-gradient-to-br from-slate-100 via-sky-50/50 to-slate-100 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-[#0f2b5b] to-[#1e3a8a] text-white px-6 py-6 text-center">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
-              <Shield className="w-6 h-6 text-amber-300" />
+      <div className="glass-card page-card-body">
+        <div className="max-w-lg mx-auto py-4">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center text-white shadow-lg">
+              <Lock className="w-7 h-7" />
             </div>
-            <h2 className="text-lg font-extrabold tracking-tight m-0">
-              अधिकृत विद्यालय पोर्टल लॉगिन
+            <div className="text-xs font-extrabold text-violet-700 tracking-wide mb-1">
+              विद्यालय प्रशासनिक नियंत्रण • MDHSSS सेमरिया (रीवा)
+            </div>
+            <h2 className="text-2xl font-extrabold text-slate-900 m-0">
+              प्रशासक लॉगिन (Admin Portal Login)
             </h2>
-            <p className="text-xs text-sky-100 mt-1 m-0">
-              माँ दुर्गा हायर सेकेंडरी स्कूल, पपौंध • रियल-टाइम Firebase क्लाउड
+            <p className="text-sm text-slate-600 mt-1.5 m-0">
+              प्रवेश आवेदन, छात्र-पालक फीडबैक, सूचना पॉपअप एवं विद्यालय डिजिटल रिकॉर्ड्स हेतु लॉगिन करें।
             </p>
           </div>
 
-          <div className="p-6 space-y-5">
-            {/* Role Selector Tabs */}
-            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+          <div className="bg-white border-2 border-violet-200 rounded-2xl p-6 shadow-md space-y-5">
+            {/* Role Toggle */}
+            <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl">
               <button
                 type="button"
                 onClick={() => {
                   setLoginRole('admin');
                   setLoginError(null);
                 }}
-                className={`py-2.5 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                className={`py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
                   loginRole === 'admin'
-                    ? 'bg-[#0f2b5b] text-white shadow-xs'
+                    ? 'bg-gradient-to-r from-violet-700 to-indigo-700 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Lock className="w-3.5 h-3.5" />
-                एडमिन पैनल
+                <Shield className="w-3.5 h-3.5" />
+                एडमिन पैनल (Admin)
               </button>
               <button
                 type="button"
@@ -249,66 +249,66 @@ export default function AdminPortalApp() {
                   setLoginRole('staff');
                   setLoginError(null);
                 }}
-                className={`py-2.5 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                className={`py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
                   loginRole === 'staff'
-                    ? 'bg-emerald-700 text-white shadow-xs'
+                    ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <Smartphone className="w-3.5 h-3.5" />
-                स्टाफ पोर्टल
+                स्टाफ पोर्टल (Staff)
               </button>
             </div>
 
             {loginError && (
-              <div className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-xl px-3.5 py-2.5">
+              <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-xs font-bold text-center">
                 ⚠️ {loginError}
               </div>
             )}
 
-            <form onSubmit={handleRoleLogin} className="space-y-3.5">
+            <form onSubmit={handleRoleLogin} className="space-y-4">
               {loginRole === 'admin' ? (
                 <>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      एडमिन यूज़र आईडी (User ID)
+                    <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                      प्रशासक यूज़र आईडी (Admin User ID) *
                     </label>
                     <input
                       type="text"
                       value={adminUserId}
                       onChange={(e) => setAdminUserId(e.target.value)}
-                      placeholder="अपनी अधिकृत User ID दर्ज करें"
+                      placeholder="यूज़र आईडी दर्ज करें"
                       required
                       autoComplete="username"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2b5b]"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-600"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      पासवर्ड (Password)
+                    <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                      प्रशासक पासवर्ड (Admin Password) *
                     </label>
                     <input
                       type="password"
                       value={adminPassword}
                       onChange={(e) => setAdminPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder="पासवर्ड दर्ज करें"
                       required
                       autoComplete="current-password"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2b5b]"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-600"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#0f2b5b] to-[#1e40af] hover:opacity-95 text-white text-sm font-extrabold shadow-md cursor-pointer transition-opacity"
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-700 to-indigo-700 hover:opacity-95 text-white text-sm font-extrabold shadow-md cursor-pointer transition-opacity"
                   >
-                    🔐 एडमिन डैशबोर्ड खोलें
+                    🔓 एडमिन डैशबोर्ड खोलें (Login to Admin Panel)
                   </button>
                 </>
               ) : (
                 <>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      शिक्षक / स्टाफ का नाम
+                    <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                      शिक्षक / स्टाफ का नाम *
                     </label>
                     <input
                       type="text"
@@ -320,8 +320,8 @@ export default function AdminPortalApp() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      विद्यालय स्टाफ कोड (School Code)
+                    <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                      विद्यालय स्टाफ कोड (School Code) *
                     </label>
                     <input
                       type="password"
@@ -336,30 +336,23 @@ export default function AdminPortalApp() {
                     type="submit"
                     className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-extrabold shadow-md cursor-pointer transition-colors"
                   >
-                    📱 फास्ट स्टाफ पोर्टल खोलें
+                    📱 स्टाफ लाइव पोर्टल खोलें
                   </button>
                   <a
                     href="https://mdhssslogin.netlify.app/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-2.5 px-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-extrabold flex items-center justify-center gap-1.5 no-underline hover:bg-amber-100 transition-colors"
+                    className="w-full py-2.5 px-3 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-xs font-extrabold flex items-center justify-center gap-1.5 hover:bg-sky-100 transition-colors"
                   >
-                    👨‍🏫 बाहरी Teacher Login पोर्टल (mdhssslogin.netlify.app)
+                    👨‍🏫 अधिकृत शिक्षक लॉगिन (mdhssslogin.netlify.app)
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </>
               )}
             </form>
 
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              <button
-                type="button"
-                onClick={navigateHome}
-                className="inline-flex items-center gap-1.5 font-bold text-slate-600 hover:text-[#0f2b5b] cursor-pointer"
-              >
-                <Home className="w-3.5 h-3.5" />
-                मुख्य वेबसाइट पर लौटें
-              </button>
+            <div className="pt-3 border-t border-dashed border-slate-200 flex items-center justify-between text-xs text-slate-500 font-semibold">
+              <span>🔒 केवल अधिकृत विद्यालय प्रशासन हेतु</span>
               <span
                 className={`inline-flex items-center gap-1 font-bold ${
                   store.connectionStatus === 'online' ? 'text-emerald-600' : 'text-amber-600'
@@ -382,11 +375,11 @@ export default function AdminPortalApp() {
   }
 
   // ==========================================
-  // 2. FAST MOBILE-FIRST STAFF PORTAL
+  // 2. FAST MOBILE-FIRST STAFF PORTAL VIEW
   // ==========================================
   if (session.role === 'staff' || previewAsStaff) {
     return (
-      <>
+      <div className="glass-card page-card-body">
         <StaffPortalView
           session={session}
           onToast={pushToast}
@@ -395,12 +388,12 @@ export default function AdminPortalApp() {
           onGoHome={navigateHome}
         />
         <ToastStack toasts={toasts} onDismiss={dismissToast} />
-      </>
+      </div>
     );
   }
 
   // ==========================================
-  // 3. ADMIN PANEL (Left Sidebar + Mobile Drawer)
+  // 3. CLASSIC FAMILIAR ADMIN DASHBOARD INTERFACE (Powered by Real-Time React + Firestore)
   // ==========================================
   const noticeActive = isValidActiveNotice(store.popupNotice);
   const tickerActive = Boolean(
@@ -409,364 +402,244 @@ export default function AdminPortalApp() {
       store.tickerMarquee.text?.trim()
   );
 
-  const navItems: {
+  const tabs: {
     id: AdminTabId;
     label: string;
-    shortLabel: string;
     icon: React.ReactNode;
-    badge?: string | number;
-    badgeColor?: string;
+    activeClass: string;
+    inactiveClass: string;
+    count?: number | string;
   }[] = [
+    {
+      id: 'admissions',
+      label: 'प्रवेश आवेदन',
+      icon: <UserPlus className="w-4 h-4" />,
+      activeClass: 'bg-gradient-to-r from-sky-600 to-blue-700 text-white border-sky-700 shadow-md',
+      inactiveClass: 'bg-white text-slate-800 border-sky-200 hover:bg-sky-50',
+      count: store.admissions.length,
+    },
+    {
+      id: 'feedbacks',
+      label: 'फीडबैक',
+      icon: <MessageSquare className="w-4 h-4" />,
+      activeClass: 'bg-gradient-to-r from-violet-600 to-indigo-700 text-white border-violet-700 shadow-md',
+      inactiveClass: 'bg-white text-slate-800 border-violet-200 hover:bg-violet-50',
+      count: store.feedbacks.length,
+    },
     {
       id: 'notice',
       label: 'सूचना पॉपअप (Notification)',
-      shortLabel: 'सूचना पॉपअप',
       icon: <Bell className="w-4 h-4" />,
-      badge: noticeActive ? 'LIVE' : 'OFF',
-      badgeColor: noticeActive
-        ? 'bg-emerald-500/20 text-emerald-300'
-        : 'bg-slate-700 text-slate-300',
+      activeClass: 'bg-gradient-to-r from-sky-600 to-cyan-700 text-white border-sky-700 shadow-md',
+      inactiveClass: 'bg-white text-sky-900 border-sky-300 hover:bg-sky-50',
+      count: noticeActive ? 'LIVE' : undefined,
     },
     {
       id: 'ticker',
-      label: 'प्रवेश सूचना पट्टी (Ticker)',
-      shortLabel: 'सूचना पट्टी',
+      label: 'प्रवेश पट्टी (Ticker)',
       icon: <Megaphone className="w-4 h-4" />,
-      badge: tickerActive ? 'LIVE' : 'OFF',
-      badgeColor: tickerActive
-        ? 'bg-emerald-500/20 text-emerald-300'
-        : 'bg-slate-700 text-slate-300',
+      activeClass: 'bg-gradient-to-r from-rose-600 to-red-700 text-white border-rose-700 shadow-md',
+      inactiveClass: 'bg-white text-rose-900 border-rose-300 hover:bg-rose-50',
+      count: tickerActive ? 'LIVE' : undefined,
+    },
+    {
+      id: 'gallery',
+      label: 'फोटो गैलरी (Gallery)',
+      icon: <ImageIcon className="w-4 h-4" />,
+      activeClass: 'bg-gradient-to-r from-purple-600 to-violet-700 text-white border-purple-700 shadow-md',
+      inactiveClass: 'bg-white text-purple-900 border-purple-300 hover:bg-purple-50',
+      count: store.galleryImages.length,
+    },
+    {
+      id: 'result',
+      label: 'रिजल्ट लिंक (Result Link)',
+      icon: <Award className="w-4 h-4" />,
+      activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white border-emerald-700 shadow-md',
+      inactiveClass: 'bg-white text-emerald-900 border-emerald-300 hover:bg-emerald-50',
     },
     {
       id: 'whatsapp',
       label: 'व्हाट्सएप ग्रुप्स (WhatsApp)',
-      shortLabel: 'व्हाट्सएप',
       icon: <MessageCircle className="w-4 h-4" />,
-      badge: store.whatsappGroups.length,
-      badgeColor: 'bg-sky-500/25 text-sky-200',
-    },
-    {
-      id: 'admissions',
-      label: 'ऑनलाइन प्रवेश आवेदन',
-      shortLabel: 'प्रवेश आवेदन',
-      icon: <UserPlus className="w-4 h-4" />,
-      badge: store.admissions.length,
-      badgeColor: 'bg-amber-500/25 text-amber-200',
-    },
-    {
-      id: 'feedbacks',
-      label: 'अभिभावक फीडबैक',
-      shortLabel: 'फीडबैक',
-      icon: <MessageSquare className="w-4 h-4" />,
-      badge: store.feedbacks.length,
-      badgeColor: 'bg-violet-500/25 text-violet-200',
-    },
-    {
-      id: 'gallery',
-      label: 'फोटो गैलरी (≤10 KB)',
-      shortLabel: 'फोटो गैलरी',
-      icon: <ImageIcon className="w-4 h-4" />,
-      badge: store.galleryImages.length,
-      badgeColor: 'bg-pink-500/25 text-pink-200',
-    },
-    {
-      id: 'result',
-      label: 'छात्र लॉगिन / रिजल्ट लिंक',
-      shortLabel: 'रिजल्ट लिंक',
-      icon: <Award className="w-4 h-4" />,
+      activeClass: 'bg-gradient-to-r from-green-600 to-emerald-700 text-white border-green-700 shadow-md',
+      inactiveClass: 'bg-white text-green-900 border-green-300 hover:bg-green-50',
+      count: store.whatsappGroups.length,
     },
     {
       id: 'firebase',
-      label: 'Firebase स्टोरेज एवं डेटाबेस',
-      shortLabel: 'Firebase डेटा',
-      icon: <Database className="w-4 h-4" />,
+      label: 'Firebase डेटाबेस व स्टोरेज',
+      icon: <Flame className="w-4 h-4" />,
+      activeClass: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-600 shadow-md',
+      inactiveClass: 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100',
     },
   ];
 
-  const currentNav = navItems.find((n) => n.id === activeTab) || navItems[0];
-
-  const SidebarContent = (
-    <div className="flex flex-col h-full bg-[#0b1f44] text-slate-100">
-      {/* Brand Header */}
-      <div className="px-4 py-4 border-b border-white/10 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-300/30 flex items-center justify-center shrink-0">
-            <Shield className="w-5 h-5 text-amber-300" />
-          </div>
+  return (
+    <div className="glass-card page-card-body">
+      <div className="space-y-6">
+        {/* Classic Royal Purple Dashboard Header Bar */}
+        <div className="bg-gradient-to-r from-[#3b0764] via-[#5b21b6] to-[#4338ca] text-white p-5 sm:p-6 rounded-2xl shadow-lg flex flex-wrap justify-between items-center gap-4">
           <div className="min-w-0">
-            <div className="text-sm font-extrabold text-white truncate">MDHSSS एडमिन</div>
-            <div className="text-[11px] text-sky-200/80 truncate">Firebase रियल-टाइम पैनल</div>
+            <div className="flex items-center gap-2.5 flex-wrap mb-1.5 text-xs">
+              <span className="bg-yellow-300 text-amber-950 px-2.5 py-0.5 rounded-md font-extrabold">
+                🛡️ एडमिन मोड सक्रिय (LIVE DATABASE)
+              </span>
+              <span className="text-purple-100 font-semibold">
+                माँ दुर्गा उच्चतर माध्यमिक विद्यालय, सेमरिया (रीवा)
+              </span>
+            </div>
+            <h2 className="text-lg sm:text-2xl font-extrabold text-white m-0 leading-snug">
+              प्रशासक: {session.name}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              type="button"
+              onClick={handleManualSync}
+              disabled={syncing}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-extrabold shadow-md cursor-pointer transition-colors disabled:opacity-60"
+            >
+              <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+              {syncing ? 'सिंक हो रहा है...' : 'क्लाउड डेटा रीफ्रेश (Sync Now)'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setPreviewAsStaff(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/30 text-white text-xs sm:text-sm font-bold cursor-pointer transition-colors"
+            >
+              <UserCheck className="w-4 h-4" />
+              स्टाफ व्यू
+            </button>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-rose-600 border border-white/30 text-white text-xs sm:text-sm font-bold cursor-pointer transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              लॉगआउट (Logout)
+            </button>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setDrawerOpen(false)}
-          className="lg:hidden p-1.5 rounded-lg bg-white/10 text-white cursor-pointer"
-          aria-label="Close sidebar"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
 
-      {/* Live Sync Pill */}
-      <div className="px-4 py-3 border-b border-white/10">
-        <div
-          className={`flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-bold ${
-            store.connectionStatus === 'online'
-              ? 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/25'
-              : 'bg-amber-500/15 text-amber-200 border border-amber-400/25'
-          }`}
-        >
-          <span className="flex items-center gap-1.5">
-            {store.connectionStatus === 'online' ? (
-              <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-            ) : (
-              <WifiOff className="w-3.5 h-3.5 text-amber-400" />
-            )}
-            {store.connectionStatus === 'online' ? 'ऑनलाइन सिंक' : 'ऑफलाइन कैश'}
-          </span>
+        {/* Classic 3-Column KPI Overview Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           <button
             type="button"
-            onClick={handleManualSync}
-            disabled={syncing}
-            className="text-[11px] underline cursor-pointer hover:text-white disabled:opacity-50"
+            onClick={() => setActiveTab('admissions')}
+            className="text-left bg-blue-50 border border-blue-200 hover:border-blue-400 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors"
           >
-            {syncing ? '...' : 'सिंक'}
+            <div>
+              <div className="text-xs font-bold text-blue-800">कुल प्रवेश आवेदन</div>
+              <div className="text-2xl font-black text-blue-950 mt-0.5 tabular-nums">
+                {store.admissions.length}
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+              <UserPlus className="w-5 h-5" />
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('feedbacks')}
+            className="text-left bg-emerald-50 border border-emerald-200 hover:border-emerald-400 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors"
+          >
+            <div>
+              <div className="text-xs font-bold text-emerald-800">अभिभावक फीडबैक</div>
+              <div className="text-2xl font-black text-emerald-950 mt-0.5 tabular-nums">
+                {store.feedbacks.length}
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <MessageSquare className="w-5 h-5" />
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('firebase')}
+            className="text-left bg-purple-50 border border-purple-200 hover:border-purple-400 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors"
+          >
+            <div>
+              <div className="text-xs font-bold text-purple-800">डेटाबेस स्थिति</div>
+              <div className="text-base font-extrabold text-purple-950 mt-1 flex items-center gap-1.5">
+                {store.connectionStatus === 'online' ? (
+                  <>
+                    <Wifi className="w-4 h-4 text-emerald-600" />
+                    <span>क्लाउड लाइव सक्रिय</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="w-4 h-4 text-amber-600" />
+                    <span>ऑफलाइन कैश मोड</span>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+              <Cloud className="w-5 h-5" />
+            </div>
           </button>
         </div>
-      </div>
 
-      {/* Navigation List */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
-        {navItems.map((item) => {
-          const active = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => {
-                setActiveTab(item.id);
-                setDrawerOpen(false);
-              }}
-              className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-left text-xs font-bold cursor-pointer transition-all ${
-                active
-                  ? 'bg-sky-600 text-white shadow-sm'
-                  : 'text-slate-200 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <span className="flex items-center gap-2.5 min-w-0">
-                <span className="shrink-0">{item.icon}</span>
-                <span className="truncate">{item.label}</span>
-              </span>
-              {item.badge !== undefined && (
-                <span
-                  className={`shrink-0 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                    active ? 'bg-white/20 text-white' : item.badgeColor || 'bg-white/10 text-white'
-                  }`}
-                >
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Sidebar Footer Actions */}
-      <div className="p-3 border-t border-white/10 space-y-1.5">
-        <button
-          type="button"
-          onClick={() => {
-            setPreviewAsStaff(true);
-            setDrawerOpen(false);
-          }}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 text-xs font-bold cursor-pointer transition-colors"
-        >
-          <UserCheck className="w-4 h-4" />
-          स्टाफ पोर्टल व्यू खोलें
-        </button>
-        <button
-          type="button"
-          onClick={navigateHome}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-100 text-xs font-bold cursor-pointer transition-colors"
-        >
-          <Home className="w-4 h-4" />
-          मुख्य वेबसाइट देखें
-        </button>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 text-xs font-bold cursor-pointer transition-colors"
-        >
-          <LogOut className="w-4 h-4" />
-          सुरक्षित लॉगआउट
-        </button>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col lg:flex-row">
-      {/* Desktop Left Sidebar */}
-      <aside className="hidden lg:block lg:w-68 xl:w-72 shrink-0 sticky top-0 h-screen shadow-lg z-20">
-        {SidebarContent}
-      </aside>
-
-      {/* Mobile Slide-out Drawer */}
-      {drawerOpen && (
-        <div
-          className="fixed inset-0 z-[99990] lg:hidden bg-slate-950/60 backdrop-blur-xs flex"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setDrawerOpen(false);
-          }}
-        >
-          <div className="w-72 max-w-[85vw] h-full shadow-2xl">{SidebarContent}</div>
-        </div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        {/* Top Bar */}
-        <header className="sticky top-0 z-10 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
+        {/* Classic Horizontal Action Navigation Tabs */}
+        <div className="flex flex-wrap gap-2.5 pb-4 border-b-2 border-slate-200">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
               <button
+                key={tab.id}
                 type="button"
-                onClick={() => setDrawerOpen(true)}
-                className="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 cursor-pointer"
-                aria-label="Open menu"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <div className="min-w-0">
-                <h1 className="text-base sm:text-lg font-extrabold text-slate-900 truncate m-0 flex items-center gap-2">
-                  <span className="text-sky-700">{currentNav.icon}</span>
-                  <span>{currentNav.label}</span>
-                </h1>
-                <p className="text-[11px] text-slate-500 truncate m-0">
-                  प्रशासक: {session.name} • सभी बदलाव तुरंत Firebase से लाइव अपडेट होते हैं
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={handleManualSync}
-                disabled={syncing}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-extrabold cursor-pointer transition-colors disabled:opacity-60"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">लाइव सिंक</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={navigateHome}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer transition-colors"
-              >
-                <Home className="w-3.5 h-3.5" />
-                वेबसाइट
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Horizontal Quick Tab Strip */}
-          <div className="lg:hidden mt-2.5 flex items-center gap-1.5 overflow-x-auto pb-0.5">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setActiveTab(item.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap cursor-pointer transition-colors ${
-                  activeTab === item.id
-                    ? 'bg-[#0f2b5b] text-white'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                onClick={() => setActiveTab(tab.id)}
+                className={`inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm font-extrabold cursor-pointer transition-all whitespace-nowrap ${
+                  isActive ? tab.activeClass : tab.inactiveClass
                 }`}
               >
-                {item.shortLabel}
+                {tab.icon}
+                <span>{tab.label}</span>
+                {tab.count !== undefined && (
+                  <span
+                    className={`text-[11px] font-black px-1.5 py-0.5 rounded-md tabular-nums ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                )}
               </button>
-            ))}
+            );
+          })}
+        </div>
+
+        {store.lastError && (
+          <div className="bg-amber-50 border border-amber-300 text-amber-900 rounded-xl px-4 py-3 text-xs font-bold flex items-center gap-2">
+            <Database className="w-4 h-4 shrink-0 text-amber-700" />
+            <span>क्लाउड सूचना: {store.lastError}</span>
           </div>
-        </header>
+        )}
 
         {/* Active Tab Workspace */}
-        <main className="flex-1 p-4 sm:p-6 max-w-6xl w-full mx-auto space-y-5">
-          {/* Compact Live Summary Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <button
-              type="button"
-              onClick={() => setActiveTab('notice')}
-              className="text-left bg-white rounded-xl border border-slate-200 p-3 shadow-2xs hover:border-sky-300 cursor-pointer transition-colors"
-            >
-              <div className="text-[11px] font-bold text-slate-500">सूचना पॉपअप</div>
-              <div
-                className={`text-sm font-black mt-0.5 ${
-                  noticeActive ? 'text-emerald-600' : 'text-slate-400'
-                }`}
-              >
-                {noticeActive ? '🟢 लाइव सक्रिय' : '⚪ कोई सूचना नहीं'}
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('whatsapp')}
-              className="text-left bg-white rounded-xl border border-slate-200 p-3 shadow-2xs hover:border-emerald-300 cursor-pointer transition-colors"
-            >
-              <div className="text-[11px] font-bold text-slate-500">व्हाट्सएप ग्रुप्स</div>
-              <div className="text-sm font-black text-emerald-700 mt-0.5">
-                {store.whatsappGroups.length} कक्षाएं (क्रमबद्ध)
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('admissions')}
-              className="text-left bg-white rounded-xl border border-slate-200 p-3 shadow-2xs hover:border-amber-300 cursor-pointer transition-colors"
-            >
-              <div className="text-[11px] font-bold text-slate-500">प्रवेश आवेदन</div>
-              <div className="text-sm font-black text-sky-700 mt-0.5">
-                {store.admissions.length} पंजीकरण
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('feedbacks')}
-              className="text-left bg-white rounded-xl border border-slate-200 p-3 shadow-2xs hover:border-violet-300 cursor-pointer transition-colors"
-            >
-              <div className="text-[11px] font-bold text-slate-500">अभिभावक फीडबैक</div>
-              <div className="text-sm font-black text-violet-700 mt-0.5">
-                {store.feedbacks.length} संदेश
-              </div>
-            </button>
-          </div>
-
-          {store.lastError && (
-            <div className="bg-amber-50 border border-amber-300 text-amber-900 rounded-xl px-4 py-2.5 text-xs font-semibold flex items-center justify-between gap-2">
-              <span>⚠️ क्लाउड सूचना: {store.lastError}</span>
-            </div>
-          )}
-
-          {/* Tab Panel Content */}
-          {activeTab === 'notice' && <NoticeTab onToast={pushToast} onConfirm={requestConfirm} />}
-          {activeTab === 'ticker' && <TickerTab onToast={pushToast} onConfirm={requestConfirm} />}
-          {activeTab === 'whatsapp' && (
-            <WhatsAppTab onToast={pushToast} onConfirm={requestConfirm} />
-          )}
+        <div>
           {activeTab === 'admissions' && (
             <AdmissionsTab onToast={pushToast} onConfirm={requestConfirm} />
           )}
           {activeTab === 'feedbacks' && (
             <FeedbacksTab onToast={pushToast} onConfirm={requestConfirm} />
           )}
+          {activeTab === 'notice' && <NoticeTab onToast={pushToast} onConfirm={requestConfirm} />}
+          {activeTab === 'ticker' && <TickerTab onToast={pushToast} onConfirm={requestConfirm} />}
           {activeTab === 'gallery' && <GalleryTab onToast={pushToast} onConfirm={requestConfirm} />}
           {activeTab === 'result' && <ResultLinkTab onToast={pushToast} />}
+          {activeTab === 'whatsapp' && (
+            <WhatsAppTab onToast={pushToast} onConfirm={requestConfirm} />
+          )}
           {activeTab === 'firebase' && (
             <FirebaseExplorerTab onToast={pushToast} onConfirm={requestConfirm} />
           )}
-        </main>
+        </div>
       </div>
 
       {/* Global In-App Toasts & Confirmation Modal */}

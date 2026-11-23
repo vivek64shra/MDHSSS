@@ -1,63 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
-    <linearGradient id="labBg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bgWall" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="50%" stop-color="#1e293b"/>
-      <stop offset="100%" stop-color="#0369a1"/>
+      <stop offset="55%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0c4a6e"/>
     </linearGradient>
+    <linearGradient id="deskGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="monitorGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#020617" flood-opacity="0.35"/>
+    </filter>
   </defs>
-  <rect width="800" height="500" fill="url(#labBg)"/>
-  
-  <!-- Desk Rows -->
-  <rect x="50" y="260" width="700" height="20" fill="#334155" rx="3"/>
-  <rect x="30" y="390" width="740" height="30" fill="#1e293b" rx="4"/>
-  
-  <!-- Computer 1 -->
-  <rect x="90" y="150" width="120" height="85" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
-  <rect x="100" y="160" width="100" height="65" fill="#0f172a"/>
-  <text x="150" y="195" font-family="monospace" font-size="12" fill="#4ade80" text-anchor="middle">&lt;code/&gt;</text>
-  <rect x="140" y="235" width="20" height="25" fill="#64748b"/>
-  <rect x="125" y="255" width="50" height="6" fill="#94a3b8" rx="2"/>
-  <rect x="95" y="265" width="70" height="8" fill="#475569" rx="2"/>
-  
-  <!-- Computer 2 -->
-  <rect x="250" y="150" width="120" height="85" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
-  <rect x="260" y="160" width="100" height="65" fill="#0f172a"/>
-  <text x="310" y="195" font-family="monospace" font-size="12" fill="#38bdf8" text-anchor="middle">PYTHON</text>
-  <rect x="300" y="235" width="20" height="25" fill="#64748b"/>
-  <rect x="285" y="255" width="50" height="6" fill="#94a3b8" rx="2"/>
-  <rect x="255" y="265" width="70" height="8" fill="#475569" rx="2"/>
 
-  <!-- Computer 3 -->
-  <rect x="410" y="150" width="120" height="85" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
-  <rect x="420" y="160" width="100" height="65" fill="#0f172a"/>
-  <text x="470" y="195" font-family="monospace" font-size="12" fill="#facc15" text-anchor="middle">WEB DEV</text>
-  <rect x="460" y="235" width="20" height="25" fill="#64748b"/>
-  <rect x="445" y="255" width="50" height="6" fill="#94a3b8" rx="2"/>
-  <rect x="415" y="265" width="70" height="8" fill="#475569" rx="2"/>
+  <!-- Sleek Tech Lab Room Background -->
+  <rect width="800" height="500" fill="url(#bgWall)"/>
+  <!-- Ambient Cyan Glow -->
+  <circle cx="400" cy="180" r="240" fill="#38bdf8" opacity="0.1"/>
+  <!-- Accent Wall Stripes -->
+  <line x1="0" y1="78" x2="800" y2="78" stroke="#38bdf8" stroke-width="1.5" opacity="0.25"/>
+  <line x1="0" y1="358" x2="800" y2="358" stroke="#38bdf8" stroke-width="2" opacity="0.4"/>
 
-  <!-- Computer 4 -->
-  <rect x="570" y="150" width="120" height="85" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
-  <rect x="580" y="160" width="100" height="65" fill="#0f172a"/>
-  <text x="630" y="195" font-family="monospace" font-size="12" fill="#ec4899" text-anchor="middle">AI &amp; DATA</text>
-  <rect x="620" y="235" width="20" height="25" fill="#64748b"/>
-  <rect x="605" y="255" width="50" height="6" fill="#94a3b8" rx="2"/>
-  <rect x="575" y="265" width="70" height="8" fill="#475569" rx="2"/>
+  <!-- Network Server Rack (Left Corner) -->
+  <g filter="url(#cardShadow)">
+    <rect x="34" y="106" width="88" height="248" rx="8" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <rect x="44" y="122" width="68" height="24" rx="4" fill="#1e293b"/>
+    <circle cx="56" cy="134" r="3.5" fill="#22c55e"/><circle cx="68" cy="134" r="3.5" fill="#38bdf8"/>
+    <rect x="44" y="156" width="68" height="24" rx="4" fill="#1e293b"/>
+    <circle cx="56" cy="168" r="3.5" fill="#22c55e"/><circle cx="68" cy="168" r="3.5" fill="#fbbf24"/>
+    <rect x="44" y="190" width="68" height="24" rx="4" fill="#1e293b"/>
+    <circle cx="56" cy="202" r="3.5" fill="#38bdf8"/><circle cx="68" cy="202" r="3.5" fill="#22c55e"/>
+    <rect x="44" y="224" width="68" height="114" rx="4" fill="#1e293b" opacity="0.6"/>
+  </g>
 
-  <!-- Foreground Monitors -->
-  <rect x="180" y="300" width="150" height="90" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-  <rect x="190" y="310" width="130" height="70" fill="#0284c7"/>
-  <text x="255" y="350" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">INTERNET LAB</text>
+  <!-- Continuous Modern Lab Workstation Desk -->
+  <rect x="0" y="356" width="800" height="22" fill="url(#deskGrad)"/>
+  <rect x="0" y="378" width="800" height="122" fill="#1e293b"/>
+  <rect x="28" y="394" width="744" height="88" rx="10" fill="#0f172a" opacity="0.55"/>
 
-  <rect x="470" y="300" width="150" height="90" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-  <rect x="480" y="310" width="130" height="70" fill="#0284c7"/>
-  <text x="545" y="350" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">TYPING &amp; IT</text>
+  <!-- Monitor 1 (Left - Coding) -->
+  <g filter="url(#cardShadow)">
+    <rect x="156" y="176" width="184" height="122" rx="10" fill="#020617" stroke="#475569" stroke-width="3"/>
+    <rect x="164" y="184" width="168" height="102" rx="5" fill="#0f172a"/>
+    <!-- Code Lines -->
+    <rect x="176" y="198" width="52" height="7" rx="3" fill="#38bdf8"/>
+    <rect x="234" y="198" width="38" height="7" rx="3" fill="#f472b6"/>
+    <rect x="188" y="214" width="92" height="7" rx="3" fill="#4ade80"/>
+    <rect x="188" y="230" width="74" height="7" rx="3" fill="#fbbf24"/>
+    <rect x="188" y="246" width="108" height="7" rx="3" fill="#94a3b8"/>
+    <rect x="176" y="262" width="46" height="7" rx="3" fill="#a78bfa"/>
+    <!-- Stand & Keyboard -->
+    <rect x="238" y="298" width="20" height="36" fill="#64748b"/>
+    <rect x="212" y="330" width="72" height="8" rx="4" fill="#94a3b8"/>
+    <rect x="192" y="346" width="112" height="10" rx="4" fill="#334155"/>
+  </g>
 
-  <!-- Top Title -->
-  <text x="400" y="70" font-family="'Segoe UI', sans-serif" font-size="24" font-weight="bold" fill="#38bdf8" text-anchor="middle">💻 अत्याधुनिक कंप्यूटर एवं आईटी लैब</text>
-  <text x="400" y="105" font-family="'Segoe UI', sans-serif" font-size="15" fill="#bae6fd" text-anchor="middle">हाई-स्पीड ब्रॉडबैंड इंटरनेट एवं व्यक्तिगत कंप्यूटर कार्यप्रणाली</text>
+  <!-- Monitor 2 (Center Hero Display - Analytics & Web) -->
+  <g filter="url(#cardShadow)">
+    <rect x="358" y="142" width="218" height="148" rx="12" fill="#020617" stroke="#38bdf8" stroke-width="3"/>
+    <rect x="368" y="152" width="198" height="124" rx="6" fill="url(#monitorGlow)"/>
+    <!-- Browser Chrome -->
+    <rect x="378" y="162" width="178" height="16" rx="4" fill="#0f172a" opacity="0.5"/>
+    <circle cx="388" cy="170" r="3" fill="#fb7185"/>
+    <circle cx="398" cy="170" r="3" fill="#fbbf24"/>
+    <circle cx="408" cy="170" r="3" fill="#4ade80"/>
+    <!-- Dashboard Tiles -->
+    <rect x="378" y="186" width="84" height="80" rx="6" fill="#ffffff" opacity="0.95"/>
+    <polyline points="388,248 404,228 420,236 438,208 452,216" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="438" cy="208" r="4" fill="#16a34a"/>
+    <rect x="470" y="186" width="86" height="36" rx="6" fill="#ffffff" opacity="0.95"/>
+    <rect x="480" y="198" width="46" height="7" rx="3" fill="#0284c7"/>
+    <rect x="480" y="210" width="64" height="5" rx="2.5" fill="#94a3b8"/>
+    <rect x="470" y="230" width="86" height="36" rx="6" fill="#0f172a" opacity="0.88"/>
+    <text x="513" y="253" font-family="monospace" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">&lt;MDHSSS/&gt;</text>
+    <!-- Stand & Keyboard -->
+    <rect x="456" y="290" width="22" height="44" fill="#94a3b8"/>
+    <rect x="424" y="330" width="86" height="9" rx="4" fill="#cbd5e1"/>
+    <rect x="404" y="346" width="126" height="10" rx="4" fill="#475569"/>
+  </g>
 
-  <!-- Bottom Caption Badge -->
-  <rect x="30" y="430" width="370" height="45" rx="10" fill="rgba(15,23,42,0.85)"/>
-  <text x="50" y="458" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🖥️ कंप्यूटर एवं डिजिटल टेक्नोलॉजी लैब</text>
+  <!-- Monitor 3 (Right - AI & Design) -->
+  <g filter="url(#cardShadow)">
+    <rect x="594" y="176" width="174" height="122" rx="10" fill="#020617" stroke="#475569" stroke-width="3"/>
+    <rect x="602" y="184" width="158" height="102" rx="5" fill="#0f172a"/>
+    <circle cx="654" cy="235" r="30" fill="none" stroke="#38bdf8" stroke-width="6" stroke-dasharray="120 70"/>
+    <circle cx="654" cy="235" r="18" fill="none" stroke="#4ade80" stroke-width="5" stroke-dasharray="80 50"/>
+    <rect x="700" y="206" width="46" height="10" rx="4" fill="#38bdf8"/>
+    <rect x="700" y="226" width="38" height="10" rx="4" fill="#a855f7"/>
+    <rect x="700" y="246" width="42" height="10" rx="4" fill="#fbbf24"/>
+    <!-- Stand & Keyboard -->
+    <rect x="671" y="298" width="20" height="36" fill="#64748b"/>
+    <rect x="646" y="330" width="70" height="8" rx="4" fill="#94a3b8"/>
+    <rect x="626" y="346" width="110" height="10" rx="4" fill="#334155"/>
+  </g>
 </svg>
