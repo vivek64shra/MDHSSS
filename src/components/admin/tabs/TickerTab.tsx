@@ -107,7 +107,7 @@ export default function TickerTab({ onToast, onConfirm }: Props) {
               }`}
             />
             <h3 className="text-sm font-extrabold text-slate-900 m-0">
-              Firebase लाइव सूचना पट्टी (Ticker Status)
+              सक्रिय सूचना पट्टी स्थिति
             </h3>
           </div>
           <div className="flex items-center gap-2">

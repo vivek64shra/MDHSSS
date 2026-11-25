@@ -23,28 +23,29 @@
       --glass-shadow-hover: 0 20px 40px -10px rgba(2, 132, 199, 0.22);
       --glass-blur: blur(16px);
       
-      /* Typography */
+      /* Typography - Crisp Devanagari + Modern Geometric Sans */
       --text-main: #1e293b;
       --text-muted: #475569;
       --text-light: #64748b;
       --text-dark: #0f172a;
-      --font-body: 'Plus Jakarta Sans', 'Tiro Devanagari Hindi', sans-serif;
-      --font-hindi: 'Tiro Devanagari Hindi', 'Plus Jakarta Sans', serif;
-      --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Noto Sans Devanagari', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-hindi: 'Noto Sans Devanagari', 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-heading: 'Noto Sans Devanagari', 'Outfit', 'Plus Jakarta Sans', sans-serif;
       
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 22px;
       --radius-full: 9999px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    *:not(#react-admin-portal-root):not(#react-admin-portal-root *) {
+    /* Zero-specificity reset so class padding/margins AND Tailwind Admin Panel utilities always work cleanly */
+    :where(*:not(#react-admin-portal-root):not(#react-admin-portal-root *)) {
       margin: 0;
       padding: 0;
     }
 
-    * {
+    :where(*) {
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
     }
@@ -70,44 +71,48 @@
       touch-action: none;
     }
 
-    /* Ambient Blue & Cyan Light Spheres */
+    /* Ambient Blue & Cyan Light Spheres (pure radial-gradient, zero GPU blur cost) */
     .ambient-sphere {
       position: fixed;
       border-radius: 50%;
-      filter: blur(90px);
       z-index: -1;
       pointer-events: none;
-      opacity: 0.5;
+      opacity: 0.42;
+      contain: strict;
     }
     .sphere-1 {
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(2, 132, 199, 0.1) 70%);
-      top: 5%;
-      left: -120px;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(2, 132, 199, 0.06) 45%, transparent 72%);
+      top: 4%;
+      left: -140px;
     }
     .sphere-2 {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(147, 197, 253, 0.45) 0%, rgba(37, 99, 235, 0.1) 70%);
-      bottom: 15%;
-      right: -120px;
+      width: 560px;
+      height: 560px;
+      background: radial-gradient(circle, rgba(147, 197, 253, 0.24) 0%, rgba(37, 99, 235, 0.06) 45%, transparent 72%);
+      bottom: 12%;
+      right: -140px;
     }
     .sphere-3 {
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, rgba(165, 243, 252, 0.4) 0%, transparent 70%);
-      top: 50%;
-      left: 30%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(165, 243, 252, 0.22) 0%, transparent 70%);
+      top: 48%;
+      left: 28%;
     }
 
-    a:not(#react-admin-portal-root *) {
+    :where(a:not(#react-admin-portal-root *)) {
       text-decoration: none;
       color: inherit;
     }
 
-    ul:not(#react-admin-portal-root *) {
+    :where(ul:not(#react-admin-portal-root *)) {
       list-style: none;
+    }
+
+    :where(button:not(#react-admin-portal-root *)) {
+      font-family: inherit;
     }
 
     /* Official Social Connect Strip on Homepage */
@@ -196,18 +201,16 @@
        3. GLASSMORPHISM UTILITY
        ========================================================================== */
     .glass-card {
-      background: var(--glass-card);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
+      background: rgba(255, 255, 255, 0.94);
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
       border-radius: var(--radius-lg);
-      transition: var(--transition);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .glass-card:hover {
-      background: var(--glass-bg-hover);
-      border-color: rgba(255, 255, 255, 0.95);
+      background: #ffffff;
+      border-color: rgba(186, 230, 253, 0.95);
       box-shadow: var(--glass-shadow-hover);
     }
 
@@ -918,6 +921,7 @@
     .marquee-text {
       display: inline-block;
       white-space: nowrap;
+      will-change: transform;
       animation: marqueeAnimation 52s linear infinite;
     }
 
@@ -927,8 +931,8 @@
     }
 
     @keyframes marqueeAnimation {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+      0% { transform: translate3d(100%, 0, 0); }
+      100% { transform: translate3d(-100%, 0, 0); }
     }
 
     /* Top Navbar Notice Bell Button */
@@ -1048,9 +1052,8 @@
       animation: bellPulse 1.8s infinite;
     }
     @keyframes bellPulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.72; }
     }
 
     /* ==========================================================================
@@ -1211,10 +1214,8 @@
     }
 
     .nav-inner-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(226, 232, 240, 0.95);
       box-shadow: 0 8px 25px rgba(2, 132, 199, 0.12);
       border-radius: var(--radius-md);
       padding: 0.45rem 0.85rem;
@@ -1282,9 +1283,7 @@
       top: calc(100% + 8px);
       left: 0;
       min-width: 250px;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: #ffffff;
       border: 1px solid #bae6fd;
       border-radius: var(--radius-md);
       box-shadow: 0 16px 40px rgba(2, 132, 199, 0.2);
@@ -1292,7 +1291,7 @@
       opacity: 0;
       visibility: hidden;
       transform: translateY(10px);
-      transition: var(--transition);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
       z-index: 1001;
     }
 
@@ -1350,8 +1349,7 @@
     }
 
     .iframe-top-controls {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(16px);
+      background: #ffffff;
       border: 1px solid #bae6fd;
       border-radius: var(--radius-md) var(--radius-md) 0 0;
       padding: 0.85rem 1.35rem;
@@ -2862,14 +2860,15 @@
       display: flex;
       gap: 1.25rem;
       width: max-content;
+      will-change: transform;
       animation: galleryMarqueeScroll 48s linear infinite;
     }
     .gallery-marquee-wrapper:hover .gallery-track {
       animation-play-state: paused;
     }
     @keyframes galleryMarqueeScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
     }
     .gallery-card {
       width: 312px;
@@ -2907,14 +2906,13 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      background: rgba(15, 23, 42, 0.78);
+      background: rgba(15, 23, 42, 0.88);
       color: #ffffff;
       font-size: 0.73rem;
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      backdrop-filter: blur(6px);
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
     }
     .gallery-info {
@@ -3502,6 +3500,180 @@
       .threedot-drawer {
         width: 92vw;
         max-width: 360px;
+      }
+      .glass-card {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(255, 255, 255, 0.97);
+      }
+    }
+
+    /* ==========================================================================
+       POLISHED GOOGLE RATE & REVIEW BANNER + ENHANCED BUTTON SYSTEM
+       ========================================================================== */
+    .google-review-banner {
+      background: linear-gradient(135deg, #ffffff 0%, #fffbeb 55%, #fef3c7 100%);
+      border: 1.5px solid #fcd34d;
+      border-radius: 20px;
+      padding: 1.45rem 1.6rem;
+      box-shadow: 0 10px 28px rgba(217, 119, 6, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .google-review-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+
+    .google-review-badge-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1.5px solid #fde68a;
+      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .google-review-stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: #f59e0b;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+
+    .google-review-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .btn-google-review-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0.72rem 1.35rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ea580c 0%, #d97706 100%);
+      color: #ffffff !important;
+      font-size: 0.92rem;
+      font-weight: 800;
+      border: 1px solid #fbbf24;
+      box-shadow: 0 6px 18px rgba(217, 119, 6, 0.32);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      cursor: pointer;
+      min-height: 44px;
+      white-space: nowrap;
+    }
+
+    .btn-google-review-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(217, 119, 6, 0.42);
+      background: linear-gradient(135deg, #c2410c 0%, #b45309 100%);
+    }
+
+    .btn-google-map-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0.72rem 1.15rem;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #0369a1 !important;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: 1.5px solid #bae6fd;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      cursor: pointer;
+      min-height: 44px;
+      white-space: nowrap;
+    }
+
+    .btn-google-map-secondary:hover {
+      background: #f0f9ff;
+      border-color: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    /* Crisp Balanced Sidebar Gateway Buttons (Centered & Comfortable) */
+    .threedot-gateway-card {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0.85rem 0.75rem !important;
+    }
+
+    .threedot-drawer-header {
+      padding: 1rem 1.15rem !important;
+    }
+
+    .threedot-drawer-body {
+      padding: 1.05rem 1.1rem 1.5rem !important;
+    }
+
+    .threedot-drawer-footer {
+      padding: 0.9rem 1.1rem !important;
+    }
+
+    .threedot-item-btn {
+      padding: 0.72rem 0.9rem !important;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+    }
+
+    .threedot-item-btn:hover {
+      box-shadow: 0 6px 14px rgba(2, 132, 199, 0.1);
+    }
+
+    /* Unified Premium Button Polish Across Homepage & Subpages */
+    .btn-hero-pri,
+    .btn-hero-sec,
+    .btn-hero-photos,
+    .btn-return-home,
+    .btn-hero-gateway {
+      font-family: var(--font-body);
+      letter-spacing: 0.01em;
+      cursor: pointer;
+    }
+
+    .btn-hero-pri:focus-visible,
+    .btn-hero-sec:focus-visible,
+    .btn-hero-photos:focus-visible,
+    .btn-hero-gateway:focus-visible,
+    .btn-google-review-primary:focus-visible,
+    .threedot-item-btn:focus-visible {
+      outline: 2.5px solid #0284c7;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .google-review-banner {
+        padding: 1.15rem 1rem;
+        border-radius: 16px;
+      }
+      .google-review-actions {
+        width: 100%;
+      }
+      .btn-google-review-primary,
+      .btn-google-map-secondary {
+        flex: 1 1 auto;
+        width: 100%;
       }
     }
 

@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://mdhsss.netlify.app/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://mdhsss.netlify.app/images/school_logo.jpg</image:loc>
+      <image:title>MDHSSS — Maa Durga Higher Secondary School Semariya, Rewa Official Logo</image:title>
+      <image:caption>Best &amp; Top School in Semariya, Rewa (M.P.) — UDISE 23140402055, MPBSE Code 322517</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mdhsss.netlify.app/images/school_building.svg</image:loc>
+      <image:title>Maa Durga Higher Secondary School Semariya Campus</image:title>
+      <image:caption>MDHSSS Semariya Rewa Modern Campus with Smart Classes, Labs &amp; CCTV Security</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mdhsss.netlify.app/images/smart_classroom.svg</image:loc>
+      <image:title>MDHSSS Semariya Smart Classroom</image:title>
+      <image:caption>Digital Smart Classrooms at Maa Durga Higher Secondary School Semariya, Rewa</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mdhsss.netlify.app/images/science_lab.svg</image:loc>
+      <image:title>MDHSSS Semariya Science Laboratories</image:title>
+      <image:caption>Physics, Chemistry and Biology Labs at Top School in Semariya, Rewa</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mdhsss.netlify.app/images/computer_lab.svg</image:loc>
+      <image:title>MDHSSS Semariya Computer Lab</image:title>
+      <image:caption>Modern Computer Education at Maa Durga H.S. School Semariya, Rewa</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mdhsss.netlify.app/images/school_bus.svg</image:loc>
+      <image:title>MDHSSS Semariya GPS School Bus Service</image:title>
+      <image:caption>Safe GPS School Bus Covering 35+ Villages in Semariya, Rewa</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://mdhsss.netlify.app/#about</loc>
-    <lastmod>2026-11-04</lastmod>
+    <loc>https://mdhsss.netlify.app/llms.txt</loc>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mdhsss.netlify.app/#admission</loc>
-    <lastmod>2026-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mdhsss.netlify.app/#student</loc>
-    <lastmod>2026-11-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.95</priority>
-  </url>
-  <url>
-    <loc>https://mdhsss.netlify.app/#facilities</loc>
-    <lastmod>2026-11-04</lastmod>
-    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mdhsss.netlify.app/#whatsapp</loc>
-    <lastmod>2026-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://mdhsss.netlify.app/#staff</loc>
-    <lastmod>2026-11-04</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
 </urlset>

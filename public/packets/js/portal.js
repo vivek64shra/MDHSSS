@@ -1024,7 +1024,22 @@
     window.getFeeReportDate = getFeeReportDate;
 
     async function fetchStudentFeesSheetIfNeeded() {
-      // 0. Instant offline packet access via window.MDHSS_STUDENT_FEES (works everywhere offline, netlify, github)
+      // 0. Lazy-load offline packet (packets/fees-data.js) on demand so homepage stays ultra-fast
+      if (!window.MDHSS_STUDENT_FEES && !window._feesPacketAttempted) {
+        window._feesPacketAttempted = true;
+        try {
+          await new Promise((resolve) => {
+            const s = document.createElement('script');
+            s.src = 'packets/fees-data.js';
+            s.async = true;
+            s.onload = resolve;
+            s.onerror = resolve;
+            document.head.appendChild(s);
+            setTimeout(resolve, 3500);
+          });
+        } catch (e) {}
+      }
+
       if (window.MDHSS_STUDENT_FEES && Array.isArray(window.MDHSS_STUDENT_FEES) && window.MDHSS_STUDENT_FEES.length > 50) {
         window._cachedStudentFeesRecords = window.MDHSS_STUDENT_FEES;
         return window.MDHSS_STUDENT_FEES;
@@ -4301,7 +4316,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.85rem; border-bottom:1px solid #334155; padding-bottom:0.75rem;">
               <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:1.2rem;">👁️</span>
-                <span style="font-weight:700; font-size:0.95rem; color:#e2e8f0;">Firebase लाइव डॉक्युमेंट / कलेक्शन व्यूअर</span>
+                <span style="font-weight:700; font-size:0.95rem; color:#e2e8f0;">डेटाबेस डॉक्युमेंट / कलेक्शन व्यूअर</span>
               </div>
               <div style="display:flex; align-items:center; gap:8px;">
                 <select id="fbDocSelector" onchange="onFbDocSelectChange()" style="background:#0f172a; color:#f8fafc; border:1px solid #475569; border-radius:6px; padding:4px 8px; font-size:0.84rem;">
@@ -7452,17 +7467,27 @@
       alert('✅ मूल 8 व्हाट्सएप ग्रुप्स सफलतापूर्वक बहाल कर दिए गए हैं!');
     }
 
-    // Scroll to top button visibility
-    window.addEventListener('scroll', () => {
-      const topBtn = document.getElementById('scrollTopBtn');
-      if (topBtn) {
-        if (window.scrollY > 300) {
-          topBtn.classList.add('show');
-        } else {
-          topBtn.classList.remove('show');
-        }
-      }
-    });
+    // Scroll to top button visibility (passive + rAF throttled for zero scroll lag)
+    (function setupPassiveScrollTopBtn() {
+      let ticking = false;
+      let isShown = false;
+      let cachedBtn = null;
+      window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(() => {
+          if (!cachedBtn) cachedBtn = document.getElementById('scrollTopBtn');
+          if (cachedBtn) {
+            const shouldShow = window.scrollY > 300;
+            if (shouldShow !== isShown) {
+              isShown = shouldShow;
+              cachedBtn.classList.toggle('show', shouldShow);
+            }
+          }
+          ticking = false;
+        });
+      }, { passive: true });
+    })();
 
     // Expose all admin, whatsapp and modal configuration methods on window
     window.switchAdminTab = switchAdminTab;

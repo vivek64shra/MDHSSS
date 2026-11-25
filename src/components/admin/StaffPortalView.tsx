@@ -13,8 +13,6 @@ import {
   Shield,
   UserCheck,
   UserPlus,
-  Wifi,
-  WifiOff,
 } from 'lucide-react';
 import { refreshAllFromCloud, usePortalStore } from '../../firebase';
 import { AdminSession, isValidActiveNotice, sortWhatsAppGroups } from '../../types/portal';
@@ -89,29 +87,15 @@ export default function StaffPortalView({
             </div>
             <div className="min-w-0">
               <h1 className="text-sm sm:text-base font-extrabold leading-tight truncate m-0">
-                स्टाफ लाइव पोर्टल (MDHSSS सेमरिया)
+                स्टाफ पोर्टल (MDHSSS सेमरिया)
               </h1>
               <p className="text-xs text-sky-100 truncate m-0">
-                {session.name} · रियल-टाइम Firebase सिंक
+                {session.name} · MDHSSS सेमरिया
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            <span
-              className={`hidden sm:inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${
-                store.connectionStatus === 'online'
-                  ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-400/30'
-                  : 'bg-amber-500/20 text-amber-200 border border-amber-400/30'
-              }`}
-            >
-              {store.connectionStatus === 'online' ? (
-                <Wifi className="w-3.5 h-3.5" />
-              ) : (
-                <WifiOff className="w-3.5 h-3.5" />
-              )}
-              {store.connectionStatus === 'online' ? 'लाइव' : 'ऑफलाइन'}
-            </span>
 
             <button
               type="button"

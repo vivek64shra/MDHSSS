@@ -130,7 +130,7 @@ export default function NoticeTab({ onToast, onConfirm }: Props) {
               }`}
             />
             <h3 className="text-sm font-extrabold text-slate-900 m-0">
-              Firebase लाइव सूचना स्थिति (Live onSnapshot)
+              सक्रिय सूचना पॉपअप स्थिति
             </h3>
           </div>
           <div className="flex items-center gap-2">

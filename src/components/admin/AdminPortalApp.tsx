@@ -17,8 +17,6 @@ import {
   Smartphone,
   UserCheck,
   UserPlus,
-  Wifi,
-  WifiOff,
 } from 'lucide-react';
 import { refreshAllFromCloud, usePortalStore } from '../../firebase';
 import { AdminSession, isValidActiveNotice, PortalRole } from '../../types/portal';
@@ -351,20 +349,8 @@ export default function AdminPortalApp() {
               )}
             </form>
 
-            <div className="pt-3 border-t border-dashed border-slate-200 flex items-center justify-between text-xs text-slate-500 font-semibold">
+            <div className="pt-3 border-t border-dashed border-slate-200 flex items-center justify-center text-xs text-slate-500 font-semibold">
               <span>🔒 केवल अधिकृत विद्यालय प्रशासन हेतु</span>
-              <span
-                className={`inline-flex items-center gap-1 font-bold ${
-                  store.connectionStatus === 'online' ? 'text-emerald-600' : 'text-amber-600'
-                }`}
-              >
-                {store.connectionStatus === 'online' ? (
-                  <Wifi className="w-3.5 h-3.5" />
-                ) : (
-                  <WifiOff className="w-3.5 h-3.5" />
-                )}
-                {store.connectionStatus === 'online' ? 'Firebase लाइव' : 'ऑफलाइन कैश'}
-              </span>
             </div>
           </div>
         </div>
@@ -564,19 +550,9 @@ export default function AdminPortalApp() {
             className="text-left bg-purple-50 border border-purple-200 hover:border-purple-400 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-colors"
           >
             <div>
-              <div className="text-xs font-bold text-purple-800">डेटाबेस स्थिति</div>
+              <div className="text-xs font-bold text-purple-800">डेटाबेस व स्टोरेज</div>
               <div className="text-base font-extrabold text-purple-950 mt-1 flex items-center gap-1.5">
-                {store.connectionStatus === 'online' ? (
-                  <>
-                    <Wifi className="w-4 h-4 text-emerald-600" />
-                    <span>क्लाउड लाइव सक्रिय</span>
-                  </>
-                ) : (
-                  <>
-                    <WifiOff className="w-4 h-4 text-amber-600" />
-                    <span>ऑफलाइन कैश मोड</span>
-                  </>
-                )}
+                <span>डेटा एक्सप्लोरर खोलें</span>
               </div>
             </div>
             <div className="w-11 h-11 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
